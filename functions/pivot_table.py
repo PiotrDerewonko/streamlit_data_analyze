@@ -16,15 +16,29 @@ def pivot_table_w_subtotals(df, values, indices, columns, aggfunc, fill_value):
 
     '''
     listOfTable = []
+    listofFirstTable = []
     for indexNumber in range(len(indices)):
         n = indexNumber + 1
+
         table = pd.pivot_table(df, values=values, index=indices[:n],
                                columns=columns,
                                aggfunc=aggfunc,
                                fill_value=fill_value).reset_index()
+        if n == 1:
+            listofFirstTable.append(table)
+        if n == len(indices):
+            test = indices[n - 1]
+            test2 = indices[:n - 1]
+            concatLastTable = table.copy()
+            concatLastTable['new_index'] = ''
+            for i in range(len(indices)):
+                concatLastTable['new_index'] = concatLastTable['new_index'] + concatLastTable[indices[i]]
+            concatLastTable.set_index(keys='new_index', inplace=True)
+            concatLastTable.drop(columns=indices[:n+1], axis=1, inplace=True)
         for column in indices[n:]:
             table[column] = ''
         listOfTable.append(table)
     concatTable = pd.concat(listOfTable).sort_index()
     concatTable = concatTable.set_index(keys=indices)
-    return concatTable.sort_index(axis=0, ascending=True)
+
+    return concatTable.sort_index(axis=0, ascending=True), concatLastTable

@@ -4,7 +4,7 @@ import streamlit as st
 from database.source_db import deaful_set
 from database.dowload_data import download_first_data
 from functions.pivot_table import pivot_table_w_subtotals
-
+import matplotlib.pyplot as plt
 #podstawowe ustawienia strony z raportami
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
@@ -30,13 +30,26 @@ chose_year = st.sidebar.multiselect(
 )
 st.sidebar.header('Proszę wybrać wiersze tabeli')
 chose_row_of_pivot_table = st.sidebar.multiselect(
-    "Wybierz wiersze", options=['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'kod_akcji'], default=['grupa_akcji_3', 'grupa_akcji_2']
+    "Wybierz wiersze", options=['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'kod_akcji'], default=['grupa_akcji_2', 'grupa_akcji_3']
 )
 #zawezam dataframe tylko do wybranych pozycji
 data_selections = data.query("grupa_akcji_2 == @chose_mailing & grupa_akcji_3==@chose_year")
-pivot_table = pivot_table_w_subtotals(data_selections, ['suma_wplat', 'liczba_wplat'],chose_row_of_pivot_table,[], 'sum',
+pivot_table, last_pivot = pivot_table_w_subtotals(data_selections, ['suma_wplat', 'liczba_wplat'],chose_row_of_pivot_table,[], 'sum',
                                       0)
+
+
+
+
+fig, ax = plt.subplots()
+tmp = last_pivot[['suma_wplat', 'liczba_wplat']]
+ax.plot(tmp)
+plt.show()
+
+
+
 st.dataframe(data_selections)
 st.dataframe(pivot_table)
+st.pyplot(fig)
+
 
 
