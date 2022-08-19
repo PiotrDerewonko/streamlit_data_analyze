@@ -36,8 +36,18 @@ chose_row_of_pivot_table = st.sidebar.multiselect(
 data_selections = data.query("grupa_akcji_2 == @chose_mailing & grupa_akcji_3==@chose_year")
 pivot_table, last_pivot = pivot_table_w_subtotals(data_selections, ['suma_wplat', 'liczba_wplat'],chose_row_of_pivot_table,[], 'sum',
                                       0)
+with st.container():
+    tab1, tab2 = st.tabs(["📈 Pivot table", "🗃 filtr"])
+    with tab2.expander("Proszę wybrać filtr"):
 
+        chose_year2 = st.multiselect(
+                "Wybierz rok2", options=data['grupa_akcji_3'].unique(), default=data['grupa_akcji_3'].unique()
+            )
 
+        chose_tmp = st.multiselect(
+                "Wybierz tmp", options=data['grupa_akcji_3'].unique(), default=data['grupa_akcji_3'].unique()
+            )
+    tab1.dataframe(data_selections)
 
 
 fig, ax = plt.subplots()
@@ -47,7 +57,7 @@ plt.show()
 
 
 
-st.dataframe(data_selections)
+
 st.dataframe(pivot_table)
 st.pyplot(fig)
 
