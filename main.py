@@ -15,18 +15,6 @@ st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
 # pobieram dane z bazy dabych w zaleznosci od lokalizacji
 mailings, con = deaful_set('local')
 
-#pobieram dane podstawowe
-#data = download_second_data(con)
-#data.to_csv('./database/dane.csv')
-#data = pd.read_csv('./database/dane.csv')
-#dodaje sidebary z mozlowoscia wyboru mailingow i lat
-def style_button_row(clicked_button_ix, n_buttons):
-    def get_button_indices(button_ix):
-        return {
-            'nth_child': button_ix,
-            'nth_last_child': n_buttons - button_ix + 1
-        }
-
 with st.sidebar:
     year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
                                   value=[date.now().year - 4, date.now().year])
@@ -42,10 +30,7 @@ data = download_dash_address_data(con)
 data_to_show = data.loc[(data['grupa_akcji_3'] >=year_from) & (data['grupa_akcji_3'] <=year_to)]
 
 a1, a2 = st.columns((10,1))
-cam_adr_plot = pivot_for_dash(data_to_show[['grupa_akcji_3','grupa_akcji_2', 'suma_wplat','koszt_calkowity']])
+cam_adr_plot = pivot_for_dash(data_to_show)
 a1.bokeh_chart(cam_adr_plot)
 b1, b2 = st.columns((4.5,5.5))
 b1.dataframe(data_to_show)
-#data_to_show.set_index(['grupa_akcji_3','grupa_akcji_2'], inplace=True)
-
-#st.bokeh_chart(cam_adr_plot, use_container_width=True)
