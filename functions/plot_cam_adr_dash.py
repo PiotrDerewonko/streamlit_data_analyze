@@ -23,7 +23,7 @@ def pivot_for_dash(data):
     pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
                                                                    'naklad_calkowity'],
                                 aggfunc='sum')
-    index_for_c
+    index_for_char = data.groupby(multindex)
     source = ColumnDataSource(pivot_table_ma)
 
     p = figure(x_range=index_for_char,
