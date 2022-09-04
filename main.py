@@ -41,9 +41,11 @@ year_to = year_range_slider[1]
 data = download_dash_address_data(con)
 data_to_show = data.loc[(data['grupa_akcji_3'] >=year_from) & (data['grupa_akcji_3'] <=year_to)]
 
-a1, a2 = st.columns(2)
-a1.dataframe(data_to_show)
+a1, a2 = st.columns((10,1))
+cam_adr_plot = pivot_for_dash(data_to_show[['grupa_akcji_3','grupa_akcji_2', 'suma_wplat','koszt_calkowity']])
+a1.bokeh_chart(cam_adr_plot)
+b1, b2 = st.columns((4.5,5.5))
+b1.dataframe(data_to_show)
 #data_to_show.set_index(['grupa_akcji_3','grupa_akcji_2'], inplace=True)
-cam_adr_plot = pivot_for_dash(data_to_show[['grupa_akcji_3','grupa_akcji_2', 'suma_wplat']])
-a2.bokeh_chart(cam_adr_plot)
+
 #st.bokeh_chart(cam_adr_plot, use_container_width=True)
