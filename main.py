@@ -6,14 +6,25 @@ from database.dowload_data import download_first_data, download_second_data, dow
 from functions.pivot_table import pivot_table_w_subtotals
 from functions.plot_cam_adr_dash import pivot_for_dash
 from datetime import datetime as date
-
+import sys
 #podstawowe ustawienia strony z raportami
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
                    layout='wide')
 
-# pobieram dane z bazy dabych w zaleznosci od lokalizacji
-mailings, con = deaful_set('local')
+''' pobieram dane z bazy dabych w zaleznosci od lokalizacji i od tego czy skrytp jest wykonywany przez corn czy 
+streamlit, jezeli przez streamlit to bierze wasrtosci przypisane z palca, jesli przez crona to warotsci podane
+jako wywolywany argument'''
+
+try:
+    sorce_main = sys.argv[1]
+except:
+    sorce_main = 'local'
+mailings, con = deaful_set(f'{sorce_main}')
+try:
+    refresh_data = sys.argv[2]
+except:
+    refresh_data = False
 
 with st.sidebar:
     year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
@@ -26,7 +37,7 @@ with st.sidebar:
 year_from = year_range_slider[0]
 year_to = year_range_slider[1]
 
-data = download_dash_address_data(con)
+data = download_dash_address_data(con, refresh_data)
 data_to_show = data.loc[(data['grupa_akcji_3'] >=year_from) & (data['grupa_akcji_3'] <=year_to)]
 
 a1, a2 = st.columns((10,1))

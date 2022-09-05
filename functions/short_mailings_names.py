@@ -8,4 +8,7 @@ def change_name(data):
     data.replace('KARDYNALSKA SIERPIEŃ', 'Q3 KARD', inplace=True)
     data.replace('KARDYNALSKA LUTY', 'Q1 KARD', inplace=True)
     data.replace('MAILING Q3 KUSTOSZ LIPIEC', 'Q3 KUST', inplace=True)
+    data.replace('KARDYNALSKA LUTY PRIM', 'Q1 KARD', inplace=True)
+    data.replace('KARDYNALSKA LUTY BIS', 'Q1 KARD', inplace=True)
+
     return data
