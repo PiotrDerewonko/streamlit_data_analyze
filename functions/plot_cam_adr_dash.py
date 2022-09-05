@@ -4,7 +4,7 @@ from bokeh.transform import dodge
 from bokeh.models import LinearAxis, Range1d
 from functions.short_mailings_names import change_name
 
-def pivot_for_dash(data):
+def pivot_and_chart_for_dash(data):
     'zmieniam typ kolumny z rokiem na tekst'
     data['grupa_akcji_3'] = data['grupa_akcji_3'].astype(str)
 
@@ -20,6 +20,8 @@ def pivot_for_dash(data):
     'dodaje zmienna multindex aby moc latwo zmieniac multindex w zarownw w atbeli przestwnej jak i ' \
     'grupowaniu do wykresu'
     multindex = ['grupa_akcji_3', 'grupa_akcji_2']
+
+    #todo dodac tutaj pzostale kolumny takie jak srednia itp
     pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
                                                                    'naklad_calkowity'],
                                 aggfunc='sum')
@@ -27,7 +29,7 @@ def pivot_for_dash(data):
     source = ColumnDataSource(pivot_table_ma)
 
     p = figure(x_range=index_for_char,
-               height=350,width=1300, title=f"Wyniki mailingow za lata {from_} - {to_}",
+               height=350, width=1300, title=f"Wyniki mailingow za lata {from_} - {to_}",
                toolbar_location='right',
                x_axis_label='Mailingi',
                y_axis_label='Suma wpłat/koszt')
@@ -36,7 +38,7 @@ def pivot_for_dash(data):
     p.extra_y_ranges = {'secon_axis': Range1d(-100, pivot_table_ma['naklad_calkowity'].max())}
     p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label='naklad/liczba wpłat'), 'right')
 
-    'dodaje bwa wykresy słupkowe'
+    'dodaje dwa wykresy słupkowe'
     p.vbar(x=dodge('grupa_akcji_3_grupa_akcji_2', 0.0, range=p.x_range), top='suma_wplat', source=source, width=0.2,
            legend_label="Suma Wplat",)
     p.vbar(x=dodge('grupa_akcji_3_grupa_akcji_2', -0.25, range=p.x_range), top='koszt_calkowity', source=source,
@@ -54,7 +56,7 @@ def pivot_for_dash(data):
     p.x_range.range_padding = 0.1
 
 
-    return p
+    return p, pivot_table_ma
 
 
 
