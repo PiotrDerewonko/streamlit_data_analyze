@@ -25,7 +25,7 @@ def pivot_for_dash(data):
                                 aggfunc='sum')
     index_for_char = data.groupby(multindex)
     source = ColumnDataSource(pivot_table_ma)
-
+    print('test')
     p = figure(x_range=index_for_char,
                height=350,width=1300, title=f"Wyniki mailingow za lata {from_} - {to_}",
                toolbar_location='right',
