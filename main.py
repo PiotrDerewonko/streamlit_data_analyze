@@ -33,17 +33,32 @@ with st.sidebar:
 year_from = year_range_slider[0]
 year_to = year_range_slider[1]
 
-data = download_dash_address_data(con, refresh_data, engine)
-data_to_show = data.loc[(data['grupa_akcji_3'] >=year_from) & (data['grupa_akcji_3'] <=year_to)]
+data_ma = download_dash_address_data(con, refresh_data, engine, 'address')
+data_to_show_ma = data_ma.loc[(data_ma['grupa_akcji_3'] >= year_from) & (data_ma['grupa_akcji_3'] <= year_to)]
+data_db = download_dash_address_data(con, refresh_data, engine, 'non address')
+data_to_show_db = data_db.loc[(data_db['grupa_akcji_3'] >= year_from) & (data_db['grupa_akcji_3'] <= year_to)]
 
 # tworze pierwsza 3 zakladki dal mailnigu adresowego
-tab1, tab2, tab3 = st.tabs(['Wykres', 'Tabela przestawna', 'Sortowanie/Zmiany wykresu'])
-# todo dorobic tutaj mozliwosci zmiany sortowania oraz kolejnsoci grupowania
+st.header('Dane z głównych mailingów adresowych')
+tab1, tab2, tab3 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu'])
 with tab3:
-    levels = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2'], label='Proszę wybrać kolejność',
+    levels_ma = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2'], label='Proszę wybrać kolejność',
                             default=['grupa_akcji_3', 'grupa_akcji_2'])
-    cam_adr_plot, test_pivot = pivot_and_chart_for_dash(data_to_show, levels)
+    cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma)
 with tab1:
-    st.bokeh_chart(cam_adr_plot)
+    st.bokeh_chart(cam_adr_plot_ma)
 with tab2:
-    st.dataframe(test_pivot)
+    st.dataframe(test_pivot_ma, 900, 400)
+
+st.header('Dane z głównych mailingów bezadresowych')
+tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
+with tab6:
+    levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac'], label='Proszę wybrać kolejność dla mailingów bezadresowych',
+                            default=['grupa_akcji_3', 'grupa_akcji_2'])
+    cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db)
+with tab4:
+    st.bokeh_chart(cam_adr_plot_db)
+with tab5:
+    st.dataframe(test_pivot_db, 900, 400)
+st.header('Dane dotyczące przyrostu korespondentów')
+tab7, tab8, tab9 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
