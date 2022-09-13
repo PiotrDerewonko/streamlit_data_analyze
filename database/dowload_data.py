@@ -81,3 +81,15 @@ def download_dash_address_data(con, refresh, engine, type):
     to_return['grupa_akcji_3'] = to_return['grupa_akcji_3'].astype(int)
 
     return to_return
+
+def download_increase_data(con, refresh, engine):
+    if refresh == 'True':
+        sql = f'''select date_part('year', adod.data) as rok_dodania, grupa_akcji_1, grupa_akcji_2, 
+        date_part('month', adod.data) as miesiac_dodania, count(id_korespondenta) as ilosc
+        from v_akcja_dodania_korespondenta2 adod
+        group by rok_dodania, grupa_akcji_1, grupa_akcji_2, miesiac_dodania'''
+        to_insert = pd.read_sql_query(sql, con)
+        to_insert.to_sql('dash_increase_data', engine, if_exists='replace', schema='raporty', index=False)
+        print('dodano do bazy danych dane dla dashboard przyrost')
+    to_return = pd.read_sql_query('select * from raporty.dash_increase_data', con)
+    return to_return
