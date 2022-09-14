@@ -1,3 +1,5 @@
 /database/source_db.py
 /database/dane.csv
 .idea/
+./generated_files/*
+/generated_files/

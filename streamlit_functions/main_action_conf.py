@@ -1,5 +1,7 @@
 import streamlit as st
 from functions.plot_cam_adr_dash import pivot_and_chart_for_dash
+import xlsxwriter
+from datetime import datetime
 def a(data_to_show_ma):
     prime = st.container()
     with prime:
@@ -32,4 +34,16 @@ def a(data_to_show_ma):
             st.bokeh_chart(cam_adr_plot_ma)
         with tab2:
             st.dataframe(test_pivot_ma, 900, 400)
+            label_of_file = f'mailing_adresowy {datetime.now()}.xlsx'
+            test_pivot_ma.to_excel(f'./generated_files/{label_of_file}', engine='xlsxwriter')
+            with open(f"./generated_files/{label_of_file}", "rb") as file:
+                btn = st.download_button(
+                    label="Download xlsx",
+                    data=file,
+                    file_name="Tabela przestawna z mailingów adresowych.xlsx",
+                    mime="image/png"
+                )
+
+
+
     return prime
