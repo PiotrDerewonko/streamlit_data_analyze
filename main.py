@@ -47,18 +47,22 @@ with st.container():
     with tab3:
         levels_ma = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2'], label='Proszę wybrać kolejność',
                                 default=['grupa_akcji_3', 'grupa_akcji_2'])
-        cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma, 'address')
+        cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma, 'address',
+                                                                  'Wyniki mailingów adresowych za lata ',
+                                                                  'Malingi', 'Suma wpłat/Koszt', 'Nakład/Liczba wpłat')
     with tab1:
         st.bokeh_chart(cam_adr_plot_ma)
     with tab2:
         st.dataframe(test_pivot_ma, 900, 400)
 
-    st.header('Dane z głównych mailingów bezadresowych')
+    st.header('Dane z głównych wrzutek bezadresowych')
     tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
     with tab6:
         levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac'], label='Proszę wybrać kolejność dla mailingów bezadresowych',
                                 default=['grupa_akcji_3', 'grupa_akcji_2'])
-        cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress')
+        cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
+                                                                  'Wyniki wrzutek bezadresowych za lata ',
+                                                                  'Wrzutki', 'Suma wpłat/Koszt', 'Nakład/Liczba wpłat')
     with tab4:
         st.bokeh_chart(cam_adr_plot_db)
     with tab5:
@@ -66,10 +70,12 @@ with st.container():
     st.header('Dane dotyczące przyrostu korespondentów')
     tab7, tab8, tab9 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
     with tab9:
-        levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania'],
+        levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_2', 'miesiac_dodania'],
                                          label='Prosze wybrac kolejnosc kolumn dla danych z przyrostu',
                                          default=['rok_dodania'])
-        cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, levels_increase, 'increase')
+        cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, levels_increase, 'increase',
+                                                                'Wyniki pozyskania korespondentów za lata ',
+                                                                'Pozyskanie', 'Ilość pozyskanych', '')
 
     with tab7:
         st.bokeh_chart(cam_inc_plot)

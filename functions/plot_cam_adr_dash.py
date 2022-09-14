@@ -3,17 +3,25 @@ from bokeh.plotting import figure, ColumnDataSource
 from bokeh.transform import dodge
 from bokeh.models import LinearAxis, Range1d
 from functions.short_mailings_names import change_name
+import itertools
+from bokeh.palettes import Dark2_5 as palette
 
-def pivot_and_chart_for_dash(data, multindex, type):
+def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label):
     if type != 'increase':
         'zmieniam typ kolumny z rokiem na tekst w przeciwnym wypdaku przestaje dzialac'
         data['grupa_akcji_3'] = data['grupa_akcji_3'].astype(str)
     if type != 'increase':
         gr3 = data['grupa_akcji_3'].drop_duplicates().to_list()
     else:
-        data['rok_dodania'] = data['rok_dodania'].astype(str)
+        data.sort_values(multindex, inplace=True)
+        data['miesiac_dodania'] = data['miesiac_dodania'].astype(int)
+        data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
+        for tmp_a in range(1, 10):
+           data['miesiac_dodania'].loc[data['miesiac_dodania'] == f"{tmp_a}"] = f"0{tmp_a}"
         data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
         data['grupa_akcji_1'] = data['grupa_akcji_1'].astype(str)
+        data['rok_dodania'] = data['rok_dodania'].astype(int)
+        data['rok_dodania'] = data['rok_dodania'].astype(str)
         gr3 = data['rok_dodania'].drop_duplicates().to_list()
     gr3.sort()
 
@@ -23,12 +31,14 @@ def pivot_and_chart_for_dash(data, multindex, type):
 
     data = change_name(data)
     if type == 'increase':
-        pivot_table_ma = pd.pivot_table(data, index=multindex, values=['ilosc'],
+        pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1',
                                 aggfunc='sum')
+        pivot_table_ma.fillna(0, inplace=True)
     else:
         pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
                                                                    'naklad_calkowity'],
                                 aggfunc='sum')
+
     index_for_char = data.groupby(multindex)
     print(index_for_char.head())
     source = ColumnDataSource(pivot_table_ma)
@@ -37,22 +47,26 @@ def pivot_and_chart_for_dash(data, multindex, type):
         ("index", "$index"),
         ('(x,y)', "($x, $y)")
     ]
-    #todo do przerobienia tyytul i opisy osi w zaleznosci od tyopu
     p = figure(x_range=index_for_char,
-               height=450, width=1500, title=f"Wyniki mailingow za lata {from_} - {to_}",
+               height=450, width=1500, title=f"{title}{from_} - {to_}",
                toolbar_location='right',
-               x_axis_label='Mailingi',
-               y_axis_label='Suma wpłat/koszt'#, tooltips=TOOLTIPS
+               x_axis_label=x_label,
+               y_axis_label=y_label#, tooltips=TOOLTIPS
                )
+    p.title.text_font_size = '18pt'
     if type == 'increase':
-        p.y_range = Range1d(-100, pivot_table_ma['ilosc'].max()*1.1)
+        print('test')
+        #p.y_range = Range1d(-100, pivot_table_ma['ilosc'].max()*1.1)
     else:
-        p.y_range = Range1d(-100, pivot_table_ma['suma_wplat'].max() * 1.1)
+        if pivot_table_ma['suma_wplat'].max() > pivot_table_ma['koszt_calkowity'].max():
+            p.y_range = Range1d(-100, pivot_table_ma['suma_wplat'].max() * 1.1)
+        else:
+            p.y_range = Range1d(-100, pivot_table_ma['koszt_calkowity'].max() * 1.1)
 
     if type != 'increase':
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
         p.extra_y_ranges = {'secon_axis': Range1d(-100, pivot_table_ma['naklad_calkowity'].max()*1.1)}
-        p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label='naklad/liczba wpłat'), 'right')
+        p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
 
     'petla w celu uwtorzenia polaczonych nazws kolumn multindexu potrzebnych do wykresu'
     str_mutlindex=''
@@ -77,8 +91,14 @@ def pivot_and_chart_for_dash(data, multindex, type):
         p.line(pivot_table_ma.index.values, pivot_table_ma['naklad_calkowity'], line_width=1, y_range_name='secon_axis',
                legend='Nakład całkowity', color="orange")
     else:
-        p.vbar_stack(['grupa_akcji_1', 'ilosc'], x=dodge(str_mutlindex, -0.25, range=p.x_range),  source=source,
-                     width=0.2, legend_label='ilosc')
+        test = pivot_table_ma.columns
+        test = test.to_list()
+        colors = itertools.cycle(palette)
+        colors_fin = []
+        for m, color in zip(range(len(pivot_table_ma.columns)), colors):
+            colors_fin.append(color)
+        p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
+                     width=0.2, legend_label=test, color=colors_fin)
         #p.vbar(x=dodge(str_mutlindex, -0.25, range=p.x_range), top='ilosc', source=source,
         #       color='red', width=0.2,
         #       legend_label="ilosc")
