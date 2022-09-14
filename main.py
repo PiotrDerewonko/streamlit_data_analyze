@@ -6,6 +6,7 @@ from database.dowload_data import download_first_data, download_second_data, dow
 from functions.pivot_table import pivot_table_w_subtotals
 from functions.plot_cam_adr_dash import pivot_and_chart_for_dash
 from datetime import datetime as date
+from streamlit_functions.main_action_conf import a
 import sys
 #podstawowe ustawienia strony z raportami
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
@@ -43,17 +44,7 @@ data_to_show_increase = data_increase.loc[(data_increase['rok_dodania'] >= year_
 st.header('Dane z głównych mailingów adresowych')
 
 with st.container():
-    tab1, tab2, tab3 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu'])
-    with tab3:
-        levels_ma = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2'], label='Proszę wybrać kolejność',
-                                default=['grupa_akcji_3', 'grupa_akcji_2'])
-        cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma, 'address',
-                                                                  'Wyniki mailingów adresowych za lata ',
-                                                                  'Malingi', 'Suma wpłat/Koszt', 'Nakład/Liczba wpłat')
-    with tab1:
-        st.bokeh_chart(cam_adr_plot_ma)
-    with tab2:
-        st.dataframe(test_pivot_ma, 900, 400)
+    a(data_to_show_ma)
 
     st.header('Dane z głównych wrzutek bezadresowych')
     tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
