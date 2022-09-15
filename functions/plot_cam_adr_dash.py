@@ -5,59 +5,41 @@ from bokeh.models import LinearAxis, Range1d
 from functions.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
-from streamlit_functions.dashboard.create_df_from_dict import create_df
+from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
     temp_df = create_df(dict)
     # todo doknczyc przerabianie funckji tak aby pobirala tabele i na jej podstawie tworzyla wykres
-    if type != 'increase':
-        'zmieniam typ kolumny z rokiem na tekst w przeciwnym wypdaku przestaje dzialac'
-        data['grupa_akcji_3'] = data['grupa_akcji_3'].astype(str)
-    if type != 'increase':
-        gr3 = data['grupa_akcji_3'].drop_duplicates().to_list()
-    else:
-        data.sort_values(multindex, inplace=True)
-        data['miesiac_dodania'] = data['miesiac_dodania'].astype(int)
-        data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
-        for tmp_a in range(1, 10):
-           data['miesiac_dodania'].loc[data['miesiac_dodania'] == f"{tmp_a}"] = f"0{tmp_a}"
-        data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
-        data['grupa_akcji_1'] = data['grupa_akcji_1'].astype(str)
-        data['rok_dodania'] = data['rok_dodania'].astype(int)
-        data['rok_dodania'] = data['rok_dodania'].astype(str)
-        gr3 = data['rok_dodania'].drop_duplicates().to_list()
-    gr3.sort()
-
-    'pobieram zakres lat'
-    from_ = gr3[0]
-    to_ = gr3[-1]
-
+    data, gr3, from_, to_ = modifcate_data(data, type, multindex)
     data = change_name(data)
     if type == 'increase':
         pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1',
                                 aggfunc='sum')
         pivot_table_ma.fillna(0, inplace=True)
+
     else:
         pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
-                                                                   'naklad_calkowity'],
-                                aggfunc='sum')
+                                                                   'naklad_calkowity'], aggfunc='sum')
+        pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
+        pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
+        pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
 
     index_for_char = data.groupby(multindex)
-    print(index_for_char.head())
-    source = ColumnDataSource(pivot_table_ma)
 
+    source = ColumnDataSource(pivot_table_ma)
+    #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
     TOOLTIPS = [
         ("index", "$index"),
-        ('(x,y)', "($x, $y)")
-    ]
+        ('(x,y)', "($x, $y)")]
+
+    #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
                height=450, width=1500, title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
-               y_axis_label=y_label#, tooltips=TOOLTIPS
+               y_axis_label=y_label, tooltips=TOOLTIPS
                )
     p.title.text_font_size = '18pt'
-    #wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
 
     if type == 'increase':
         print('test')
@@ -76,6 +58,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
         p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
         p.yaxis.axis_label_text_font_size = "15pt"
         #p.extra_y_ranges.secon_axis.formatter.use_scientific = False
+
+    #wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
     p.yaxis.formatter.use_scientific = False
     'petla w celu uwtorzenia polaczonych nazws kolumn multindexu potrzebnych do wykresu'
     str_mutlindex=''
@@ -122,9 +106,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
 
     if type != 'increase':
         #dodanie dodatkowych pol do tabeli przestawnej
-        pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
-        pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
-        pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
+
         pivot_table_ma = pivot_table_ma.style.format( na_rep='MISSING',
                     formatter={
                                ('suma_wplat'): lambda x: "{: .0f} zł".format(x),

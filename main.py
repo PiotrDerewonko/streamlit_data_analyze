@@ -54,7 +54,7 @@ with st.container():
         cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
                                                                   'Wyniki wrzutek bezadresowych za lata ',
                                                                   'Wrzutki', 'Suma wpłat/Koszt',
-                                                                  'Nakład/Liczba wpłat', '')
+                                                                  'Nakład/Liczba wpłat', {})
     with tab4:
         st.bokeh_chart(cam_adr_plot_db)
     with tab5:
@@ -67,7 +67,7 @@ with st.container():
                                          default=['rok_dodania'])
         cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, levels_increase, 'increase',
                                                                 'Wyniki pozyskania korespondentów za lata ',
-                                                                'Pozyskanie', 'Ilość pozyskanych', '', '')
+                                                                'Pozyskanie', 'Ilość pozyskanych', '', {})
 
     with tab7:
         st.bokeh_chart(cam_inc_plot)
