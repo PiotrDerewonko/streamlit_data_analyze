@@ -14,12 +14,12 @@ st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    layout='wide')
 
 try:
-    sorce_main = sys.argv[1]
+    sorce_main = sys.argv[3]
 except:
     sorce_main = 'local'
 mailings, con, engine = deaful_set(f'{sorce_main}')
 try:
-    refresh_data = sys.argv[2]
+    refresh_data = sys.argv[4]
 except:
     refresh_data = False
 
@@ -53,7 +53,8 @@ with st.container():
                                 default=['grupa_akcji_3', 'grupa_akcji_2'])
         cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
                                                                   'Wyniki wrzutek bezadresowych za lata ',
-                                                                  'Wrzutki', 'Suma wpłat/Koszt', 'Nakład/Liczba wpłat')
+                                                                  'Wrzutki', 'Suma wpłat/Koszt',
+                                                                  'Nakład/Liczba wpłat', '')
     with tab4:
         st.bokeh_chart(cam_adr_plot_db)
     with tab5:
@@ -66,7 +67,7 @@ with st.container():
                                          default=['rok_dodania'])
         cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, levels_increase, 'increase',
                                                                 'Wyniki pozyskania korespondentów za lata ',
-                                                                'Pozyskanie', 'Ilość pozyskanych', '')
+                                                                'Pozyskanie', 'Ilość pozyskanych', '', '')
 
     with tab7:
         st.bokeh_chart(cam_inc_plot)

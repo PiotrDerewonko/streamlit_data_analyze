@@ -5,8 +5,11 @@ from bokeh.models import LinearAxis, Range1d
 from functions.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
+from streamlit_functions.dashboard.create_df_from_dict import create_df
 
-def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label):
+def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
+    temp_df = create_df(dict)
+    # todo doknczyc przerabianie funckji tak aby pobirala tabele i na jej podstawie tworzyla wykres
     if type != 'increase':
         'zmieniam typ kolumny z rokiem na tekst w przeciwnym wypdaku przestaje dzialac'
         data['grupa_akcji_3'] = data['grupa_akcji_3'].astype(str)

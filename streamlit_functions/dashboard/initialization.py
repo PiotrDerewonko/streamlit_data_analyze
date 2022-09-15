@@ -1,22 +1,14 @@
 import streamlit as st
 def create_dictionary():
-    return  {'sw': True, 'os_sw': 'prime', 'char_sm': 'bar',
-                          'lw': True, 'os_lw': 'prime', 'char_lw': 'bar',
-                          'nc': True, 'os_nc': 'second', 'char_nc': 'line',
-                          'kc': True, 'os_kc': 'second', 'char_kc': 'line',
-                          'roi': False, 'os_roi': 'prime', 'char_roi': 'bar',
-                          'szlw': False, 'os_szlw': 'prime', 'char_szlw': 'bar',
+    return {'sw': True, 'sw_axis': 'Oś główna', 'sw_char': 'bar',
+                          'lw': True, 'lw_axis': 'Oś główna', 'lw_char': 'bar',
+                          'nc': True, 'nc_axis': 'Oś pomocnicza', 'nc_char': 'line',
+                          'kc': True, 'kc_axis': 'Oś pomocnicza', 'kc_char': 'line',
+                          'roi': False, 'roi_axis': 'Oś główna', 'roi_char': 'bar',
+                          'szlw': False, 'szlw_axis': 'Oś główna', 'szlw_char': 'bar',
                           }
-def create_session_state_key():
-    if 'sw' not in st.session_state:
-        st.session_state['sw'] = True
-    if 'lw' not in st.session_state:
-        st.session_state['lw'] = True
-    if 'nc' not in st.session_state:
-        st.session_state['nc'] = True
-    if 'kc' not in st.session_state:
-        st.session_state['kc'] = True
-    if 'roi' not in st.session_state:
-        st.session_state['roi'] = False
-    if 'szlw' not in st.session_state:
-        st.session_state['szlw'] = False
+def create_session_state_key(data):
+    for x, y in data.items():
+        if x not in st.session_state:
+            st.session_state[x] = y
+
