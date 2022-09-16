@@ -37,21 +37,13 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
                )
     p.title.text_font_size = '18pt'
 
-    if type == 'increase':
-        print('test')
-        #p.y_range = Range1d(-100, pivot_table_ma['ilosc'].max()*1.1)
-    else:
-        if pivot_table_ma['suma_wplat'].max() > pivot_table_ma['koszt_calkowity'].max():
-            p.y_range = Range1d(-100, pivot_table_ma['suma_wplat'].max() * 1.1)
-        else:
-            p.y_range = Range1d(-100, pivot_table_ma['koszt_calkowity'].max() * 1.1)
+    p.y_range = Range1d(-100, max_value_for_y_prime*1.1)
 
     if type != 'increase':
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
-        p.extra_y_ranges = {'secon_axis': Range1d(-100, pivot_table_ma['naklad_calkowity'].max()*1.1)}
+        p.extra_y_ranges = {'secon_axis': Range1d(-100, max_value_for_y_second*1.1)}
         p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
         p.yaxis.axis_label_text_font_size = "15pt"
-        #p.extra_y_ranges.secon_axis.formatter.use_scientific = False
 
     #wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
     p.yaxis.formatter.use_scientific = False
@@ -64,7 +56,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
             j += 1
         else:
             str_mutlindex = str_mutlindex + "_" + i
-
 
     'dodaje dwa wykresy słupkowe i dwa liniowe'
     if type != 'increase':
