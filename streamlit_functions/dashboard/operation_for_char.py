@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 def create_df(data):
     if len(data) > 1:
         tmp = pd.DataFrame(data.items(), columns=['Wspolczynnik', 'Opcje'])
@@ -65,8 +66,11 @@ def create_pivot_table(data, multindex, type):
     else:
         pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
                                                                    'naklad_calkowity'], aggfunc='sum')
+
         pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
         pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
         pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
+        pivot_table_ma.replace([np.inf, -np.inf], np.nan, inplace=True)
+        pivot_table_ma.fillna(0, inplace=True)
 
     return pivot_table_ma

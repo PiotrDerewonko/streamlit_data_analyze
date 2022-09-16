@@ -37,11 +37,11 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
                )
     p.title.text_font_size = '18pt'
 
-    p.y_range = Range1d(-100, max_value_for_y_prime*1.1)
+    p.y_range = Range1d(0, max_value_for_y_prime*1.1)
 
     if (type != 'increase') and (max_value_for_y_second != 0):
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
-        p.extra_y_ranges = {'secon_axis': Range1d(-100, max_value_for_y_second*1.1)}
+        p.extra_y_ranges = {'secon_axis': Range1d(0, max_value_for_y_second*1.1)}
         p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
         p.yaxis.axis_label_text_font_size = "15pt"
 
