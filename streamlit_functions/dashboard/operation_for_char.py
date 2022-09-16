@@ -15,7 +15,17 @@ def create_df(data):
         return tmp_all.loc[tmp_all['Wartosc parametru'] == True]
 
 def check_max_value(pivot, data, axis):
-    print('test')
+    max = 0
+    tmp = data.loc[data['oś'] == axis]
+    if len(tmp) >= 1:
+        for i, row in tmp.iterrows():
+            print('test')
+            tmp_sum = pivot[f'''{row['Nazwa parametru']}'''].max()
+            if tmp_sum > max:
+                max = tmp_sum
+    return max
+
+
 
 def change_short_names(data):
     data = data.replace({'sw': 'suma_wplat', 'lw': 'liczba_wplat', 'nc': 'naklad_calkowity',

@@ -6,7 +6,7 @@ from functions.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
 from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
-    change_short_names
+    change_short_names, check_max_value
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
     temp_df = create_df(dict)
@@ -18,6 +18,9 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
     index_for_char = data.groupby(multindex)
 
     pivot_table_ma = create_pivot_table(data, multindex, type)
+
+    max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
+    max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
 
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
