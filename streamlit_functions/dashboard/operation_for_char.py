@@ -74,3 +74,19 @@ def create_pivot_table(data, multindex, type):
         pivot_table_ma.fillna(0, inplace=True)
 
     return pivot_table_ma
+
+def label_of_axis(data):
+    label_axis_prime = ''
+    label_axis_second = ''
+    for i, row2 in data.iterrows():
+        if row2['oś'] == 'Oś główna':
+            if len(label_axis_prime) == 0:
+                label_axis_prime = row2[0]
+            else:
+                label_axis_prime = label_axis_prime + '/' + str(row2['Nazwa parametru'])
+        else:
+            if len(label_axis_second) == 0:
+                label_axis_second = row2[0]
+            else:
+                label_axis_second = label_axis_second + '/' + str(row2['Nazwa parametru'])
+    return label_axis_prime, label_axis_second

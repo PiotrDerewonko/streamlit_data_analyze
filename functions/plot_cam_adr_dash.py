@@ -6,14 +6,14 @@ from functions.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
 from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
-    change_short_names, check_max_value
+    change_short_names, check_max_value, label_of_axis
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
     temp_df = create_df(dict)
-    # todo doknczyc przerabianie funckji tak aby pobirala tabele i na jej podstawie tworzyla wykres
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)
     data = change_name(data)
     temp_df = change_short_names(temp_df)
+    y_label, y_sec_label = label_of_axis(temp_df)
 
     index_for_char = data.groupby(multindex)
 
@@ -26,7 +26,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
     TOOLTIPS = [
         ("index", "$index"),
-        ('(x,y)', "($x, $y)")]
+    ("value", "@suma_wplat"),
+    ("value2", "@liczba_wplat")]
 
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
@@ -64,35 +65,30 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
         len_y_second_positions = len(temp_df.loc[temp_df['oś'] == 'secon_axis'])
         colors_fin = []
         colors = itertools.cycle(palette)
+        # todo dorobic mechanim automatycznego doboru grubosci kolumn i przesuniecia w zaleznosci od ilosc argumentow
+        list_tmp = [0, -0.16, 0.16, -0.32, 0.32, -0.48, 0.48, -0.64, 0.64, -0.8, 0.8, -0.96, 0.96]
         for m, color in zip(range(len(temp_df)), colors):
             colors_fin.append(color)
         j = 0
+        count_of_y_prime = 0
+        count_of_y_second = 0
         for i, row in temp_df.iterrows():
-            count_to_division = 0
             if row['oś'] == 'default':
-                count_to_division = len_y_prime_positions
+                position = list_tmp[count_of_y_prime]
+                count_of_y_prime += 1
             else:
-                count_to_division = len_y_second_positions
+                position = list_tmp[count_of_y_second]
+                count_of_y_second += 1
             if row['Opcje'] == 'Wykres Słupkowy':
-                p.vbar(x=dodge(str_mutlindex, j/4,
+                p.vbar(x=dodge(str_mutlindex, position,
                                range=p.x_range), top=row['Nazwa parametru'], source=source,
-                           width=0.2, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
+                           width=0.16, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
             elif row['Opcje'] == 'Wykres liniowy':
                 p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
                            y_range_name=row['oś'],
                            legend=row['Nazwa parametru'], color=colors_fin[j])
             j += 1
 
-
-
-
-        #p.vbar(x=dodge(str_mutlindex, -0.25, range=p.x_range), top='koszt_calkowity', source=source,
-        #       color='red', width=0.2,
-        #       legend_label="Koszt", y_range_name='default')
-        #p.line(pivot_table_ma.index.values, pivot_table_ma['liczba_wplat'], line_width=1, y_range_name='secon_axis',
-        #       legend='Liczba wpłat', color="green")
-        #p.line(pivot_table_ma.index.values, pivot_table_ma['naklad_calkowity'], line_width=1, y_range_name='secon_axis',
-        #       legend='Nakład całkowity', color="orange")
     else:
         pt_columns = pivot_table_ma.columns
         pt_columns = pt_columns.to_list()
@@ -102,9 +98,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
             colors_fin.append(color)
         p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
                      width=0.2, legend_label=pt_columns, color=colors_fin)
-        #p.vbar(x=dodge(str_mutlindex, -0.25, range=p.x_range), top='ilosc', source=source,
-        #       color='red', width=0.2,
-        #       legend_label="ilosc")
+
     p.xgrid.grid_line_color = None
     p.legend.location = "top_left"
     p.legend.click_policy = "hide"
