@@ -27,9 +27,15 @@ def a(data_to_show_ma):
                                                                                        st.session_state.sw),
                                          key="sw")
                         sw_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
-                                               label='Rodzaj wykresu dla sumy wpłat')
+                                               label='Rodzaj wykresu dla sumy wpłat',
+                                               on_change=create_df(dictionary_options, "sw_axis",
+                                                                                       st.session_state.sw_axis),
+                                               key="sw_axis")
                         sw_char = st.selectbox(options=['Wykres Słupkowy', 'Wykres liniowy'],
-                                               label='Oś dla sumy wplat')
+                                               label='Oś dla sumy wplat',
+                                               on_change=create_df(dictionary_options, "sw_char",
+                                                                   st.session_state.sw_char)
+                                               , key="sw_char")
 
 
                     with c2:
@@ -45,7 +51,7 @@ def a(data_to_show_ma):
                     with c4:
                         kc = st.checkbox('Koszt całkowity', value=True, on_change=create_df(dictionary_options, 'kc',
                                                                                             st.session_state.kc), key='kc')
-                        kc_axis = st.selectbox(options=['Oś pomocnicza', 'Oś główna'], label='Rodzaj wykresu dla kosztu')
+                        kc_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'], label='Rodzaj wykresu dla kosztu')
                         kc_char = st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy'], label='Oś dla kosztu')
                     with c5:
                         rc = st.checkbox('ROI', on_change=create_df(dictionary_options, 'roi', st.session_state.roi),

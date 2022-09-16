@@ -57,17 +57,34 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
         else:
             str_mutlindex = str_mutlindex + "_" + i
 
-    'dodaje dwa wykresy słupkowe i dwa liniowe'
+    # tworze wykresy
     if type != 'increase':
-        p.vbar(x=dodge(str_mutlindex, 0.0, range=p.x_range), top='suma_wplat', source=source, width=0.2,
-               legend_label="Suma Wplat",)
-        p.vbar(x=dodge(str_mutlindex, -0.25, range=p.x_range), top='koszt_calkowity', source=source,
-               color='red', width=0.2,
-               legend_label="Koszt")
-        p.line(pivot_table_ma.index.values, pivot_table_ma['liczba_wplat'], line_width=1, y_range_name='secon_axis',
-               legend='Liczba wpłat', color="green")
-        p.line(pivot_table_ma.index.values, pivot_table_ma['naklad_calkowity'], line_width=1, y_range_name='secon_axis',
-               legend='Nakład całkowity', color="orange")
+        temp_df = temp_df.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
+        colors_fin = []
+        colors = itertools.cycle(palette)
+        for m, color in zip(range(len(temp_df)), colors):
+            colors_fin.append(color)
+        j = 0
+        for i, row in temp_df.iterrows():
+            if row['Opcje'] == 'Wykres Słupkowy':
+                p.vbar(x=dodge(str_mutlindex, 0.0, range=p.x_range), top=row['Nazwa parametru'], source=source,
+                           width=0.2, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
+            elif row['Opcje'] == 'Wykres liniowy':
+                p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
+                           y_range_name=row['oś'],
+                           legend=row['Nazwa parametru'], color=colors_fin[j])
+            j += 1
+
+
+
+
+        #p.vbar(x=dodge(str_mutlindex, -0.25, range=p.x_range), top='koszt_calkowity', source=source,
+        #       color='red', width=0.2,
+        #       legend_label="Koszt", y_range_name='default')
+        #p.line(pivot_table_ma.index.values, pivot_table_ma['liczba_wplat'], line_width=1, y_range_name='secon_axis',
+        #       legend='Liczba wpłat', color="green")
+        #p.line(pivot_table_ma.index.values, pivot_table_ma['naklad_calkowity'], line_width=1, y_range_name='secon_axis',
+        #       legend='Nakład całkowity', color="orange")
     else:
         pt_columns = pivot_table_ma.columns
         pt_columns = pt_columns.to_list()
