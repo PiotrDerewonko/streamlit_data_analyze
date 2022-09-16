@@ -5,26 +5,19 @@ from bokeh.models import LinearAxis, Range1d
 from functions.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
-from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data
+from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
+    change_short_names
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
     temp_df = create_df(dict)
     # todo doknczyc przerabianie funckji tak aby pobirala tabele i na jej podstawie tworzyla wykres
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)
     data = change_name(data)
-    if type == 'increase':
-        pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1',
-                                aggfunc='sum')
-        pivot_table_ma.fillna(0, inplace=True)
+    temp_df = change_short_names(temp_df)
 
-    else:
-        pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
-                                                                   'naklad_calkowity'], aggfunc='sum')
-        pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
-        pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
-        pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
 
-    index_for_char = data.groupby(multindex)
+
+    pivot_table_ma = create_pivot_table(data, multindex, type)
 
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
@@ -47,10 +40,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
     else:
         if pivot_table_ma['suma_wplat'].max() > pivot_table_ma['koszt_calkowity'].max():
             p.y_range = Range1d(-100, pivot_table_ma['suma_wplat'].max() * 1.1)
-
         else:
             p.y_range = Range1d(-100, pivot_table_ma['koszt_calkowity'].max() * 1.1)
-
 
     if type != 'increase':
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
@@ -84,14 +75,14 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
         p.line(pivot_table_ma.index.values, pivot_table_ma['naklad_calkowity'], line_width=1, y_range_name='secon_axis',
                legend='Nakład całkowity', color="orange")
     else:
-        test = pivot_table_ma.columns
-        test = test.to_list()
+        pt_columns = pivot_table_ma.columns
+        pt_columns = pt_columns.to_list()
         colors = itertools.cycle(palette)
         colors_fin = []
         for m, color in zip(range(len(pivot_table_ma.columns)), colors):
             colors_fin.append(color)
         p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
-                     width=0.2, legend_label=test, color=colors_fin)
+                     width=0.2, legend_label=pt_columns, color=colors_fin)
         #p.vbar(x=dodge(str_mutlindex, -0.25, range=p.x_range), top='ilosc', source=source,
         #       color='red', width=0.2,
         #       legend_label="ilosc")

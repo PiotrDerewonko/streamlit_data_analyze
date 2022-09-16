@@ -14,8 +14,14 @@ def create_df(data):
         tmp_all = pd.merge(tmp_all, char, left_index=True, right_index=True)
         return tmp_all.loc[tmp_all['Wartosc parametru'] == True]
 
-def check_max_value(pivot, data):
+def check_max_value(pivot, data, axis):
     print('test')
+
+def change_short_names(data):
+    data = data.replace({'sw': 'suma_wplat', 'lw': 'liczba_wplat', 'nc': 'naklad_calkowity',
+                         'kc': 'koszt_calkowity', 'roi': 'ROI', 'szlw': 'Stopa zwrotu l.w.'})
+    data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
+    return data
 
 def modifcate_data(data, type, multindex):
     if type != 'increase':
@@ -40,3 +46,17 @@ def modifcate_data(data, type, multindex):
     to_ = gr3[-1]
 
     return data, gr3, from_, to_
+
+def create_pivot_table(data, multindex, type):
+    if type == 'increase':
+        pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1', aggfunc='sum')
+        pivot_table_ma.fillna(0, inplace=True)
+
+    else:
+        pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
+                                                                   'naklad_calkowity'], aggfunc='sum')
+        pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
+        pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
+        pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
+
+    return pivot_table_ma
