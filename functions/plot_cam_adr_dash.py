@@ -60,14 +60,22 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
     # tworze wykresy
     if type != 'increase':
         temp_df = temp_df.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
+        len_y_prime_positions = len(temp_df.loc[temp_df['oś'] == 'default'])
+        len_y_second_positions = len(temp_df.loc[temp_df['oś'] == 'secon_axis'])
         colors_fin = []
         colors = itertools.cycle(palette)
         for m, color in zip(range(len(temp_df)), colors):
             colors_fin.append(color)
         j = 0
         for i, row in temp_df.iterrows():
+            count_to_division = 0
+            if row['oś'] == 'default':
+                count_to_division = len_y_prime_positions
+            else:
+                count_to_division = len_y_second_positions
             if row['Opcje'] == 'Wykres Słupkowy':
-                p.vbar(x=dodge(str_mutlindex, 0.0, range=p.x_range), top=row['Nazwa parametru'], source=source,
+                p.vbar(x=dodge(str_mutlindex, j/4,
+                               range=p.x_range), top=row['Nazwa parametru'], source=source,
                            width=0.2, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
             elif row['Opcje'] == 'Wykres liniowy':
                 p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
