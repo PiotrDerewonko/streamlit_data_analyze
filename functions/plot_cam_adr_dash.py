@@ -15,7 +15,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_s
     data = change_name(data)
     temp_df = change_short_names(temp_df)
 
-
+    index_for_char = data.groupby(multindex)
 
     pivot_table_ma = create_pivot_table(data, multindex, type)
 
