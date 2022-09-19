@@ -85,6 +85,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
                                ('naklad_calkowity'): lambda x: "{: .0f}".format(x),
                                ('ROI'): lambda x: "{:,.2f} zł".format(x),
                                ('Stopa zwrotu l.w.'): lambda x: "{: .2f} %".format(x),
+                                ('Stopa pozyskania'): lambda x: "{: .2f} %".format(x),
                                ('Koszt na głowę'): lambda x: "{: .2f} zł".format(x),
                                ('koszt_calkowity'): lambda x: "{: .0f} zł".format(x)
                                })

@@ -15,6 +15,7 @@ def create_dictionary_nonadr():
                           'nc_db': True, 'nc_axis_db': 'Oś pomocnicza', 'nc_char_db': 'Wykres liniowy',
                           'roi_db': False, 'roi_axis_db': 'Oś główna', 'roi_char_db': 'Wykres liniowy',
                           'szlw_db': False, 'szlw_axis_db': 'Oś główna', 'szlw_char_db': 'Wykres liniowy',
+                            'szp_db': False, 'szp_axis_db': 'Oś główna', 'szp_char_db': 'Wykres liniowy',
                           }
 def create_session_state_key(data):
     for x, y in data.items():

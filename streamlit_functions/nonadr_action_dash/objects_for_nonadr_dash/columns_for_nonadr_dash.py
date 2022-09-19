@@ -93,3 +93,20 @@ def szlw(dictionary_options):
                          on_change=create_df(dictionary_options, "szlw_char_db",
                                              st.session_state.szlw_char_db)
                          )
+def szp(dictionary_options):
+    st.checkbox('Stopa Zwrotu Poz.', on_change=create_df(dictionary_options, 'szp_db',
+                                                              st.session_state.szp_db),
+                 key='szp_db')
+    st.selectbox(options=['Oś pomocnicza', 'Oś główna'],
+                             label='Rodzaj wykresu dla SZP',
+                             key='szp_axis_db',
+                             on_change=create_df(dictionary_options, "szp_axis_db",
+                                                 st.session_state.szp_axis_db)
+                             )
+
+
+    st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy'], label='Oś dla SZP',
+                         key='szp_char_db',
+                         on_change=create_df(dictionary_options, "szp_char_db",
+                                             st.session_state.szp_char_db)
+                         )

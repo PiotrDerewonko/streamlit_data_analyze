@@ -3,6 +3,7 @@ import numpy as np
 def create_df(data):
     if len(data) > 1:
         tmp = pd.DataFrame(data.items(), columns=['Wspolczynnik', 'Opcje'])
+        # todo dorobic tutaj aby sam tworzyl ta liste parametrow na podswteier dlugosci
         position_of_parameter = [0, 3, 6, 9, 12, 15]
         position_of_axis = [x+1 for x in position_of_parameter]
         position_of_char = [x+2 for x in position_of_parameter]
@@ -69,11 +70,15 @@ def create_pivot_table(data, multindex, type):
 
     else:
         pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
-                                                                   'naklad_calkowity'], aggfunc='sum')
+                                                                   'naklad_calkowity', 'pozyskano'], aggfunc='sum')
 
         pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
         pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
         pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
+        if type == 'nonaddress':
+            pivot_table_ma['Stopa pozyskania'] = (pivot_table_ma['pozyskano']/pivot_table_ma['naklad_calkowity'])*100
+        elif type == 'address':
+            pivot_table_ma.drop(columns='pozyskano', inplace=True)
         pivot_table_ma.replace([np.inf, -np.inf], np.nan, inplace=True)
         pivot_table_ma.fillna(0, inplace=True)
 
