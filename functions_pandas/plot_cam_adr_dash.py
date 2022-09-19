@@ -6,14 +6,17 @@ from functions_pandas.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
 from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
-    change_short_names, check_max_value, label_of_axis
+    change_short_names_ma,change_short_names_db, check_max_value, label_of_axis
 import streamlit_functions.adr_action_dash.objects_for_ma_dash.char as char_opt
 
-def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
+def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
     temp_df = create_df(dict)
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)
     data = change_name(data)
-    temp_df = change_short_names(temp_df)
+    if type == 'address':
+        temp_df = change_short_names_ma(temp_df)
+    elif type =='nonaddress':
+        temp_df = change_short_names_db(temp_df)
     y_label, y_sec_label = label_of_axis(temp_df)
 
     index_for_char = data.groupby(multindex)

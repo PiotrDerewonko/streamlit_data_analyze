@@ -26,11 +26,15 @@ def check_max_value(pivot, data, axis):
                 max = tmp_sum
     return max
 
-
-
-def change_short_names(data):
+def change_short_names_ma(data):
     data = data.replace({'sw': 'suma_wplat', 'lw': 'liczba_wplat', 'nc': 'naklad_calkowity',
                          'kc': 'koszt_calkowity', 'roi': 'ROI', 'szlw': 'Stopa zwrotu l.w.'})
+    data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
+    return data
+
+def change_short_names_db(data):
+    data = data.replace({'sw_db': 'suma_wplat', 'lw_db': 'liczba_wplat', 'nc_db': 'naklad_calkowity',
+                         'kc_db': 'koszt_calkowity', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.'})
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
