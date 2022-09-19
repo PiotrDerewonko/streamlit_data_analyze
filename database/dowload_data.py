@@ -43,6 +43,8 @@ def download_dash_address_data(con, refresh, engine, type):
         extra = ', substring(ta.kod_akcji, 7,2) as miesiac'
         extra_group = ',miesiac'
     if refresh == 'True':
+        # todo przerobic to na nowe tabele w nowej bazie danych
+        # todo w przypadku danych bezadresowych dodac material ilosc pozyskanych osob
         sql = f'''select grupa_akcji_3,grupa_akcji_2, sum(kwota) as suma_wplat, count(tr.id_transakcji)
                  as liczba_wplat, 0 as koszt_calkowity, 0 as naklad_calkowity {extra} from public.t_aktywnosci_korespondentow tak
                 left outer join public.t_transakcje tr
