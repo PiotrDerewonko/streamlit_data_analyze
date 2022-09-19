@@ -1,9 +1,8 @@
 
 import streamlit as st
-from streamlit_functions.dashboard.initialization import create_dictionary, create_session_state_key
-import streamlit_functions.main_action_dash.objects_for_ma_dash.columns_for_ma_dash as columns_for_ma_dash
-from functions.plot_cam_adr_dash import pivot_and_chart_for_dash
-from streamlit_functions.main_action_dash.objects_for_ma_dash.function_auxiliary import filtr_mailing
+from streamlit_functions.dashboard.initialization import create_dictionary_adr, create_session_state_key
+import streamlit_functions.adr_action_dash.objects_for_ma_dash.columns_for_ma_dash as columns_for_ma_dash
+from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 
 def filtr_mailings(dictionary_options, data_to_show_ma):
     options_ma_ma = data_to_show_ma['grupa_akcji_2'].drop_duplicates().to_list()
@@ -19,7 +18,7 @@ def char_options():
     with st.container():
         st.caption("Prosze wybrać parametry które maja znaleść sie na wykresie")
         c1, c2, c3, c4, c5, c6 = st.columns(6)
-        dictionary_options = create_dictionary()
+        dictionary_options = create_dictionary_adr()
         create_session_state_key(dictionary_options)
         with c1:
             columns_for_ma_dash.column_sum_amount(dictionary_options)

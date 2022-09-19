@@ -2,12 +2,12 @@ import pandas as pd
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.transform import dodge
 from bokeh.models import LinearAxis, Range1d
-from functions.short_mailings_names import change_name
+from functions_pandas.short_mailings_names import change_name
 import itertools
 from bokeh.palettes import Dark2_5 as palette
 from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
     change_short_names, check_max_value, label_of_axis
-import streamlit_functions.main_action_dash.objects_for_ma_dash.char as char_opt
+import streamlit_functions.adr_action_dash.objects_for_ma_dash.char as char_opt
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, y_label, y_sec_label, dict):
     temp_df = create_df(dict)

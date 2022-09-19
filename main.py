@@ -1,12 +1,10 @@
-import pandas as pd
-
 import streamlit as st
 from database.source_db import deaful_set
-from database.dowload_data import download_first_data, download_second_data, download_dash_address_data, download_increase_data
-from functions.pivot_table import pivot_table_w_subtotals
-from functions.plot_cam_adr_dash import pivot_and_chart_for_dash
+from database.dowload_data import download_dash_address_data, download_increase_data
+from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from datetime import datetime as date
-from streamlit_functions.main_action_conf import main_action_config
+from streamlit_functions.adr_action_dash.adr_action_conf import main_action_config
+from streamlit_functions.nonadr_action_dash.nonadr_action_conf import non_action_main_conf
 import sys
 #podstawowe ustawienia strony z raportami
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
@@ -44,21 +42,10 @@ data_to_show_increase = data_increase.loc[(data_increase['rok_dodania'] >= year_
 st.header('Dane z głównych mailingów adresowych')
 
 with st.container():
+    # odwoluje sie do funkcji ktore generuje caly modul odpowiedzialny za mailingi adresowe
     main_action_config(data_to_show_ma)
-
     st.header('Dane z głównych wrzutek bezadresowych')
-    tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
-    with tab6:
-        levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac'], label='Proszę wybrać kolejność dla mailingów bezadresowych',
-                                default=['grupa_akcji_3', 'grupa_akcji_2'])
-        cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
-                                                                  'Wyniki wrzutek bezadresowych za lata ',
-                                                                  'Wrzutki', 'Suma wpłat/Koszt',
-                                                                  'Nakład/Liczba wpłat', {})
-    with tab4:
-        st.bokeh_chart(cam_adr_plot_db)
-    with tab5:
-        st.dataframe(test_pivot_db, 900, 400)
+    non_action_main_conf(data_to_show_db)
     st.header('Dane dotyczące przyrostu korespondentów')
     tab7, tab8, tab9 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
     with tab9:

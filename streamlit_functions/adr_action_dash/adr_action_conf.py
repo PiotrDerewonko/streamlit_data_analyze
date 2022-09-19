@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit_functions.main_action_dash.objects_for_ma_dash.tabs_for_ma_dash as tabs_ma
+import streamlit_functions.adr_action_dash.objects_for_ma_dash.tabs_for_ma_dash as tabs_ma
 
 def main_action_config(data_to_show_ma):
     prime = st.container()
