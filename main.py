@@ -6,7 +6,7 @@ from database.dowload_data import download_first_data, download_second_data, dow
 from functions.pivot_table import pivot_table_w_subtotals
 from functions.plot_cam_adr_dash import pivot_and_chart_for_dash
 from datetime import datetime as date
-from streamlit_functions.main_action_conf import a
+from streamlit_functions.main_action_conf import main_action_config
 import sys
 #podstawowe ustawienia strony z raportami
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
@@ -44,7 +44,7 @@ data_to_show_increase = data_increase.loc[(data_increase['rok_dodania'] >= year_
 st.header('Dane z głównych mailingów adresowych')
 
 with st.container():
-    a(data_to_show_ma)
+    main_action_config(data_to_show_ma)
 
     st.header('Dane z głównych wrzutek bezadresowych')
     tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])

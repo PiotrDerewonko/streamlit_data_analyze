@@ -1,17 +1,18 @@
 import streamlit as st
 import streamlit_functions.main_action_dash.objects_for_ma_dash.tabs_for_ma_dash as tabs_ma
 
-def a(data_to_show_ma):
+def main_action_config(data_to_show_ma):
     prime = st.container()
     with prime:
         tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu', 'Ustawienie wykresu',
                                     'Filtr danych'])
-        with tab5:
-            tabs_ma.filtr_mailings()
+
         with tab4:
             dictionary_options = tabs_ma.char_options()
+        with tab5:
+            filtr_ma = tabs_ma.filtr_mailings(dictionary_options, data_to_show_ma)
         with tab3:
-            cam_adr_plot_ma, test_pivot_ma = tabs_ma.columns_order(dictionary_options, data_to_show_ma)
+            cam_adr_plot_ma, test_pivot_ma = tabs_ma.columns_order(dictionary_options, data_to_show_ma, filtr_ma)
         with tab1:
             st.bokeh_chart(cam_adr_plot_ma)
         with tab2:

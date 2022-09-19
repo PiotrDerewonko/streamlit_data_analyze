@@ -3,14 +3,17 @@ import streamlit as st
 from streamlit_functions.dashboard.initialization import create_dictionary, create_session_state_key
 import streamlit_functions.main_action_dash.objects_for_ma_dash.columns_for_ma_dash as columns_for_ma_dash
 from functions.plot_cam_adr_dash import pivot_and_chart_for_dash
+from streamlit_functions.main_action_dash.objects_for_ma_dash.function_auxiliary import filtr_mailing
 
-def filtr_mailings():
-    levels_ma_ma = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2'],
+def filtr_mailings(dictionary_options, data_to_show_ma):
+    options_ma_ma = data_to_show_ma['grupa_akcji_2'].drop_duplicates().to_list()
+    options_ma_ma.sort()
+    selected_ma = st.multiselect(options=options_ma_ma,
                                   label='Proszę wybrać rodzaje mailingów',
-                                  default=['grupa_akcji_3', 'grupa_akcji_2'])
-    levels_ma_year = st.multiselect(options=['2022', '2021'],
-                                    label='Proszę wybrać lata mailingów',
-                                    default=['2022', '2021'])
+                                  #on_change=filtr_mailing(data_to_show_ma, options_ma_ma),
+                                  default=options_ma_ma)
+    return selected_ma
+
 
 def char_options():
     with st.container():
@@ -33,11 +36,12 @@ def char_options():
     st.markdown(dictionary_options)
     return dictionary_options
 
-def columns_order(dictionary_options, data_to_show_ma):
+def columns_order(dictionary_options, data_to_show_ma, filtr_ma):
     with st.container():
         levels_ma = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2'],
                                    label='Proszę wybrać kolejność kolumn',
                                    default=['grupa_akcji_3', 'grupa_akcji_2'])
+        data_to_show_ma = data_to_show_ma[data_to_show_ma['grupa_akcji_2'].isin(filtr_ma)]
         cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma, 'address',
                                                                   'Wyniki mailingów adresowych za lata ',
                                                                   'Malingi', 'Suma wpłat/Koszt',
