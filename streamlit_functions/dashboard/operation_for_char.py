@@ -4,7 +4,12 @@ def create_df(data):
     if len(data) > 1:
         tmp = pd.DataFrame(data.items(), columns=['Wspolczynnik', 'Opcje'])
         # todo dorobic tutaj aby sam tworzyl ta liste parametrow na podswteier dlugosci
-        position_of_parameter = [0, 3, 6, 9, 12, 15]
+        position_of_parameter = []
+        numbers_of_obcjects = len(data)/3
+        j = 0
+        for i in range(0, int(numbers_of_obcjects)):
+            position_of_parameter.append(j)
+            j += 3
         position_of_axis = [x+1 for x in position_of_parameter]
         position_of_char = [x+2 for x in position_of_parameter]
         parameters = tmp.iloc[position_of_parameter].reset_index()
@@ -35,7 +40,8 @@ def change_short_names_ma(data):
 
 def change_short_names_db(data):
     data = data.replace({'sw_db': 'suma_wplat', 'lw_db': 'liczba_wplat', 'nc_db': 'naklad_calkowity',
-                         'kc_db': 'koszt_calkowity', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.'})
+                         'kc_db': 'koszt_calkowity', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.',
+                         'szp_db': 'Stopa pozyskania'})
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
