@@ -1,11 +1,14 @@
-import streamlit as st
-from database.source_db import deaful_set
-from database.dowload_data import download_dash_address_data, download_increase_data
-from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
+import sys
 from datetime import datetime as date
+
+import streamlit as st
+
+from database.dowload_data import download_dash_address_data, download_increase_data
+from database.source_db import deaful_set
+from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from streamlit_functions.adr_action_dash.adr_action_conf import main_action_config
 from streamlit_functions.nonadr_action_dash.nonadr_action_conf import non_action_main_conf
-import sys
+
 #podstawowe ustawienia strony z raportami
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
@@ -49,12 +52,12 @@ with st.container():
     st.header('Dane dotyczące przyrostu korespondentów')
     tab7, tab8, tab9 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
     with tab9:
-        levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_2', 'miesiac_dodania'],
+        levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
                                          label='Prosze wybrac kolejnosc kolumn dla danych z przyrostu',
                                          default=['rok_dodania'])
         cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, levels_increase, 'increase',
                                                                 'Wyniki pozyskania korespondentów za lata ',
-                                                                'Pozyskanie', 'Ilość pozyskanych', '', {})
+                                                                 '', {})
 
     with tab7:
         st.bokeh_chart(cam_inc_plot)

@@ -1,6 +1,6 @@
 import streamlit as st
 
-import streamlit_functions.nonadr_action_dash.objects_for_nonadr_dash.tabs_for_nonma_dash as tabs_ma
+import streamlit_functions.increase_dash.objects_for_increase_dash.tabs_for_increase_dash as tabs_ma
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 
 
@@ -12,9 +12,9 @@ def non_action_main_conf(data_to_show_db):
         with tab4:
             dictionary_options = tabs_ma.char_options()
         with tab3:
-            levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac', 'kod_akcji'],
+            levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac'],
                                        label='Proszę wybrać kolejność dla mailingów bezadresowych',
-                                       default=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac'])
+                                       default=['grupa_akcji_3', 'grupa_akcji_2'])
             cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
                                                                       'Wyniki wrzutek bezadresowych za lata ',
                                                                       'Wrzutki', dictionary_options)

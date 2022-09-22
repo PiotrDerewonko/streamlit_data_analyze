@@ -1,5 +1,7 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
+
 def create_df(data):
     if len(data) > 1:
         tmp = pd.DataFrame(data.items(), columns=['Wspolczynnik', 'Opcje'])
@@ -58,9 +60,13 @@ def modifcate_data(data, type, multindex):
            data['miesiac_dodania'].loc[data['miesiac_dodania'] == f"{tmp_a}"] = f"0{tmp_a}"
         data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
         data['grupa_akcji_1'] = data['grupa_akcji_1'].astype(str)
+        data['grupa_akcji_2'] = data['grupa_akcji_2'].astype(str)
         data['rok_dodania'] = data['rok_dodania'].astype(int)
         data['rok_dodania'] = data['rok_dodania'].astype(str)
+        data['kod_akcji'] = data['kod_akcji'].astype(str)
         gr3 = data['rok_dodania'].drop_duplicates().to_list()
+    if type =='nonaddress':
+        data['miesiac'] = data['miesiac'].astype(str)
     gr3.sort()
 
     'pobieram zakres lat'

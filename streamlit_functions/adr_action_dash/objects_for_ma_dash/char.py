@@ -1,4 +1,5 @@
 import itertools
+
 from bokeh.palettes import Dark2_5 as palette
 from bokeh.transform import dodge
 
@@ -10,7 +11,7 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
     colors_fin = []
     colors = itertools.cycle(palette)
     #  todo dorobic mechanim automatycznego doboru grubosci kolumn i przesuniecia w zaleznosci od ilosc argumentow
-    list_tmp = [0, -0.16, 0.16, -0.32, 0.32, -0.48, 0.48, -0.64, 0.64, -0.8, 0.8, -0.96, 0.96]
+    list_tmp = [0, -0.3, 0.3, -0.60, 0.60, -0.90, 0.90]
     for m, color in zip(range(len(temp_df)), colors):
         colors_fin.append(color)
     j = 0
@@ -26,7 +27,7 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
         if row['Opcje'] == 'Wykres Słupkowy':
             p.vbar(x=dodge(str_mutlindex, position,
                            range=p.x_range), top=row['Nazwa parametru'], source=source,
-                   width=0.16, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
+                   width=0.3, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
         elif row['Opcje'] == 'Wykres liniowy':
             p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
                    y_range_name=row['oś'],

@@ -17,6 +17,16 @@ def create_dictionary_nonadr():
                           'szlw_db': False, 'szlw_axis_db': 'Oś główna', 'szlw_char_db': 'Wykres liniowy',
                             'szp_db': False, 'szp_axis_db': 'Oś główna', 'szp_char_db': 'Wykres liniowy',
                           }
+
+def create_dictionary_increase():
+    return {'sw_db': True, 'sw_axis_db': 'Oś główna', 'sw_char_db': 'Wykres Słupkowy',
+            'kc_db': True, 'kc_axis_db': 'Oś główna', 'kc_char_db': 'Wykres Słupkowy',
+                          'lw_db': True, 'lw_axis_db': 'Oś pomocnicza', 'lw_char_db': 'Wykres liniowy',
+                          'nc_db': True, 'nc_axis_db': 'Oś pomocnicza', 'nc_char_db': 'Wykres liniowy',
+                          'roi_db': False, 'roi_axis_db': 'Oś główna', 'roi_char_db': 'Wykres liniowy',
+                          'szlw_db': False, 'szlw_axis_db': 'Oś główna', 'szlw_char_db': 'Wykres liniowy',
+                            'szp_db': False, 'szp_axis_db': 'Oś główna', 'szp_char_db': 'Wykres liniowy',
+                          }
 def create_session_state_key(data):
     for x, y in data.items():
         if x not in st.session_state:

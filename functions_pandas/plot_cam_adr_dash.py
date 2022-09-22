@@ -1,4 +1,3 @@
-import pandas as pd
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.transform import dodge
 from bokeh.models import LinearAxis, Range1d
@@ -8,23 +7,40 @@ from bokeh.palettes import Dark2_5 as palette
 from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
     change_short_names_ma,change_short_names_db, check_max_value, label_of_axis
 import streamlit_functions.adr_action_dash.objects_for_ma_dash.char as char_opt
+import itertools
+
+from bokeh.models import LinearAxis, Range1d
+from bokeh.palettes import Dark2_5 as palette
+from bokeh.plotting import figure, ColumnDataSource
+from bokeh.transform import dodge
+
+import streamlit_functions.adr_action_dash.objects_for_ma_dash.char as char_opt
+from functions_pandas.short_mailings_names import change_name
+from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
+    change_short_names_ma, change_short_names_db, check_max_value, label_of_axis
+
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
-    temp_df = create_df(dict)
+    if type != 'increase':
+        temp_df = create_df(dict)
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)
     data = change_name(data)
     if type == 'address':
         temp_df = change_short_names_ma(temp_df)
     elif type =='nonaddress':
         temp_df = change_short_names_db(temp_df)
-    y_label, y_sec_label = label_of_axis(temp_df)
+    if type != 'increase':
+        y_label, y_sec_label = label_of_axis(temp_df)
+    else:
+        y_label = 'Ilość pozyskanych'
 
     index_for_char = data.groupby(multindex)
 
     pivot_table_ma = create_pivot_table(data, multindex, type)
 
-    max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
-    max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
+    if type != 'increase':
+        max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
+        max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
 
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
@@ -32,17 +48,18 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         ("index", "$index"),
     ("value", "@suma_wplat"),
     ("value2", "@liczba_wplat")]
-
+    print(index_for_char.last(20))
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
-               height=450, width=1500, title=f"{title}{from_} - {to_}",
+               height=700, width=1500, title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label, tooltips=TOOLTIPS
                )
     p.title.text_font_size = '18pt'
 
-    p.y_range = Range1d(0, max_value_for_y_prime*1.1)
+    if type != 'increase':
+        p.y_range = Range1d(0, max_value_for_y_prime*1.1)
 
     if (type != 'increase') and (max_value_for_y_second != 0):
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
@@ -73,7 +90,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         for m, color in zip(range(len(pivot_table_ma.columns)), colors):
             colors_fin.append(color)
         p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
-                     width=0.2, legend_label=pt_columns, color=colors_fin)
+                     width=0.7, legend_label=pt_columns, color=colors_fin)
 
     char_opt.char_options(p)
 

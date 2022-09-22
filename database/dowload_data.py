@@ -44,15 +44,15 @@ def download_dash_address_data(con, refresh, engine, type):
         extra = ', substring(ta.kod_akcji, 7,2) as miesiac'
         extra_group = ',miesiac'
         extra_union = f'''union
-        select grupa_akcji_3,grupa_akcji_2, 0, 0, 0, 0, substring(kod_akcji, 7,2) as miesiac,
+        select grupa_akcji_3,grupa_akcji_2,kod_akcji, 0, 0, 0, 0, substring(kod_akcji, 7,2) as miesiac,
         count(id_korespondenta) as pozyskano 
         from v_akcja_dodania_korespondenta2
         where id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two})
-                group by grupa_akcji_3, grupa_akcji_2, miesiac'''
+                group by grupa_akcji_3, grupa_akcji_2,kod_akcji, miesiac'''
     if refresh == 'True':
         # todo przerobic to na nowe tabele w nowej bazie danych
         # todo w przypadku danych bezadresowych dodac material
-        sql = f'''select grupa_akcji_3,grupa_akcji_2, sum(kwota) as suma_wplat, count(tr.id_transakcji)
+        sql = f'''select grupa_akcji_3,grupa_akcji_2,kod_akcji, sum(kwota) as suma_wplat, count(tr.id_transakcji)
                  as liczba_wplat, 0 as koszt_calkowity, 0 as naklad_calkowity {extra}, 0 as pozyskano from public.t_aktywnosci_korespondentow tak
                 left outer join public.t_transakcje tr
                 on tr.id_transakcji = tak.id_transakcji
@@ -63,23 +63,23 @@ def download_dash_address_data(con, refresh, engine, type):
 
                 where tak.id_akcji in ( select id_akcji from t_akcje where  id_grupy_akcji_2 in {id_group_two} and t_akcje.id_grupy_akcji_3 !=7)
                 group by --rok_i_mailing, 
-                grupa_akcji_3,grupa_akcji_2{extra_group}
+                grupa_akcji_3,grupa_akcji_2, kod_akcji{extra_group}
                 union
                 select distinct --grupa_akcji_2||' '|| grupa_akcji_3 as rok_i_mailing,
-                grupa_akcji_3,grupa_akcji_2, 0, 0, sum(koszt_calkowity), sum(naklad_calkowity) {extra},0 from v_akcje_naklad_koszt_calkowity vankc
+                grupa_akcji_3,grupa_akcji_2,kod_akcji, 0, 0, sum(koszt_calkowity), sum(naklad_calkowity) {extra},0 from v_akcje_naklad_koszt_calkowity vankc
             left outer join t_akcje ta on vankc.id_akcji = ta.id_akcji
             left outer join t_grupy_akcji_2 t on ta.id_grupy_akcji_2 = t.id_grupy_akcji_2
             left outer join t_grupy_akcji_3 a on ta.id_grupy_akcji_3 = a.id_grupy_akcji_3
             where vankc.id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two} and t_akcje.id_grupy_akcji_3 !=7)
             group by --rok_i_mailing,
-                grupa_akcji_3,grupa_akcji_2{extra_group}
+                grupa_akcji_3,grupa_akcji_2, kod_akcji{extra_group}
                 {extra_union}
 
                 '''
         to_insert = pd.read_sql_query(sql, con)
-        a = '''                union select grupa_akcji_3,grupa_akcji_2, 0,0,0,0 {extra}, count(id_korespondenta) as pozyskano
+        a = '''                union select grupa_akcji_3,grupa_akcji_2,kod_akcji, 0,0,0,0 {extra}, count(id_korespondenta) as pozyskano
                 from v_akcja_dodania_korespondenta2
-                group by grupa_akcji_3,grupa_akcji_2'''
+                group by grupa_akcji_3,grupa_akcji_2, kod_akcji'''
         if type == 'address':
             to_insert.to_sql('dash_ma_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard adresowy')
@@ -98,10 +98,10 @@ def download_dash_address_data(con, refresh, engine, type):
 
 def download_increase_data(con, refresh, engine):
     if refresh == 'True':
-        sql = f'''select date_part('year', adod.data) as rok_dodania, grupa_akcji_1, grupa_akcji_2, 
+        sql = f'''select date_part('year', adod.data) as rok_dodania, grupa_akcji_1, grupa_akcji_2, kod_akcji,
         date_part('month', adod.data) as miesiac_dodania, count(id_korespondenta) as ilosc
         from v_akcja_dodania_korespondenta2 adod
-        group by rok_dodania, grupa_akcji_1, grupa_akcji_2, miesiac_dodania'''
+        group by rok_dodania, grupa_akcji_1, grupa_akcji_2,kod_akcji, miesiac_dodania'''
         to_insert = pd.read_sql_query(sql, con)
         to_insert.to_sql('dash_increase_data', engine, if_exists='replace', schema='raporty', index=False)
         print('dodano do bazy danych dane dla dashboard przyrost')
