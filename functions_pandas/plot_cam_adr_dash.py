@@ -1,12 +1,3 @@
-from bokeh.plotting import figure, ColumnDataSource
-from bokeh.transform import dodge
-from bokeh.models import LinearAxis, Range1d
-from functions_pandas.short_mailings_names import change_name
-import itertools
-from bokeh.palettes import Dark2_5 as palette
-from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
-    change_short_names_ma,change_short_names_db, check_max_value, label_of_axis
-import streamlit_functions.adr_action_dash.objects_for_ma_dash.char as char_opt
 import itertools
 
 from bokeh.models import LinearAxis, Range1d
@@ -48,7 +39,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         ("index", "$index"),
     ("value", "@suma_wplat"),
     ("value2", "@liczba_wplat")]
-    print(index_for_char.last(20))
+    print(index_for_char.describe())
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
                height=700, width=1500, title=f"{title}{from_} - {to_}",

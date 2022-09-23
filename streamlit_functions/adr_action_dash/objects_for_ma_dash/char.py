@@ -32,6 +32,9 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
             p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
                    y_range_name=row['oś'],
                    legend=row['Nazwa parametru'], color=colors_fin[j])
+            p.circle(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''],
+                   y_range_name=row['oś'],
+                   legend=row['Nazwa parametru'], color=colors_fin[j])
         j += 1
 
 def char_options(p):

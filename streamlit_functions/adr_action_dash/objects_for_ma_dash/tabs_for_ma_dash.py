@@ -42,7 +42,8 @@ def columns_order(dictionary_options, data_to_show_ma, filtr_ma):
         levels_ma = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'kod_akcji'],
                                    label='Proszę wybrać kolejność kolumn',
                                    default=['grupa_akcji_3', 'grupa_akcji_2'])
-        data_to_show_ma = data_to_show_ma[data_to_show_ma['grupa_akcji_2'].isin(filtr_ma)]
+        if len(filtr_ma) >=1:
+            data_to_show_ma = data_to_show_ma[data_to_show_ma['grupa_akcji_2'].isin(filtr_ma)]
         cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma, 'address',
                                                                   'Wyniki mailingów adresowych za lata ',
                                                                   'Malingi', dictionary_options)

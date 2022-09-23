@@ -46,7 +46,7 @@ st.header('Dane z głównych mailingów adresowych')
 
 with st.container():
     # odwoluje sie do funkcji ktore generuje caly modul odpowiedzialny za mailingi adresowe
-    main_action_config(data_to_show_ma)
+    main_action_config(data_to_show_ma, True)
     st.header('Dane z głównych wrzutek bezadresowych')
     non_action_main_conf(data_to_show_db)
     st.header('Dane dotyczące przyrostu korespondentów')
