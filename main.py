@@ -17,7 +17,7 @@ print(sys.argv)
 try:
     sorce_main = sys.argv[3]
 except:
-    sorce_main = 'local'
+    sorce_main = 'lwowska'
 mailings, con, engine = deaful_set(f'{sorce_main}')
 try:
     refresh_data = sys.argv[4]

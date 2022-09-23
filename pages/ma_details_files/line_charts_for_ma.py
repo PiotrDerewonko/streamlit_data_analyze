@@ -13,8 +13,9 @@ def line_chart_for_m(pivot):
         colors_fin.append(color)
     j = 0
     for i in pivot.columns:
-        p.line(pivot.index.values, pivot[i], line_width=1, legend=f'{i}', color=colors_fin[j]
+        p.line(pivot.index.values, pivot[i], line_width=3, legend=f'{i}', color=colors_fin[j]
                )
         j += 1
     p.legend.location = 'top_left'
+    p.yaxis.formatter.use_scientific = False
     return p
