@@ -44,17 +44,17 @@ def charts(mailing, con, years, refresh_data, engine):
                                          'Stopa zwrotu liczby wpłat %')
         with tab4:
             st.bokeh_chart(char_roi)
-            with st.expander('Zobacz tabele'):
+            with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_roi)
         with tab3:
             st.bokeh_chart(char_szlw)
-            with st.expander('Zobacz tabele'):
+            with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_szlw)
         with tab2:
             st.bokeh_chart(char_count_of_amount)
-            with st.expander('Zobacz tabele'):
+            with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_count_amount)
         with tab1:
             st.bokeh_chart(char_sum_of_amount)
-            with st.expander('Zobacz tabele'):
+            with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_count_amount)

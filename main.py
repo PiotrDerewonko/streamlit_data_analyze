@@ -22,7 +22,7 @@ mailings, con, engine = deaful_set(f'{sorce_main}')
 #try:
 #    refresh_data = sys.argv[4]
 #except:
-refresh_data = 'False'
+refresh_data = 'True'
 
 with st.sidebar:
     year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
