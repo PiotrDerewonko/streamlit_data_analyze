@@ -14,15 +14,15 @@ st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
                    layout='wide')
 print(sys.argv)
-try:
-    sorce_main = sys.argv[3]
-except:
-    sorce_main = 'lwowska'
+#try:
+#    sorce_main = sys.argv[3]
+#except:
+sorce_main = 'local'
 mailings, con, engine = deaful_set(f'{sorce_main}')
-try:
-    refresh_data = sys.argv[4]
-except:
-    refresh_data = 'False'
+#try:
+#    refresh_data = sys.argv[4]
+#except:
+refresh_data = 'False'
 
 with st.sidebar:
     year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,

@@ -4,9 +4,10 @@ from bokeh.palettes import Dark2_5 as palette
 from bokeh.plotting import figure
 
 
-def line_chart_for_m(pivot):
+def line_chart_for_m(pivot, title, y_axis_label):
     p = figure(height=700, width=1500,
-               toolbar_location='right')
+               toolbar_location='right',
+               title=title, y_axis_label=y_axis_label)
     colors_fin = []
     colors = itertools.cycle(palette)
     for m, color in zip(range(len(pivot.columns)), colors):
@@ -19,3 +20,15 @@ def line_chart_for_m(pivot):
     p.legend.location = 'top_left'
     p.yaxis.formatter.use_scientific = False
     return p
+
+def change_list_to_string(list, para):
+    if len(list) >= 1:
+        tmp = f'{para}'
+        for i in range(0, len(list)):
+            if i == 0:
+                tmp = tmp + ' ' + list[i]
+            else:
+                tmp = tmp + ', ' + list[i]
+    else:
+        tmp = ''
+    return tmp

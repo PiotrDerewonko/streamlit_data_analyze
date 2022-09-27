@@ -1,7 +1,10 @@
 import pandas as pd
 
 def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, data, cumulative):
-    data_to_show = data.loc[(data['dzien_po_mailingu'] >= days_from) & (data['dzien_po_mailingu'] <= days_to)]
+    if type =='sum' or type =='count':
+        data_to_show = data.loc[(data['dzien_po_mailingu'] >= days_from) & (data['dzien_po_mailingu'] <= days_to)]
+    else:
+        data_to_show = data
     columns_for_pivot_table = []
     if len(mailing) >= 1:
         data_to_show = data_to_show[data_to_show['grupa_akcji_2'].isin(mailing)]
@@ -13,6 +16,10 @@ def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, dat
         values = 'suma_wplat'
     elif type == 'count':
         values = 'liczba_wplat'
+    elif type == 'cost':
+        values = 'koszt'
+    elif type == 'circ':
+        values = 'naklad'
     pivot_table = pd.pivot_table(data_to_show, index='dzien_po_mailingu', values=values,
                                  columns=columns_for_pivot_table, aggfunc='sum')
     pivot_table.fillna(0, inplace=True)
