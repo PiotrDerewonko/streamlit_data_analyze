@@ -79,7 +79,14 @@ def create_pivot_table(data, multindex, type):
     if type == 'increase':
         pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1', aggfunc='sum')
         pivot_table_ma.fillna(0, inplace=True)
-
+    elif type == 'dist':
+        pivot_table_ma = pd.pivot_table(data, index=multindex, values='id_korespondenta', columns='status_second_pay',
+                                        aggfunc='count')
+        pivot_table_ma.fillna(0, inplace=True)
+        pivot_table_ma['sum'] = 0
+        for i in pivot_table_ma.columns:
+            pivot_table_ma['sum'] = pivot_table_ma['sum'] + pivot_table_ma[i]
+        print('test')
     else:
         pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
                                                                    'naklad_calkowity', 'pozyskano'], aggfunc='sum')

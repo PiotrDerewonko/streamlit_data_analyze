@@ -19,8 +19,9 @@ def distance_between_first_and_second_pay(con, engine, refresh_data):
     data_corr_pay['distance_fp_to_sp'] = (data_corr_pay['second_pay'] - data_corr_pay['first_pay']).dt.days
     data_corr_pay['distance_fp_to_sp'].fillna(99999, inplace=True)
     data_corr_pay['status_second_pay'] = ''
-    compartment = [(0, 180, 'do pół roku'), (180, 365, 'od pół roku do roku'), (365, 730, 'miedzy 1 a drugim rokiem'),
-                   (730, 99998, 'powyżej dwóch lat')]
+    compartment = [(0, 180, '1) do pół roku'), (180, 365, '2) od pół roku do roku'),
+                   (365, 730, '3) miedzy 1 a drugim rokiem'),
+                   (730, 99998, '4) powyżej dwóch lat')]
     for i in compartment:
         data_corr_pay['status_second_pay'].loc[(data_corr_pay['distance_fp_to_sp'] >= i[0]) &
                                            (data_corr_pay['distance_fp_to_sp'] <= i[1])] = f'{i[2]}'

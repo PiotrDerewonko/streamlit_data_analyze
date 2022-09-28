@@ -14,8 +14,13 @@ def line_chart_for_m(pivot, title, y_axis_label):
     for m, color in zip(range(len(pivot.columns)), colors):
         colors_fin.append(color)
     j = 0
+    len_columns = len(pivot.columns)
     for i in pivot.columns:
-        p.line(pivot.index.values, pivot[i], line_width=3, legend=f'{i}', color=colors_fin[j]
+        if j == len_columns-1:
+            line_width = 7
+        else:
+            line_width = 4
+        p.line(pivot.index.values, pivot[i], line_width=line_width, legend=f'{i}', color=colors_fin[j]
                )
         j += 1
     p.legend.location = 'top_left'
