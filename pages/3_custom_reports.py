@@ -8,5 +8,5 @@ with st.container():
     sorce_main = 'local'
     st.header("Odległość między pierwszą a drugą wpłatą")
     mailings, con, engine = deaful_set(f'{sorce_main}')
-    refresh_data = 'True'
-    distance_between_first_and_second_pay(con, engine, refresh_data)
+    refresh_data = 'False'
+    data = distance_between_first_and_second_pay(con, engine, refresh_data)
