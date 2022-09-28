@@ -85,8 +85,16 @@ def create_pivot_table(data, multindex, type):
         pivot_table_ma.fillna(0, inplace=True)
         pivot_table_ma['sum'] = 0
         for i in pivot_table_ma.columns:
-            pivot_table_ma['sum'] = pivot_table_ma['sum'] + pivot_table_ma[i]
-        print('test')
+            if i != 'sum':
+                pivot_table_ma['sum'] = pivot_table_ma['sum'] + pivot_table_ma[i]
+        tmp_df = pivot_table_ma.copy()
+        for j in pivot_table_ma.columns:
+            if j != 'sum':
+                tmp_df[j] = tmp_df['sum']
+        tmp2 = pivot_table_ma.div(tmp_df)
+        tmp2.drop(columns=['sum'], inplace=True)
+        pivot_table_ma = tmp2
+
     else:
         pivot_table_ma = pd.pivot_table(data, index=multindex, values=['suma_wplat', 'koszt_calkowity', 'liczba_wplat',
                                                                    'naklad_calkowity', 'pozyskano'], aggfunc='sum')
