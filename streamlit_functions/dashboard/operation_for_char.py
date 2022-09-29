@@ -67,7 +67,10 @@ def modifcate_data(data, type, multindex):
         gr3 = data['rok_dodania'].drop_duplicates().to_list()
     if type =='nonaddress':
         data['miesiac'] = data['miesiac'].astype(str)
+    if type =='dist':
+        gr3 = data['date_part'].drop_duplicates().to_list()
     gr3.sort()
+
 
     'pobieram zakres lat'
     from_ = gr3[0]

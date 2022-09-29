@@ -2,10 +2,22 @@ import pandas as pd
 
 def down_data_about_cor(con, engine, refresh):
     if refresh == 'True':
-        sql = '''select id_korespondenta, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3, data as data_dodania,
-        date_part('year', data)
-        from v_akcja_dodania_korespondenta2'''
+        sql = '''select adod.id_korespondenta, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3, data as data_dodania,
+        last_mailing, date_part('year', data)
+        from v_akcja_dodania_korespondenta2 adod
+        left outer join (select id_korespondenta, True as last_mailing  from t_akcje_korespondenci where id_akcji in (
+        select id_akcji from t_akcje where id_grupy_akcji_2 in (
+            select id_grupy_akcji_2 from t_akcje_korespondenci tak
+left outer join t_akcje ta on tak.id_akcji = ta.id_akcji
+where id_grupy_akcji_2 in (9,10,11,12) order by data desc limit 1
+            )
+and id_grupy_akcji_3 in (select id_grupy_akcji_3 from t_akcje_korespondenci tak
+left outer join t_akcje ta on tak.id_akcji = ta.id_akcji
+where id_grupy_akcji_2 in (9,10,11,12) order by data desc limit 1))
+) last
+on last.id_korespondenta = adod.id_korespondenta'''
         data = pd.read_sql_query(sql, con)
+        data['last_mailing'].fillna(False, inplace=True)
         data.to_sql('cr_distance_corr', engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_corr')
     data = pd.read_sql_query('''select * from raporty.cr_distance_corr''', con)
