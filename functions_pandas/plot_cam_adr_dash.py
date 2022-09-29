@@ -1,5 +1,6 @@
 import itertools
 
+from bokeh.models import HoverTool
 from bokeh.models import LinearAxis, Range1d
 from bokeh.palettes import Dark2_5 as palette
 from bokeh.plotting import figure, ColumnDataSource
@@ -36,18 +37,17 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
     TOOLTIPS = [
-        ("index", "$index"),
-    ("value", "@suma_wplat"),
-    ("value2", "@liczba_wplat")]
+        ("Series", "@columns")]
     print(index_for_char.describe())
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
                height=700, width=1500, title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
-               y_axis_label=y_label, tooltips=TOOLTIPS
-               )
+               y_axis_label=y_label)
+
     p.title.text_font_size = '18pt'
+
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         p.y_range = Range1d(0, max_value_for_y_prime*1.1)
@@ -82,6 +82,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
             colors_fin.append(color)
         p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
                      width=0.7, legend_label=pt_columns, color=colors_fin)
+        p.add_tools(HoverTool(tooltips=[("LOCATION", "@pivot_table_ma.columns[0]")]))
 
     char_opt.char_options(p)
 

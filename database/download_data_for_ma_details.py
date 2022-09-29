@@ -35,9 +35,6 @@ def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, dat
                                      columns=columns_for_pivot_table, aggfunc='sum')
         pivot_table_sec = pivot_table_sec.cumsum()
         tmp = pivot_table_sec.loc[pivot_table_sec.index == days_from]
-        print(pivot_table_sec.index)
-        print(tmp.index)
-        print(pivot_table.index)
         if (type == 'sum') | (type == 'count'):
             pivot_table = pd.concat([tmp, pivot_table])
 
