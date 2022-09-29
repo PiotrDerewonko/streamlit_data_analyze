@@ -12,7 +12,7 @@ from streamlit_functions.dashboard.operation_for_char import create_df, modifcat
 
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
-    if (type != 'increase') & (type != 'dist'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)
     data = change_name(data)
@@ -20,7 +20,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         temp_df = change_short_names_ma(temp_df)
     elif type =='nonaddress':
         temp_df = change_short_names_db(temp_df)
-    if (type != 'increase') & (type != 'dist'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         y_label, y_sec_label = label_of_axis(temp_df)
     else:
         y_label = 'Ilość pozyskanych'
@@ -29,7 +29,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
 
     pivot_table_ma = create_pivot_table(data, multindex, type)
 
-    if (type != 'increase') & (type != 'dist'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
         max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
 
@@ -49,10 +49,10 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
                )
     p.title.text_font_size = '18pt'
 
-    if (type != 'increase') & (type != 'dist'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         p.y_range = Range1d(0, max_value_for_y_prime*1.1)
 
-    if ((type != 'increase') & (type != 'dist')) and (max_value_for_y_second != 0):
+    if ((type != 'increase') & (type != 'dist') & (type != 'dist2')) and (max_value_for_y_second != 0):
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
         p.extra_y_ranges = {'secon_axis': Range1d(0, max_value_for_y_second*1.1)}
         p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
@@ -71,7 +71,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
             str_mutlindex = str_mutlindex + "_" + i
 
     # tworze wykresy
-    if (type != 'increase') & (type != 'dist'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         char_opt.char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma)
     else:
         pt_columns = pivot_table_ma.columns

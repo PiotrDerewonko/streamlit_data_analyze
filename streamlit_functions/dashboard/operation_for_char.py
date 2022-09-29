@@ -67,7 +67,7 @@ def modifcate_data(data, type, multindex):
         gr3 = data['rok_dodania'].drop_duplicates().to_list()
     if type =='nonaddress':
         data['miesiac'] = data['miesiac'].astype(str)
-    if type =='dist':
+    if (type =='dist') | (type =='dist2'):
         gr3 = data['date_part'].drop_duplicates().to_list()
     gr3.sort()
 
@@ -83,6 +83,10 @@ def create_pivot_table(data, multindex, type):
         pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1', aggfunc='sum')
         pivot_table_ma.fillna(0, inplace=True)
     elif type == 'dist':
+        pivot_table_ma = pd.pivot_table(data, index=multindex, values='id_korespondenta', columns='status_second_pay',
+                                        aggfunc='count')
+        pivot_table_ma.fillna(0, inplace=True)
+    elif type == 'dist2':
         pivot_table_ma = pd.pivot_table(data, index=multindex, values='id_korespondenta', columns='status_second_pay',
                                         aggfunc='count')
         pivot_table_ma.fillna(0, inplace=True)

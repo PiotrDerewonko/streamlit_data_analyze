@@ -21,14 +21,28 @@ with st.container():
                                      default=default_gr1)
     min_int_sl = int(data['date_part'].min())
     max_int_sl = int(data['date_part'].max())
-    if len(gr1)>=1:
+    if len(gr1) >= 1:
         data = data[data['grupa_akcji_1'].isin(gr1)]
     year_add_slider = st.slider('Prosze wybrać lata pozyskania korespondentów', min_value=min_int_sl,
                                 max_value=max_int_sl, value=[max_int_sl-2, max_int_sl])
     data = data.loc[(data['date_part'] >= year_add_slider[0]) & (data['date_part'] <= year_add_slider[1])]
+
+    last_mailing = st.checkbox(label='Tylko osoby z ostatnim mailingiem Q', value=True)
+
+    if last_mailing==True:
+        data = data.loc[data['last_mailing']==True]
     data.dropna(subset=['grupa_akcji_1'], inplace=True)
     data['date_part'] = data['date_part'].astype(str)
-    char, pivot = pivot_and_chart_for_dash(data, multindex, 'dist', 'Odległość między pierwszą a drugą wpłatą dla osób pozyskanych z lat ', 'źródlo pozyskania', {} )
+    char, pivot = pivot_and_chart_for_dash(data, multindex, 'dist',
+                                           'Odległość między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
+                                           'źródlo pozyskania', {})
+    char_stack, pivot_stack = pivot_and_chart_for_dash(data, multindex, 'dist2',
+                                           'Odległość między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
+                                           'źródlo pozyskania', {})
+    st.header('Wykres do 100 %')
+    st.bokeh_chart(char_stack)
+    st.header('Tabela z danymi')
     st.dataframe(pivot)
+    st.header('Wykres wartościowy')
     st.bokeh_chart(char)
-    print('test')
+
