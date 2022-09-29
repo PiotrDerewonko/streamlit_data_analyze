@@ -6,7 +6,7 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.distance i
     distance_between_first_and_second_pay
 
 with st.container():
-    sorce_main = 'lwowska'
+    sorce_main = 'local'
     st.header("Odległość między pierwszą a drugą wpłatą")
     multindex = st.multiselect(options=['grupa_akcji_1', 'grupa_akcji_2','grupa_akcji_3', 'status_first_pay', 'date_part'],
                                      label='Prosze wybrac index',
