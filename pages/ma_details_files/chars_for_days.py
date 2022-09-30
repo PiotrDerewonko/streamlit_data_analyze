@@ -12,7 +12,7 @@ def charts(mailing, con, years, refresh_data, engine):
                                                       'Profit', 'Wybór dni'])
         with tab6:
             days_range = st.slider('Proszę wybrać dnia od nadania mailingu', min_value=1, max_value=60,
-                                  value=[5, 60])
+                                  value=[1, 60])
             cumulative = st.checkbox(label='Wykresy kumulacyjnie', value=True)
             mailings_string = change_list_to_string(mailing, 'dla mailingów')
             years_string = change_list_to_string(years, 'za lata')

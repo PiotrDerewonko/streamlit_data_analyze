@@ -113,6 +113,14 @@ def create_pivot_table(data, multindex, type):
             pivot_table_ma['Stopa pozyskania'] = (pivot_table_ma['pozyskano']/pivot_table_ma['naklad_calkowity'])*100
         elif type == 'address':
             pivot_table_ma.drop(columns='pozyskano', inplace=True)
+        if type == 'address':
+            pivot_table_ma['index_liczba_wplat'] = 0
+            pivot_table_ma['index_suma_wplat'] = 0
+            for i in range(1, len(pivot_table_ma.index)):
+                pivot_table_ma['index_liczba_wplat'].iloc[i] = \
+                    (pivot_table_ma['liczba_wplat'].iloc[i] / pivot_table_ma['liczba_wplat'].iloc[i-1]) * 100
+                pivot_table_ma['index_suma_wplat'].iloc[i] = \
+                    (pivot_table_ma['suma_wplat'].iloc[i] / pivot_table_ma['suma_wplat'].iloc[i-1]) * 100
         pivot_table_ma.replace([np.inf, -np.inf], np.nan, inplace=True)
         pivot_table_ma.fillna(0, inplace=True)
 
