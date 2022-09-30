@@ -34,15 +34,15 @@ with st.container():
     data.dropna(subset=['grupa_akcji_1'], inplace=True)
     data['date_part'] = data['date_part'].astype(str)
     char, pivot = pivot_and_chart_for_dash(data, multindex, 'dist',
-                                           'Odległość między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
+                                           'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
                                            'źródlo pozyskania', {})
     char_stack, pivot_stack = pivot_and_chart_for_dash(data, multindex, 'dist2',
-                                           'Odległość między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
+                                           'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
                                            'źródlo pozyskania', {})
     st.header('Wykres do 100 %')
     st.bokeh_chart(char_stack)
     st.header('Tabela z danymi')
     st.dataframe(pivot)
-    st.header('Wykres wartościowy')
+    st.header('Wykres ilościowy')
     st.bokeh_chart(char)
 

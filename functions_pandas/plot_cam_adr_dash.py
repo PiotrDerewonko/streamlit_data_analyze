@@ -35,10 +35,9 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
 
     source = ColumnDataSource(pivot_table_ma)
+    print('bbbbbb')
+    print(source.data)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
-    TOOLTIPS = [
-        ("Series", "@columns")]
-    print(index_for_char.describe())
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
                height=700, width=1500, title=f"{title}{from_} - {to_}",
@@ -82,7 +81,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
             colors_fin.append(color)
         p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
                      width=0.7, legend_label=pt_columns, color=colors_fin)
-        p.add_tools(HoverTool(tooltips=[("LOCATION", "@pivot_table_ma.columns[0]")]))
 
     char_opt.char_options(p)
 
@@ -100,6 +98,19 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
                         ('index_liczba_wplat'): lambda x: "{: .2f} %".format(x),
                         ('index_suma_wplat'): lambda x: "{: .2f} %".format(x),
                                })
+        try:
+            print('xxxx')
+            print(source.data.values())
+            index_name = list(source.data.values())
+            index_name = index_name.tra
+            hover = HoverTool(tooltips=[  # ("suma_wplat", "@suma_wplat"), ("liczba_wplat", "@liczba_wplat"),
+                ('teddddddddddddddst', f'@{index_name[1]}')
+            ])
+            p.add_tools(hover)
+        except:
+            print('yesy')
+
+
 
     return p, pivot_table_ma
 

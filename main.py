@@ -27,6 +27,7 @@ refresh_data = 'False'
 with st.sidebar:
     year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
                                   value=[date.now().year - 4, date.now().year])
+
 year_from = year_range_slider[0]
 year_to = year_range_slider[1]
 

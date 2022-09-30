@@ -1,5 +1,6 @@
 import itertools
 
+from bokeh.models import HoverTool
 from bokeh.palettes import Dark2_5 as palette
 from bokeh.transform import dodge
 
@@ -36,6 +37,19 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
                    y_range_name=row['oś'],
                    legend=row['Nazwa parametru'], color=colors_fin[j])
         j += 1
+
+    try:
+        index_name = list(source.data.keys())
+        hover = HoverTool(tooltips=[#("suma_wplat", "@suma_wplat"), ("liczba_wplat", "@liczba_wplat"),
+                                    ('teddddddddddddddst', f'@{index_name[0]}')
+                                    ])
+        p.add_tools(hover)
+        hover = HoverTool(tooltips=[("suma_wplat", "@suma_wplat"), ("liczba_wplat", "@liczba_wplat"),
+                                    #('test', f'@{index_name[0]}')
+                                    ])
+        p.add_tools(hover)
+    except:
+        print('yesy')
 
 def char_options(p):
     p.xgrid.grid_line_color = None

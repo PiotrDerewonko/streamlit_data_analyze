@@ -25,6 +25,7 @@ def line_chart_for_m(pivot, title, y_axis_label):
         j += 1
     p.legend.location = 'top_left'
     p.yaxis.formatter.use_scientific = False
+
     return p
 
 def change_list_to_string(list, para):

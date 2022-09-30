@@ -24,7 +24,7 @@ def main_action_config(data_to_show_ma, show_filter):
         with tab1:
             st.bokeh_chart(cam_adr_plot_ma)
         with tab2:
-            st.dataframe(test_pivot_ma, 1000, 400)
+            st.dataframe(test_pivot_ma, 1200, 400)
             label_of_file = f'dane mailing_adresowy.xlsx'
 
             @st.cache
