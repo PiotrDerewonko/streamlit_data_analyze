@@ -27,7 +27,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         y_label = 'Ilość pozyskanych'
 
     index_for_char = data.groupby(multindex)
-
+    print(index_for_char.head())
     pivot_table_ma = create_pivot_table(data, multindex, type)
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
@@ -35,12 +35,11 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
 
     source = ColumnDataSource(pivot_table_ma)
-    print('bbbbbb')
-    print(source.data)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
-               height=700, width=1500, title=f"{title}{from_} - {to_}",
+               height=700, width=1300,
+               title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label)

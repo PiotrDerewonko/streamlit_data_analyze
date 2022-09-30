@@ -8,9 +8,12 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.distance i
 with st.container():
     sorce_main = 'local'
     st.header("Odległość między pierwszą a drugą wpłatą")
-    multindex = st.multiselect(options=['grupa_akcji_1', 'grupa_akcji_2','grupa_akcji_3', 'status_first_pay', 'date_part'],
+    #todo dodac plec miejscowosc, rozmiar miejscowosc, okreg pcoztowy
+
+    multindex = st.multiselect(options=['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'status_first_pay',
+                                        'date_part', 'plec', 'okreg_pocztowy'],
                                      label='Prosze wybrac index',
-                                     default=['grupa_akcji_1', 'status_first_pay'])
+                                     default=['grupa_akcji_1', 'status_first_pay', 'plec'])
 
     mailings, con, engine = deaful_set(f'{sorce_main}')
     refresh_data = 'False'
@@ -32,6 +35,7 @@ with st.container():
     if last_mailing==True:
         data = data.loc[data['last_mailing']==True]
     data.dropna(subset=['grupa_akcji_1'], inplace=True)
+    data['date_part'] = data['date_part'].astype(int)
     data['date_part'] = data['date_part'].astype(str)
     char, pivot = pivot_and_chart_for_dash(data, multindex, 'dist',
                                            'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
@@ -40,9 +44,9 @@ with st.container():
                                            'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
                                            'źródlo pozyskania', {})
     st.header('Wykres do 100 %')
-    st.bokeh_chart(char_stack)
+    st.bokeh_chart(char_stack, use_container_width=True)
     st.header('Tabela z danymi')
-    st.dataframe(pivot)
+    st.dataframe(pivot, use_container_width=True)
     st.header('Wykres ilościowy')
-    st.bokeh_chart(char)
+    st.bokeh_chart(char, use_container_width=True)
 

@@ -1,9 +1,10 @@
 import pandas as pd
 
+
 def down_data_about_cor(con, engine, refresh):
     if refresh == 'True':
         sql = '''select adod.id_korespondenta, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3, data as data_dodania,
-        last_mailing, date_part('year', data)
+        last_mailing, date_part('year', data),plec, okreg_pocztowy
         from v_akcja_dodania_korespondenta2 adod
         left outer join (select id_korespondenta, True as last_mailing  from t_akcje_korespondenci where id_akcji in (
         select id_akcji from t_akcje where id_grupy_akcji_2 in (
@@ -15,12 +16,33 @@ and id_grupy_akcji_3 in (select id_grupy_akcji_3 from t_akcje_korespondenci tak
 left outer join t_akcje ta on tak.id_akcji = ta.id_akcji
 where id_grupy_akcji_2 in (9,10,11,12) order by data desc limit 1))
 ) last
-on last.id_korespondenta = adod.id_korespondenta'''
+on last.id_korespondenta = adod.id_korespondenta
+left outer join (select id_korespondenta , case when id_plci=1 then 'mężczyźni'
+ when id_plci=2 then 'kobiety'
+ when id_plci=3 then 'mnogie' else 'mnogie'end as plec, 
+ case 
+ when substring(kod_pocztowy, 1, 1)::int=0 then 'warszawski'
+ when substring(kod_pocztowy, 1, 1)::int=1 then 'olsztyński'
+ when substring(kod_pocztowy, 1, 1)::int=2 then 'lubelski'
+ when substring(kod_pocztowy, 1, 1)::int=3 then 'krakowski'
+ when substring(kod_pocztowy, 1, 1)::int=4 then 'katowicki'
+ when substring(kod_pocztowy, 1, 1)::int=5 then 'wrocłąwski'
+ when substring(kod_pocztowy, 1, 1)::int=6 then 'poznański'
+ when substring(kod_pocztowy, 1, 1)::int=7 then 'szczeciński'
+ when substring(kod_pocztowy, 1, 1)::int=8 then 'gdański'
+ when substring(kod_pocztowy, 1, 1)::int=9 then 'łódzki'
+ else 'puste'
+ end as okreg_pocztowy 
+ from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all k 
+left outer join t_tytuly tyt
+on tyt.tytul=k.tytul_1) plc
+on plc.id_korespondenta=adod.id_korespondenta'''
         data = pd.read_sql_query(sql, con)
         data['last_mailing'].fillna(False, inplace=True)
         data.to_sql('cr_distance_corr', engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_corr')
     data = pd.read_sql_query('''select * from raporty.cr_distance_corr''', con)
+    data[['plec', 'okreg_pocztowy']].fillna('', inplace=True)
     return data
 
 def down_data_about_pay(con, engine, refresh):

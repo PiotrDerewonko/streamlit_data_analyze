@@ -69,6 +69,8 @@ def modifcate_data(data, type, multindex):
         data['miesiac'] = data['miesiac'].astype(str)
     if (type =='dist') | (type =='dist2'):
         gr3 = data['date_part'].drop_duplicates().to_list()
+        data['plec'] = data['plec'].astype(str)
+        data['okreg_pocztowy'] = data['okreg_pocztowy'].astype(str)
     gr3.sort()
 
 
