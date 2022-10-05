@@ -1,4 +1,4 @@
-from pages.custom_reports_files.distance_between_first_and_second_pay.distance import distance_between_first_and_second_pay
+from database.dowload_data import download_dash_address_data, download_increase_data
 from database.source_db import deaful_set
 from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
     distance_between_first_and_second_pay
