@@ -16,6 +16,7 @@ def down_data_sum_and_count(con, refresh_data, engine):
         group by grupa_akcji_3, grupa_akcji_2, dzien_po_mailingu'''
         data = pd.read_sql_query(sql, con)
         data.to_sql('dash_char_ma_data', engine, if_exists='replace', schema='raporty', index=False)
+        print('dodaon')
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data''', con)
     return data
 

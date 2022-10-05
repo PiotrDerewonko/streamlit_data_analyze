@@ -7,6 +7,9 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.distance i
 
 with st.container():
     sorce_main = 'local'
+    mailings, con, engine = deaful_set(f'{sorce_main}')
+    refresh_data = 'False'
+
     st.header("Odległość między pierwszą a drugą wpłatą")
     #todo dodac plec miejscowosc, rozmiar miejscowosc, okreg pcoztowy
 
@@ -15,8 +18,6 @@ with st.container():
                                      label='Prosze wybrac index',
                                      default=['grupa_akcji_1', 'status_first_pay', 'plec'])
 
-    mailings, con, engine = deaful_set(f'{sorce_main}')
-    refresh_data = 'False'
     data = distance_between_first_and_second_pay(con, engine, refresh_data)
     default_gr1 = data['grupa_akcji_1'].drop_duplicates()
     gr1 = st.multiselect(options=default_gr1,
@@ -31,9 +32,14 @@ with st.container():
     data = data.loc[(data['date_part'] >= year_add_slider[0]) & (data['date_part'] <= year_add_slider[1])]
 
     last_mailing = st.checkbox(label='Tylko osoby z ostatnim mailingiem Q', value=True)
+    positive_adr = st.checkbox(label='Tylko osoby z poprawnym adresem', value=True)
 
-    if last_mailing==True:
+    if last_mailing == True:
         data = data.loc[data['last_mailing']==True]
+
+    if positive_adr == True:
+        data = data.loc[data['good_address']=='poprawny_adres']
+
     data.dropna(subset=['grupa_akcji_1'], inplace=True)
     data['date_part'] = data['date_part'].astype(int)
     data['date_part'] = data['date_part'].astype(str)

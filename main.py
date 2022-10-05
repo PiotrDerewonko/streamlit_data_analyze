@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime as date
 
 import streamlit as st
@@ -13,15 +12,9 @@ from streamlit_functions.nonadr_action_dash.nonadr_action_conf import non_action
 st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
                    layout='wide')
-print(sys.argv)
-#try:
-#    sorce_main = sys.argv[3]
-#except:
+
 sorce_main = 'local'
 mailings, con, engine = deaful_set(f'{sorce_main}')
-#try:
-#    refresh_data = sys.argv[4]
-#except:
 refresh_data = 'False'
 
 with st.sidebar:

@@ -5,7 +5,7 @@ from bokeh.plotting import figure
 
 
 def line_chart_for_m(pivot, title, y_axis_label):
-    p = figure(height=700, width=1500,
+    p = figure(height=700, width=1300,
                toolbar_location='right',
                title=title, y_axis_label=y_axis_label, x_axis_label='Dzien po nadaniu mailingu'
                )
