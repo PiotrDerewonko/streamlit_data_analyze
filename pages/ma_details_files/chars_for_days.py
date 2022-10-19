@@ -16,6 +16,7 @@ def charts(mailing, con, years, refresh_data, engine):
             cumulative = st.checkbox(label='Wykresy kumulacyjnie', value=True)
             mailings_string = change_list_to_string(mailing, 'dla mailingów')
             years_string = change_list_to_string(years, 'za lata')
+            trends = st.selectbox(label='Wybierz mailing do linii trendu', options=[['test', 'test2'], ['test3', 'test4']])
 
             #dane, tabel i wkyres dla liczby wplat
             data_sum_count = down_data_sum_and_count(con, refresh_data, engine)

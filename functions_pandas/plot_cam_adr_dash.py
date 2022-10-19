@@ -27,7 +27,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
         y_label = 'Ilość pozyskanych'
 
     index_for_char = data.groupby(multindex)
-    print(index_for_char.head())
     pivot_table_ma = create_pivot_table(data, multindex, type)
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
@@ -98,8 +97,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
                         ('index_suma_wplat'): lambda x: "{: .2f} %".format(x),
                                })
         try:
-            print('xxxx')
-            print(source.data.values())
             index_name = list(source.data.values())
             index_name = index_name.tra
             hover = HoverTool(tooltips=[  # ("suma_wplat", "@suma_wplat"), ("liczba_wplat", "@liczba_wplat"),
@@ -107,7 +104,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
             ])
             p.add_tools(hover)
         except:
-            print('yesy')
+            a='test'
 
 
 

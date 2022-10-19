@@ -50,9 +50,9 @@ with st.container():
                                            'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
                                            'źródlo pozyskania', {})
     st.header('Wykres do 100 %')
-    st.bokeh_chart(char_stack, use_container_width=True)
+    st.bokeh_chart(char_stack)
     st.header('Tabela z danymi')
-    st.dataframe(pivot, use_container_width=True)
+    st.dataframe(pivot)
     st.header('Wykres ilościowy')
-    st.bokeh_chart(char, use_container_width=True)
+    st.bokeh_chart(char)
 

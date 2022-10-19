@@ -28,7 +28,6 @@ def check_max_value(pivot, data, axis):
     tmp = data.loc[data['oś'] == axis]
     if len(tmp) >= 1:
         for i, row in tmp.iterrows():
-            print('test')
             tmp_sum = pivot[f'''{row['Nazwa parametru']}'''].max()
             if tmp_sum > max:
                 max = tmp_sum
@@ -111,6 +110,7 @@ def create_pivot_table(data, multindex, type):
         pivot_table_ma['ROI'] = pivot_table_ma['suma_wplat']/pivot_table_ma['koszt_calkowity']
         pivot_table_ma['Stopa zwrotu l.w.'] = (pivot_table_ma['liczba_wplat']/pivot_table_ma['naklad_calkowity'])*100
         pivot_table_ma['Koszt na głowę'] = pivot_table_ma['koszt_calkowity']/pivot_table_ma['naklad_calkowity']
+        pivot_table_ma['Średnia wpłata'] = pivot_table_ma['suma_wplat']/pivot_table_ma['liczba_wplat']
         if type == 'nonaddress':
             pivot_table_ma['Stopa pozyskania'] = (pivot_table_ma['pozyskano']/pivot_table_ma['naklad_calkowity'])*100
         elif type == 'address':

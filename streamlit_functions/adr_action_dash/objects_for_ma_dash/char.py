@@ -49,7 +49,7 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
                                     ])
         p.add_tools(hover)
     except:
-        print('yesy')
+        a='test'
 
 def char_options(p):
     p.xgrid.grid_line_color = None
