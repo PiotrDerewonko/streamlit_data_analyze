@@ -1,5 +1,5 @@
 #from main import con, refresh_data
-from database.down_data_cr_distansce import down_data_about_cor, down_data_about_pay
+from pages.custom_reports_files.distance_between_first_and_second_pay.down_data_cr_distansce import down_data_about_cor, down_data_about_pay
 
 
 def distance_between_first_and_second_pay(con, engine, refresh_data):

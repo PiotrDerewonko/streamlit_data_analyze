@@ -6,7 +6,7 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.distance i
     distance_between_first_and_second_pay
 
 with st.container():
-    sorce_main = 'local'
+    sorce_main = 'lwowska'
     mailings, con, engine = deaful_set(f'{sorce_main}')
     refresh_data = 'False'
 

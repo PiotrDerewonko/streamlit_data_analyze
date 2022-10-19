@@ -13,7 +13,7 @@ st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
                    layout='wide')
 
-sorce_main = 'local'
+sorce_main = 'lwowska'
 mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
 

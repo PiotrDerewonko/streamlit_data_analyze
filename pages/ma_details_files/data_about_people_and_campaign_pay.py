@@ -38,3 +38,43 @@ def download_data_about_people(con, refresh_data, engine):
 
     return data_to_return
 
+def download_data_about_people_camp_pay(con, refresh_data, engine):
+    if refresh_data == 'True':
+        sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
+         grupa_akcji_2, grupa_akcji_3, kod_akcji
+         from t_aktywnosci_korespondentow tak
+        left outer join t_akcje ta
+        on ta.id_akcji = tak.id_akcji
+        left outer join public.t_transakcje tr
+        on tr.id_transakcji = tak.id_transakcji
+        left outer join t_grupy_akcji_1 gr1
+        on gr1.id_grupy_akcji_1 = ta.id_grupy_akcji_1  
+        left outer join t_grupy_akcji_2 gr2
+        on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2    
+        left outer join t_grupy_akcji_3 gr3
+        on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3         
+        where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,101) and tak.id_transakcji is not null
+        group by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3, kod_akcji'''
+        data = pd.read_sql_query(sql, con)
+        data.to_sql('people_in_camp_pay', engine, schema='raporty', if_exists='replace', index=False)
+    data = pd.read_sql_query('select * from raporty.people_in_camp_pay', con)
+    return data
+
+def download_data_about_people_camp(con, refresh_data, engine):
+    if refresh_data == 'True':
+        sql = f'''select tak.id_korespondenta, kod_akcji, grupa_akcji_2, grupa_akcji_3, koszt.koszt
+        from t_akcje_korespondenci tak
+        left outer join t_akcje ta 
+        on ta.id_akcji=tak.id_akcji
+        left outer join t_grupy_akcji_2 gr2
+        on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2
+        left outer join t_grupy_akcji_3 gr3
+        on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
+        left outer join public.v_koszt_korespondenta_w_akcjach koszt
+        on koszt.id_korespondenta = tak.id_korespondenta and koszt.id_akcji = tak.id_akcji'''
+        data = pd.read_sql_query(sql, con)
+        data.to_sql('people_in_camp', engine, schema='raporty', if_exists='replace', index=False)
+    data = pd.read_sql_query('select * from raporty.people_in_camp', con)
+    return data
+
+

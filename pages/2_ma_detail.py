@@ -4,7 +4,7 @@ from database.source_db import deaful_set
 from pages.ma_details_files.chars_for_days import charts
 from pages.ma_details_files.chose_campaign import choose
 
-sorce_main = 'local'
+sorce_main = 'lwowska'
 mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
 
