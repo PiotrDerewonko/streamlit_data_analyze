@@ -34,14 +34,15 @@ def download_data_about_people(con, refresh_data, engine):
 
         #dodanie do bazy danych utowroznej tyabeli
         data_tmp_1.to_sql('people_data', engine, schema='raporty', if_exists='replace', index=False)
-    data_to_return = pd.read_sql_query('select * from raporty.people_data', con)
-
+    #data_to_return = pd.read_sql_query('select * from raporty.people_data', con)
+    #data_to_return.to_csv('./pages/ma_details_files/tmp_file/people.csv')
+    data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0')
     return data_to_return
 
 def download_data_about_people_camp_pay(con, refresh_data, engine):
     if refresh_data == 'True':
         sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
-         grupa_akcji_2, grupa_akcji_3, kod_akcji
+         grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty
          from t_aktywnosci_korespondentow tak
         left outer join t_akcje ta
         on ta.id_akcji = tak.id_akcji
@@ -54,15 +55,18 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         left outer join t_grupy_akcji_3 gr3
         on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3         
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,101) and tak.id_transakcji is not null
-        group by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3, kod_akcji'''
+        group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
         data = pd.read_sql_query(sql, con)
         data.to_sql('people_in_camp_pay', engine, schema='raporty', if_exists='replace', index=False)
-    data = pd.read_sql_query('select * from raporty.people_in_camp_pay', con)
+    #data = pd.read_sql_query('select * from raporty.people_in_camp_pay', con)
+    #data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
+    data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
 
 def download_data_about_people_camp(con, refresh_data, engine):
     if refresh_data == 'True':
-        sql = f'''select tak.id_korespondenta, kod_akcji, grupa_akcji_2, grupa_akcji_3, koszt.koszt
+        sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_2 as grupa_akcji_2_wysylki, 
+        grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt
         from t_akcje_korespondenci tak
         left outer join t_akcje ta 
         on ta.id_akcji=tak.id_akcji
@@ -71,10 +75,14 @@ def download_data_about_people_camp(con, refresh_data, engine):
         left outer join t_grupy_akcji_3 gr3
         on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
         left outer join public.v_koszt_korespondenta_w_akcjach koszt
-        on koszt.id_korespondenta = tak.id_korespondenta and koszt.id_akcji = tak.id_akcji'''
+        on koszt.id_korespondenta = tak.id_korespondenta and koszt.id_akcji = tak.id_akcji
+        where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)'''
         data = pd.read_sql_query(sql, con)
+        data.fillna(0, inplace=True)
         data.to_sql('people_in_camp', engine, schema='raporty', if_exists='replace', index=False)
-    data = pd.read_sql_query('select * from raporty.people_in_camp', con)
+    #data = pd.read_sql_query('select * from raporty.people_in_camp', con)
+    #data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+    data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
 
 
