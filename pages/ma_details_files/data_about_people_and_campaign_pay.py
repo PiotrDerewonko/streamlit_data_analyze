@@ -66,7 +66,7 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
 def download_data_about_people_camp(con, refresh_data, engine):
     if refresh_data == 'True':
         sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_2 as grupa_akcji_2_wysylki, 
-        grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt
+        grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad
         from t_akcje_korespondenci tak
         left outer join t_akcje ta 
         on ta.id_akcji=tak.id_akcji
