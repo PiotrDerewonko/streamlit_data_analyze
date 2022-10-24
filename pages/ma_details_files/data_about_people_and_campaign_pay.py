@@ -4,7 +4,11 @@ def download_data_about_people(con, refresh_data, engine):
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
         list_of_sql = [['''select id_korespondenta, 'jest w modlitwie różańcowej' as modlitwa_rozancowa from 
         t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', 'nie jest w modlitwie różańcowej'],
-                       ]
+                       ['''select id_korespondenta, 'posiada ' ||count(id_materialu)::text||' dziesiątek' as ilosc_dzisiatek from 
+                (select distinct id_korespondenta, id_materialu from t_akcje_korespondenci tak
+                left outer join t_akcje_materialy tam
+                on tam.id_akcji=tak.id_akcji where tam.id_materialu in (694, 673, 652, 625, 620)) dzies
+                group by id_korespondenta''', 'nie ma żadnej dziesiątki']]
 
         data_tmp_1 = pd.read_sql_query('select id_korespondenta from t_korespondenci', con)
         for j in list_of_sql:
@@ -34,8 +38,8 @@ def download_data_about_people(con, refresh_data, engine):
 
         #dodanie do bazy danych utowroznej tyabeli
         data_tmp_1.to_sql('people_data', engine, schema='raporty', if_exists='replace', index=False)
-    #data_to_return = pd.read_sql_query('select * from raporty.people_data', con)
-    #data_to_return.to_csv('./pages/ma_details_files/tmp_file/people.csv')
+    data_to_return = pd.read_sql_query('select * from raporty.people_data', con)
+    data_to_return.to_csv('./pages/ma_details_files/tmp_file/people.csv')
     data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0')
     return data_to_return
 
@@ -58,8 +62,8 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
         data = pd.read_sql_query(sql, con)
         data.to_sql('people_in_camp_pay', engine, schema='raporty', if_exists='replace', index=False)
-    #data = pd.read_sql_query('select * from raporty.people_in_camp_pay', con)
-    #data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
+    data = pd.read_sql_query('select * from raporty.people_in_camp_pay', con)
+    data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
 
@@ -80,8 +84,8 @@ def download_data_about_people_camp(con, refresh_data, engine):
         data = pd.read_sql_query(sql, con)
         data.fillna(0, inplace=True)
         data.to_sql('people_in_camp', engine, schema='raporty', if_exists='replace', index=False)
-    #data = pd.read_sql_query('select * from raporty.people_in_camp', con)
-    #data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+    data = pd.read_sql_query('select * from raporty.people_in_camp', con)
+    data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
 

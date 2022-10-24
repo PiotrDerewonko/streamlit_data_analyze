@@ -14,20 +14,50 @@ st.header('Analiza głównych mailingów adresowych ')
 with st.container():
     qamp, years = choose()
     st.header('Wersje z wybranych mailingów ')
-    tab1, tab2 = st.tabs(['Tabela przestawna', 'Kolejność kolumn'])
-    with tab2:
+    tab1, tab2, tab3 = st.tabs(['Tabela przestawna', 'korelacje', 'Kolejność kolumn'])
+    with tab3:
         sql = 'select * from raporty.people_data limit 1'
         tmp = pd.read_sql_query(sql, con)
         list_options = tmp.columns.to_list()
+        list_options = sorted(list_options)
         list_options.append('grupa_akcji_2_wysylki')
         list_options.append('grupa_akcji_3_wysylki')
         list_options.append('kod_akcji_wysylki')
+        test1 = ['']
+        if 'text_key' not in st.session_state:
+            st.session_state.text_key = ''
+        if 'text_key_1' not in st.session_state:
+            st.session_state.text_key_1 = ''
+        if 'test_list' not in st.session_state:
+            st.session_state.test_list = ''
+        test1.append(st.session_state.test_list)
+
+        def test():
+            a= st.session_state.text_key
+            for ii in range(0, len(a)):
+
+                test1.append(a[ii])
+        def test_1():
+            a= st.session_state.text_key_1
+            for ii in range(0, len(a)):
+                test1.append(a[ii])
         columns_options = st.multiselect(options=list_options, default=['grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'],
-                                         label='Prosze wybrac kolumny')
+                                         label='Prosze wybrac gift')
+        columns_options2 = st.multiselect(options=['grupa_akcji_22_wysylki', 'grupa_akcji_33_wysylki',''],
+                                         label='Modlitwy', on_change=test(), key='text_key')
+        columns_options2_1 = st.multiselect(options=['grupa_akcji_22_1_wysylki', 'grupa_akcji_33_1_wysylki',''],
+                                         label='Prosze wybrac kolumny2_1', on_change=test_1(), key='text_key_1')
+        columns_options3 = st.multiselect(options=test1,
+                                         label='Prosze wybrac kolumny3')
+        corr_method = st.selectbox(options=['pearson', 'spearman'], label='Metoda korelacji')
         def create_pivot():
-            data = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options)
+            data, char = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options, corr_method)
             st.dataframe(data)
+
+            with tab2:
+                st.pyplot(char)
         test = st.button('zaladuj dane')
+
     with tab1:
         if test:
             create_pivot()
