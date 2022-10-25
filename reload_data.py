@@ -1,3 +1,5 @@
+from dotenv import dotenv_values
+
 from database.dowload_data import download_dash_address_data, download_increase_data
 from database.source_db import deaful_set
 from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
@@ -6,7 +8,8 @@ from pages.ma_details_files.data_about_people_and_campaign_pay import download_d
     download_data_about_people_camp_pay, download_data_about_people_camp
 from pages.ma_details_files.download_data_fo_char_line import down_data_sum_and_count
 
-sorce_main = 'lwowska'
+sorce_main = dotenv_values('.env')
+sorce_main = list(sorce_main.values())[0]
 refresh_data = 'True'
 mail, con, engine = deaful_set(sorce_main)
 print('rozpoczynam przeladowanie danych')

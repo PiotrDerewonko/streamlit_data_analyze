@@ -4,3 +4,5 @@
 ./generated_files/*
 /generated_files/
 pages/ma_details_files/tmp_file/*
+.env
+

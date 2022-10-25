@@ -52,6 +52,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     pivot_to_return['SZLW'] = (pivot_to_return['liczba_wplat']/pivot_to_return['naklad'])*100
     plt.figure(figsize=(16, 9))
     columns_options.append('suma_wplat')
+    columns_options.append('liczba_wplat')
     data_all = data_all[columns_options].replace('nie posiada.+?', 0, regex=True)
     data_all= data_all[columns_options].replace('posiada.+?', 1, regex=True)
     korelacja = data_all[columns_options].corr(corr_method)

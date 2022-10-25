@@ -1,6 +1,7 @@
 from datetime import datetime as date
 
 import streamlit as st
+from dotenv import dotenv_values
 
 from database.dowload_data import download_dash_address_data, download_increase_data
 from database.source_db import deaful_set
@@ -13,7 +14,8 @@ st.set_page_config(page_title="Moduł raportowania dla firmy FSAPS",
                    page_icon=':bar_chart:',
                    layout='wide')
 
-sorce_main = 'lwowska'
+sorce_main = dotenv_values('.env')
+sorce_main = list(sorce_main.values())[0]
 mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
 

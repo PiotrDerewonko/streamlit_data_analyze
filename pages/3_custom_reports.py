@@ -1,4 +1,5 @@
 import streamlit as st
+from dotenv import dotenv_values
 
 from database.source_db import deaful_set
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
@@ -6,7 +7,8 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.distance i
     distance_between_first_and_second_pay
 
 with st.container():
-    sorce_main = 'lwowska'
+    sorce_main = dotenv_values('.env')
+    sorce_main = list(sorce_main.values())[0]
     mailings, con, engine = deaful_set(f'{sorce_main}')
     refresh_data = 'False'
 
