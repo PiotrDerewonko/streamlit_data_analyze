@@ -40,12 +40,13 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
 
     pivot_to_return_2 = data_all.pivot_table(values=['suma_wplat_stand'], aggfunc=[ my25,np.median, my75, np.std],
                                            index=columns_options)
-    #pivot_to_return_2.rename(columns={'suma_wplat': 'odchylenie'}, inplace=True)
+
     pivot_to_return = pivot_to_return.merge(pivot_to_return_2, how='left', left_index=True, right_index=True)
-    #pivot_to_return_2 = data_all.pivot_table(values=['suma_wplat'], aggfunc='mediana',
-    #                                       index=columns_options)
-    #pivot_to_return_2.rename(columns={'suma_wplat': 'mediana'}, inplace=True)
-    #pivot_to_return = pivot_to_return.merge(pivot_to_return_2, how='left', left_index=True, right_index=True)
+    a = pivot_to_return.columns
+    pivot_to_return.rename(columns={a[5]: '1 percentyl'}, inplace=True)
+    pivot_to_return.rename(columns={a[6]: 'mediana'}, inplace=True)
+    pivot_to_return.rename(columns={a[7]: '3 percentyl'}, inplace=True)
+    pivot_to_return.rename(columns={a[8]: 'Odchylenie'}, inplace=True)
     pivot_to_return['średnia'] = pivot_to_return['suma_wplat']/pivot_to_return['liczba_wplat']
     pivot_to_return['ROI'] = pivot_to_return['suma_wplat']/pivot_to_return['koszt']
     pivot_to_return['SZLW'] = (pivot_to_return['liczba_wplat']/pivot_to_return['naklad'])*100

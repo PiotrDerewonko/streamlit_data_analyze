@@ -37,9 +37,7 @@ def download_data_about_people(con, refresh_data, engine):
                 test =''
 
         #dodanie do bazy danych utowroznej tyabeli
-        data_tmp_1.to_sql('people_data', engine, schema='raporty', if_exists='replace', index=False)
-    data_to_return = pd.read_sql_query('select * from raporty.people_data', con)
-    data_to_return.to_csv('./pages/ma_details_files/tmp_file/people.csv')
+        data_tmp_1.to_csv('./pages/ma_details_files/tmp_file/people.csv')
     data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0')
     return data_to_return
 
@@ -61,9 +59,7 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,101) and tak.id_transakcji is not null
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
         data = pd.read_sql_query(sql, con)
-        data.to_sql('people_in_camp_pay', engine, schema='raporty', if_exists='replace', index=False)
-    data = pd.read_sql_query('select * from raporty.people_in_camp_pay', con)
-    data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
+        data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
 
@@ -83,9 +79,7 @@ def download_data_about_people_camp(con, refresh_data, engine):
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)'''
         data = pd.read_sql_query(sql, con)
         data.fillna(0, inplace=True)
-        data.to_sql('people_in_camp', engine, schema='raporty', if_exists='replace', index=False)
-    data = pd.read_sql_query('select * from raporty.people_in_camp', con)
-    data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+        data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
 
