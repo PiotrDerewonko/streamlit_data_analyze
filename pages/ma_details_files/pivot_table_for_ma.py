@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from dotenv import dotenv_values
 
 from database.source_db import deaful_set
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people, \
@@ -9,7 +10,8 @@ from pages.ma_details_files.data_about_people_and_campaign_pay import download_d
 
 
 def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method):
-    sorce_main = 'lwowska'
+    sorce_main = dotenv_values('.env')
+    sorce_main = list(sorce_main.values())[0]
     refresh_data = 'False'
     year_int = []
     for i in year:

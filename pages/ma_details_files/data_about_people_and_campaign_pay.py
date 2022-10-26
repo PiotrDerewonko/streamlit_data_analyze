@@ -4,7 +4,7 @@ def download_data_about_people(con, refresh_data, engine):
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
         list_of_sql = [['''select id_korespondenta, 'jest w modlitwie różańcowej' as modlitwa_rozancowa from 
         t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', 'nie jest w modlitwie różańcowej'],
-                       ['''select id_korespondenta, 'posiada ' ||count(id_materialu)::text||' dziesiątek' as ilosc_dzisiatek from 
+                       ['''select id_korespondenta, 'posiada ' ||count(id_materialu)::text||' dziesiątek' as ilosc_dziesiatek from 
                 (select distinct id_korespondenta, id_materialu from t_akcje_korespondenci tak
                 left outer join t_akcje_materialy tam
                 on tam.id_akcji=tak.id_akcji where tam.id_materialu in (694, 673, 652, 625, 620)) dzies
@@ -59,6 +59,9 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,101) and tak.id_transakcji is not null
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
         data = pd.read_sql_query(sql, con)
+
+
+        data.to_csv('./pages/ma_details_files/tmp_file/people.csv')
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
