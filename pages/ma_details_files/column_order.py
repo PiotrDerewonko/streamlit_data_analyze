@@ -2,8 +2,9 @@ import pandas as pd
 import streamlit as st
 
 def column_options(con):
-    sql = 'select * from raporty.people_data limit 1'
-    tmp = pd.read_sql_query(sql, con)
+    #sql = 'select * from raporty.people_data limit 1'
+    #tmp = pd.read_sql_query(sql, con)
+    tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0', nrows=1)
     list_options = tmp.columns.to_list()
     list_options = sorted(list_options)
     list_options.append('grupa_akcji_2_wysylki')

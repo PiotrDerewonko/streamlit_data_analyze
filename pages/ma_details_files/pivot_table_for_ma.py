@@ -50,8 +50,13 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     pivot_to_return.rename(columns={a[7]: '3 percentyl'}, inplace=True)
     pivot_to_return.rename(columns={a[8]: 'Odchylenie'}, inplace=True)
     pivot_to_return['średnia'] = pivot_to_return['suma_wplat']/pivot_to_return['liczba_wplat']
+    pivot_to_return['średnia_stand'] = pivot_to_return['suma_wplat_stand']/pivot_to_return['liczba_wplat']
     pivot_to_return['ROI'] = pivot_to_return['suma_wplat']/pivot_to_return['koszt']
     pivot_to_return['SZLW'] = (pivot_to_return['liczba_wplat']/pivot_to_return['naklad'])*100
+    pivot_to_return['Koszt na głowę'] = pivot_to_return['koszt']/pivot_to_return['naklad']
+
+    #kopjuje tabele przestawna przed formatowaniem
+    pivot_to_return_values = pivot_to_return.copy()
     plt.figure(figsize=(16, 9))
     columns_options.append('suma_wplat')
     columns_options.append('liczba_wplat')
@@ -92,7 +97,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #    d.append(d.sum().rename((k, 'Total')))
     #    for k, d in pivot_to_return.groupby(level=len(columns_options)-2)
     #]).append(pivot_to_return.sum().rename(('Grand', 'Total')))
-    return t, plt
+    return t, plt, pivot_to_return_values
 
 
 

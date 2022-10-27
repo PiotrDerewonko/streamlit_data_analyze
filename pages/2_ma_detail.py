@@ -2,6 +2,7 @@ import streamlit as st
 from dotenv import dotenv_values
 
 from database.source_db import deaful_set
+from pages.ma_details_files.char_options.char_options import char_options
 from pages.ma_details_files.chars_for_days import charts
 from pages.ma_details_files.chose_campaign import choose
 from pages.ma_details_files.column_order import column_options
@@ -17,16 +18,20 @@ with st.container():
     qamp, years = choose()
     st.header('Wersje z wybranych mailingów ')
     tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu'])
+    with tab5:
+        char_options()
     with tab4:
         columns_options, corr_method = column_options(con)
 
         def create_pivot():
-            data, char = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options, corr_method)
+            data, char, data_values = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options, corr_method)
             st.dataframe(data)
+
 
             with tab3:
                 st.pyplot(char)
         test = st.button('Przelicz dane')
+
 
     with tab2:
         if test:
