@@ -100,7 +100,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #]).append(pivot_to_return.sum().rename(('Grand', 'Total')))
     if len(columns_options)>=3:
         columns_options = columns_options[:3]
-    char = pivot_and_chart_for_dash(data_all, columns_options, 'me_detail', 'test', 'test', {},pivot_to_return_values, )
+    char = pivot_and_chart_for_dash(data_all, columns_options, 'me_detail', 'test', 'test', {},pivot_to_return_values)
     return t, plt, pivot_to_return_values
 
 

@@ -47,7 +47,7 @@ def change_short_names_db(data):
     return data
 
 def modifcate_data(data, type, multindex):
-    if type != 'increase':
+    if type != 'increase' and type != 'me_detail':
         'zmieniam typ kolumny z rokiem na tekst w przeciwnym wypdaku przestaje dzialac'
         data['grupa_akcji_3'] = data['grupa_akcji_3'].astype(str)
         gr3 = data['grupa_akcji_3'].drop_duplicates().to_list()

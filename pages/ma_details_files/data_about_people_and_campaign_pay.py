@@ -112,8 +112,6 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
         data = pd.read_sql_query(sql, con)
 
-
-        data.to_csv('./pages/ma_details_files/tmp_file/people.csv')
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
