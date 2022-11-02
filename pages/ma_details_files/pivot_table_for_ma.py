@@ -5,6 +5,7 @@ import seaborn as sns
 from dotenv import dotenv_values
 
 from database.source_db import deaful_set
+from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people, \
     download_data_about_people_camp_pay, download_data_about_people_camp
 
@@ -97,6 +98,9 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #    d.append(d.sum().rename((k, 'Total')))
     #    for k, d in pivot_to_return.groupby(level=len(columns_options)-2)
     #]).append(pivot_to_return.sum().rename(('Grand', 'Total')))
+    if len(columns_options)>=3:
+        columns_options = columns_options[:3]
+    char = pivot_and_chart_for_dash(data_all, columns_options, 'me_detail', 'test', 'test', {},pivot_to_return_values, )
     return t, plt, pivot_to_return_values
 
 

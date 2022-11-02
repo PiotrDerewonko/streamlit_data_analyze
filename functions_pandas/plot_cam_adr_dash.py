@@ -12,7 +12,7 @@ from streamlit_functions.dashboard.operation_for_char import create_df, modifcat
     change_short_names_ma, change_short_names_db, check_max_value, label_of_axis
 
 
-def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict):
+def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *pivot_to_return_values, **temp_df_fin):
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)

@@ -8,7 +8,56 @@ def download_data_about_people(con, refresh_data, engine):
                 (select distinct id_korespondenta, id_materialu from t_akcje_korespondenci tak
                 left outer join t_akcje_materialy tam
                 on tam.id_akcji=tak.id_akcji where tam.id_materialu in (694, 673, 652, 625, 620)) dzies
-                group by id_korespondenta''', 'nie ma żadnej dziesiątki']]
+                group by id_korespondenta''', 'nie ma żadnej dziesiątki'],
+                       ['''select id_korespondenta, 'dawne wojewodzkie' as typ_miejscowosci 
+                       from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all
+                       where miejscowosc in ( 'BIAŁA PODLASKA'	,
+ 'BIAŁYSTOK'	,
+ 'BIELSKO-BIAŁA'	,
+ 'BYDGOSZCZ'	,
+ 'CHEŁM'	,
+ 'CIECHANÓW'	,
+ 'CZĘSTOCHOWA'	,
+ 'ELBLĄG'	,
+ 'GDAŃSK'	,
+ 'GORZÓW WIELKOPOLSKI'	,
+ 'JELENIA GÓRA'	,
+ 'KALISZ'	,
+ 'KATOWICE'	,
+ 'KONIN'	,
+ 'KOSZALIN'	,
+ 'KRAKÓW'	,
+ 'KROSNO'	,
+ 'LEGNICA'	,
+ 'LESZNO'	,
+ 'LUBLIN'	,
+ 'ŁOMŻA'	,
+ 'ŁÓDŹ'	,
+ 'NOWY SĄCZ'	,
+ 'OLSZTYN'	,
+ 'OPOLE'	,
+ 'OSTROŁĘKA'	,
+ 'PIŁA'	,
+ 'PIOTRKÓW TRYBUNALSKI'	,
+ 'PŁOCK'	,
+ 'POZNAŃ'	,
+ 'PRZEMYŚL'	,
+ 'RADOM'	,
+ 'RZESZÓW'	,
+ 'SIEDLCE'	,
+ 'SIERADZ'	,
+ 'SKIERNIEWICE'	,
+ 'SŁUPSK'	,
+ 'SUWAŁKI'	,
+ 'SZCZECIN'	,
+ 'TARNOBRZEG'	,
+ 'TARNÓW'	,
+ 'TORUŃ'	,
+ 'WAŁBRZYCH'	,
+ 'WARSZAWA'	,
+ 'WŁOCŁAWEK'	,
+ 'ZAMOŚĆ'	,
+ 'ZIELONA GÓRA'	)''', 'pozostałe']]
 
         data_tmp_1 = pd.read_sql_query('select id_korespondenta from t_korespondenci', con)
         for j in list_of_sql:
@@ -23,6 +72,7 @@ def download_data_about_people(con, refresh_data, engine):
         material = pd.read_sql_query(sql, con)
         list_material = material['id_materialu'].to_list()
         for i in list_material:
+            print(f'dodawanie material o id {i}')
             name = pd.read_sql_query(f'''select kod_materialu from t_materialy where id_materialu = {i}''', con)
             name = name['kod_materialu'].iloc[0]
             sql_2 = f'''select distinct id_korespondenta, 'posiada '||kod_materialu as "{name}" from t_akcje_korespondenci tak
@@ -33,12 +83,14 @@ def download_data_about_people(con, refresh_data, engine):
             try:
                 data_tmp_1 = data_tmp_1.merge(tmp, on='id_korespondenta', how='left')
                 data_tmp_1[tmp.columns[1]].fillna(f'nie posiada {name}', inplace=True)
+                print(f'dodano material o id {i}')
             except:
-                test =''
+                print(f'nie dodano materialu o id {i}')
 
         #dodanie do bazy danych utowroznej tyabeli
         data_tmp_1.to_csv('./pages/ma_details_files/tmp_file/people.csv')
-    data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0')
+    data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+                                 low_memory=False)
     return data_to_return
 
 def download_data_about_people_camp_pay(con, refresh_data, engine):
