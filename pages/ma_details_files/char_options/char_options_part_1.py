@@ -2,6 +2,10 @@ import streamlit as st
 
 def char_options_part1():
     with st.container():
+        test = {'sw': True}
+
+        def create_df(data_all, label, value):
+            data_all[f'{label}'] = value
         c1, c2, c3, c4 = st.columns(4)
         list_of_objects =[[c1, 'sw', 'Suma wpłat', 'swax', 'Oś dla sumy wpłat', ['Oś główna', 'Oś pomocnicza'],
                            'swchar', 'Rodzaj wykresu dla Sumy wpłat', ['Słupkowy', 'Liniowy'], True],
@@ -11,12 +15,17 @@ def char_options_part1():
                            'kcchar', 'Rodzaj wykresu dla Kosztu', ['Słupkowy', 'Liniowy'], True],
                           [c4, 'nc', 'Nakład', 'ncax', 'Oś dla nakładu', ['Oś pomocnicza', 'Oś główna'],
                            'ncchar', 'Rodzaj wykresu dla Nakładu', ['Liniowy', 'Słupkowy'], True]]
-        #todo tu dodac inicaljizacje
+
+        for x in list_of_objects:
+            if x[1] not in st.session_state:
+                st.session_state[x[1]] = x[9]
         for i in list_of_objects:
             with i[0]:
-                i[1] = st.checkbox(i[2], value=i[9])
+                i[1] = st.checkbox(i[2], value=i[9], on_change=create_df(test, i[1], st.session_state.sw))
                 i[3] = st.selectbox(i[4], i[5])
                 i[6] = st.selectbox(i[7], i[8])
+
+        st.markdown(test)
 
 
 def char_options_part2():

@@ -21,8 +21,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         temp_df = change_short_names_ma(temp_df)
     elif type =='nonaddress':
         temp_df = change_short_names_db(temp_df)
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'me_detail'):
-        y_label, y_sec_label = label_of_axis(temp_df)
+
     else:
         y_label = 'Ilość pozyskanych'
 
@@ -32,6 +31,13 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     else:
         pivot_table_ma = args[0]
         temp_df = args[1]
+        if len(temp_df.loc[temp_df['oś'] == 'Oś pomocnicza'])>0:
+            temp_df_fin_sec = True
+        else:
+            temp_df_fin_sec = False
+
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):
+        y_label, y_sec_label = label_of_axis(temp_df)
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
@@ -53,7 +59,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     p.title.text_font_size = '18pt'
 
 
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'me_detail'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):
         p.y_range = Range1d(0, max_value_for_y_prime*1.1)
 
     if ((type != 'increase') & (type != 'dist') & (type != 'dist2')) and (max_value_for_y_second != 0):
