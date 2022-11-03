@@ -21,6 +21,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_about_people = download_data_about_people(con, refresh_data, engine)
     data_about_pay = download_data_about_people_camp_pay(con, refresh_data, engine)
     data_about_camp = download_data_about_people_camp(con, refresh_data, engine)
+
     if len(camp)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp)]
     if len(year_int)>=1:
@@ -100,8 +101,14 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #]).append(pivot_to_return.sum().rename(('Grand', 'Total')))
     if len(columns_options)>=3:
         columns_options = columns_options[:3]
-    char = pivot_and_chart_for_dash(data_all, columns_options, 'me_detail', 'test', 'test', {},pivot_to_return_values)
-    return t, plt, pivot_to_return_values
+    test_dict = {'Nazwa parametru': ['suma_wplat'], 'oś': ['Oś główna'], 'Opcje': ['Wykres Słupkowy']}
+    temp_df_fin = pd.DataFrame(data=test_dict)
+    char, a = pivot_and_chart_for_dash(data_all, columns_options[0:2], 'me_detail', 'test', 'test', {},pivot_to_return_values,
+                                    temp_df_fin)
+
+
+
+    return t, plt,  pivot_to_return_values, char
 
 
 

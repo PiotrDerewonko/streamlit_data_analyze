@@ -24,12 +24,14 @@ with st.container():
         columns_options, corr_method = column_options(con)
 
         def create_pivot():
-            data, char, data_values = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options, corr_method)
+            data, char, data_values,   test2 = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options, corr_method)
             st.dataframe(data)
 
 
             with tab3:
                 st.pyplot(char)
+            with tab1:
+                st.bokeh_chart(test2)
         test = st.button('Przelicz dane')
 
 

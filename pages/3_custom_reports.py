@@ -47,7 +47,7 @@ with st.container():
     data['date_part'] = data['date_part'].astype(str)
     char, pivot = pivot_and_chart_for_dash(data, multindex, 'dist',
                                            'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
-                                           'źródlo pozyskania', {})
+                                           'źródlo pozyskania', {}, [], [])
     char_stack, pivot_stack = pivot_and_chart_for_dash(data, multindex, 'dist2',
                                            'Odstęp czasu między pierwszą a drugą wpłatą dla osób pozyskanych z lat ',
                                            'źródlo pozyskania', {})

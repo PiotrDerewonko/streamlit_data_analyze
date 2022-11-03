@@ -1,6 +1,5 @@
 import itertools
 
-from bokeh.models import HoverTool
 from bokeh.models import LinearAxis, Range1d
 from bokeh.palettes import Dark2_5 as palette
 from bokeh.plotting import figure, ColumnDataSource
@@ -12,26 +11,34 @@ from streamlit_functions.dashboard.operation_for_char import create_df, modifcat
     change_short_names_ma, change_short_names_db, check_max_value, label_of_axis
 
 
-def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *pivot_to_return_values, **temp_df_fin):
+def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args):
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     data, gr3, from_, to_ = modifcate_data(data, type, multindex)
-    data = change_name(data)
+    if type != 'me_detail':
+        data = change_name(data)
     if type == 'address':
         temp_df = change_short_names_ma(temp_df)
     elif type =='nonaddress':
         temp_df = change_short_names_db(temp_df)
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'me_detail'):
         y_label, y_sec_label = label_of_axis(temp_df)
     else:
         y_label = 'Ilość pozyskanych'
 
     index_for_char = data.groupby(multindex)
-    pivot_table_ma = create_pivot_table(data, multindex, type)
+    if type != 'me_detail':
+        pivot_table_ma = create_pivot_table(data, multindex, type)
+    else:
+        pivot_table_ma = args[0]
+        temp_df = args[1]
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
-        max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
+        try:
+            max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
+        except:
+            max_value_for_y_second = 0
 
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
@@ -46,7 +53,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *pivot
     p.title.text_font_size = '18pt'
 
 
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'me_detail'):
         p.y_range = Range1d(0, max_value_for_y_prime*1.1)
 
     if ((type != 'increase') & (type != 'dist') & (type != 'dist2')) and (max_value_for_y_second != 0):
@@ -80,9 +87,9 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *pivot
         p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
                      width=0.7, legend_label=pt_columns, color=colors_fin)
 
-    char_opt.char_options(p)
+    #char_opt.char_options(p)
 
-    if type != 'increase':
+    if (type != 'increase') and (type != 'me_detail'):
         #dodanie dodatkowych pol do tabeli przestawnej
         pivot_table_ma = pivot_table_ma.style.format(na_rep='MISSING',
                     formatter={
@@ -96,17 +103,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *pivot
                         ('index_liczba_wplat'): lambda x: "{: .2f} %".format(x),
                         ('index_suma_wplat'): lambda x: "{: .2f} %".format(x),
                                })
-        try:
-            index_name = list(source.data.values())
-            index_name = index_name.tra
-            hover = HoverTool(tooltips=[  # ("suma_wplat", "@suma_wplat"), ("liczba_wplat", "@liczba_wplat"),
-                ('teddddddddddddddst', f'@{index_name[1]}')
-            ])
-            p.add_tools(hover)
-        except:
-            a='test'
-
-
 
     return p, pivot_table_ma
 

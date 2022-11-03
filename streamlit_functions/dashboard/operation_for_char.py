@@ -47,36 +47,19 @@ def change_short_names_db(data):
     return data
 
 def modifcate_data(data, type, multindex):
-    if type != 'increase' and type != 'me_detail':
-        'zmieniam typ kolumny z rokiem na tekst w przeciwnym wypdaku przestaje dzialac'
-        data['grupa_akcji_3'] = data['grupa_akcji_3'].astype(str)
+    for i in multindex:
+        data[f'{i}'] = data[f'{i}'].astype(str)
+
+    if 'grupa_akcji_3' in multindex:
         gr3 = data['grupa_akcji_3'].drop_duplicates().to_list()
+        gr3.sort()
+        'pobieram zakres lat'
+        from_ = gr3[0]
+        to_ = gr3[-1]
     else:
-        data.sort_values(multindex, inplace=True)
-        data['miesiac_dodania'] = data['miesiac_dodania'].astype(int)
-        data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
-        for tmp_a in range(1, 10):
-           data['miesiac_dodania'].loc[data['miesiac_dodania'] == f"{tmp_a}"] = f"0{tmp_a}"
-        data['miesiac_dodania'] = data['miesiac_dodania'].astype(str)
-        data['grupa_akcji_1'] = data['grupa_akcji_1'].astype(str)
-        data['grupa_akcji_2'] = data['grupa_akcji_2'].astype(str)
-        data['rok_dodania'] = data['rok_dodania'].astype(int)
-        data['rok_dodania'] = data['rok_dodania'].astype(str)
-        data['kod_akcji'] = data['kod_akcji'].astype(str)
-        gr3 = data['rok_dodania'].drop_duplicates().to_list()
-    if type =='nonaddress':
-        data['miesiac'] = data['miesiac'].astype(str)
-    if (type =='dist') | (type =='dist2'):
-        gr3 = data['date_part'].drop_duplicates().to_list()
-        data['plec'] = data['plec'].astype(str)
-        data['okreg_pocztowy'] = data['okreg_pocztowy'].astype(str)
-    gr3.sort()
-
-
-    'pobieram zakres lat'
-    from_ = gr3[0]
-    to_ = gr3[-1]
-
+        gr3 = []
+        from_ = 0
+        to_ = 0
     return data, gr3, from_, to_
 
 def create_pivot_table(data, multindex, type):

@@ -1,4 +1,8 @@
 import pandas as pd
+
+from functions_pandas.short_mailings_names import change_name
+
+
 def download_data_about_people(con, refresh_data, engine):
     if refresh_data == 'True':
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
@@ -132,6 +136,7 @@ def download_data_about_people_camp(con, refresh_data, engine):
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)'''
         data = pd.read_sql_query(sql, con)
         data.fillna(0, inplace=True)
+        data = change_name(data)
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
