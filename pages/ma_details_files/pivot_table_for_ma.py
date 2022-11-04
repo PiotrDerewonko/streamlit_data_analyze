@@ -11,7 +11,7 @@ from pages.ma_details_files.pivot_table.pivot_table_for_ma_details import create
     style_pivot_table_for_ma
 
 
-def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method):
+def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char):
     sorce_main = dotenv_values('.env')
     sorce_main = list(sorce_main.values())[0]
     refresh_data = 'False'
@@ -59,11 +59,12 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     columns_options.remove('liczba_wplat')
     if len(columns_options) > 3:
         columns_options = columns_options[:3]
-    test_dict = {'Nazwa parametru': ['suma_wplat', 'liczba_wplat'], 'oś': ['Oś główna', 'Oś pomocnicza'],
-                 'Opcje': ['Wykres Słupkowy', 'Wykres liniowy']}
-    temp_df_fin = pd.DataFrame(data=test_dict)
+        pivot_to_return_values = create_pivot_table_for_ma_details(data_all_copy, columns_options)
+    #test_dict = {'Nazwa parametru': ['suma_wplat', 'liczba_wplat'], 'oś': ['Oś główna', 'Oś pomocnicza'],
+    #             'Opcje': ['Wykres Słupkowy', 'Wykres liniowy']}
+    #temp_df_fin = pd.DataFrame(data=test_dict)
     char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'test', 'test', {},
-                                       pivot_to_return_values, temp_df_fin)
+                                       pivot_to_return_values, options_char)
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 
 

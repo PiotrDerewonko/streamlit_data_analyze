@@ -22,12 +22,15 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     elif type =='nonaddress':
         temp_df = change_short_names_db(temp_df)
 
-    else:
-        y_label = 'Ilość pozyskanych'
+    y_label = 'Ilość pozyskanych'
 
     index_for_char = data.groupby(multindex)
     if type != 'me_detail':
         pivot_table_ma = create_pivot_table(data, multindex, type)
+        if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
+            temp_df_fin_sec = True
+        else:
+            temp_df_fin_sec = False
     else:
         pivot_table_ma = args[0]
         temp_df = args[1]
@@ -36,7 +39,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         else:
             temp_df_fin_sec = False
 
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):
+    if ((type != 'increase') & (type != 'dist') & (type != 'dist2')) | (temp_df_fin_sec ==True):
         y_label, y_sec_label = label_of_axis(temp_df)
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):

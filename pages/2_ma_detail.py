@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 from dotenv import dotenv_values
 
@@ -19,12 +20,15 @@ with st.container():
     st.header('Wersje z wybranych mailingów ')
     tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu'])
     with tab5:
-        char_options()
+        options_char = char_options()
     with tab4:
         columns_options, corr_method = column_options(con)
 
         def create_pivot():
-            data, char_corr, data_values, char_default = create_pivot_table(con, refresh_data, engine, qamp, years, columns_options, corr_method)
+            options_data_frame = pd.DataFrame(data=options_char)
+            data, char_corr, data_values, char_default = create_pivot_table(con, refresh_data, engine, qamp, years,
+                                                                            columns_options, corr_method, options_data_frame
+                                                                            )
             st.dataframe(data)
 
 

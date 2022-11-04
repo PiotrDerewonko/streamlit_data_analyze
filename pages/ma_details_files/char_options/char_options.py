@@ -10,6 +10,7 @@ def char_options():
     refresh_data = 'False'
     with st.container():
         st.subheader("Wartośc bezwzgledne")
-        char_options_part1()
+        option_1 = char_options_part1()
         st.subheader("Współczynniki")
         char_options_part2()
+    return option_1
