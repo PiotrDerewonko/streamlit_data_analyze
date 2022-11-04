@@ -21,6 +21,7 @@ def options_col1_suma_wplat(axis_1, char_1):
         dataframe = pd.DataFrame(data=test_dict)
     else:
         test_dict = {}
+        dataframe = pd.DataFrame(data=test_dict)
     return test_dict, dataframe
 
 def options_col1_liczba_wplat(axis_1, char_1):
@@ -40,6 +41,7 @@ def options_col1_liczba_wplat(axis_1, char_1):
         dataframe = pd.DataFrame(data=test_dict)
     else:
         test_dict = {}
+        dataframe = pd.DataFrame(data=test_dict)
     return test_dict, dataframe
 
 def options_col1_naklad(axis_1, char_1):
@@ -59,6 +61,7 @@ def options_col1_naklad(axis_1, char_1):
         dataframe = pd.DataFrame(data=test_dict)
     else:
         test_dict = {}
+        dataframe = pd.DataFrame(data=test_dict)
     return test_dict, dataframe
 
 def options_col1_koszt(axis_1, char_1):
@@ -78,4 +81,5 @@ def options_col1_koszt(axis_1, char_1):
         dataframe = pd.DataFrame(data=test_dict)
     else:
         test_dict = {}
+        dataframe = pd.DataFrame(data=test_dict)
     return test_dict, dataframe

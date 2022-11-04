@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 from dotenv import dotenv_values
 
@@ -12,5 +13,6 @@ def char_options():
         st.subheader("Wartośc bezwzgledne")
         option_1 = char_options_part1()
         st.subheader("Współczynniki")
-        char_options_part2()
-    return option_1
+        option_2 = char_options_part2()
+        all = pd.concat([option_1, option_2])
+    return all
