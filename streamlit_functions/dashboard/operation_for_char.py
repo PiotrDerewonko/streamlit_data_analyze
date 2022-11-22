@@ -46,21 +46,40 @@ def change_short_names_db(data):
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
-def modifcate_data(data, type, multindex):
+def modifcate_data(data, type, multindex, title):
     for i in multindex:
         data[f'{i}'] = data[f'{i}'].astype(str)
 
     if 'grupa_akcji_3' in multindex:
-        gr3 = data['grupa_akcji_3'].drop_duplicates().to_list()
-        gr3.sort()
+        years = data['grupa_akcji_3'].drop_duplicates().to_list()
+        years.sort()
         'pobieram zakres lat'
-        from_ = gr3[0]
-        to_ = gr3[-1]
+        from_ = years[0]
+        to_ = years[-1]
+    elif 'grupa_akcji_3_wysylki' in multindex:
+        years = data['grupa_akcji_3_wysylki'].drop_duplicates().to_list()
+        years.sort()
+        'pobieram zakres lat'
+        from_ = years[0]
+        to_ = years[-1]
     else:
-        gr3 = []
-        from_ = 0
-        to_ = 0
-    return data, gr3, from_, to_
+        from_ = '0'
+        to_ = '0'
+        years = []
+    if 'grupa_akcji_2' in multindex:
+        list_mailings = data['grupa_akcji_2'].drop_duplicates().to_list()
+        list_mailings.sort()
+    elif 'grupa_akcji_2_wysylki' in multindex:
+        list_mailings = data['grupa_akcji_2_wysylki'].drop_duplicates().to_list()
+        list_mailings.sort()
+    else:
+        list_mailings = []
+    title_fin = title
+    if len(list_mailings) >= 1:
+        title_fin = title_fin + f" dla mailingów {list_mailings}"
+    if len(years) >= 1:
+        title_fin = title_fin + f" za lata {years}"
+    return data,  title_fin
 
 def create_pivot_table(data, multindex, type):
     if type == 'increase':

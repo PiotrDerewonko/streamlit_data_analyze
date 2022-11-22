@@ -14,7 +14,8 @@ from streamlit_functions.dashboard.operation_for_char import create_df, modifcat
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args):
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
-    data, gr3, from_, to_ = modifcate_data(data, type, multindex)
+    data,  title_fin = modifcate_data(data, type, multindex, title)
+
     if type != 'me_detail':
         data = change_name(data)
     if type == 'address':
@@ -34,6 +35,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     else:
         pivot_table_ma = args[0]
         temp_df = args[1]
+        title_fin = title_fin + args[2]
         if len(temp_df.loc[temp_df['oś'] == 'Oś pomocnicza'])>0:
             temp_df_fin_sec = True
         else:
@@ -54,12 +56,14 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     #tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
                height=700, width=1300,
-               title=f"{title}{from_} - {to_}",
+               title=f"{title_fin}",
+               #title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label)
 
     p.title.text_font_size = '18pt'
+    p.xaxis.major_label_orientation = "vertical"
 
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):

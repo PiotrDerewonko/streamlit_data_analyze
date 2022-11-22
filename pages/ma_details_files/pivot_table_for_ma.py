@@ -24,9 +24,24 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_about_camp = download_data_about_people_camp(con, refresh_data, engine)
 
     if len(camp)>=1:
-        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp)]
+        z = 0
+        camp2 = camp.copy()
+        for j in camp2:
+            if j == 'MAILING Q1':
+                camp2[z] = 'Q1.1'
+            if j == 'MAILING Q2':
+                camp2[z] = 'Q2'
+            if j == 'MAILING Q3':
+                camp2[z] = 'Q3.1'
+            if j == 'MAILING Q4':
+                camp2[z] = 'Q4'
+            z += 1
+
+
+        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp2)]
     if len(year_int)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
+        year_int.sort()
     data_all = pd.merge(data_about_camp, data_about_pay, left_on=['id_korespondenta', 'kod_akcji_wysylki'],
                         right_on=['id_korespondenta', 'kod_akcji_wplaty'], how='left')
     data_all = pd.merge(data_all, data_about_people, on='id_korespondenta', how='left')
@@ -63,8 +78,8 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #test_dict = {'Nazwa parametru': ['suma_wplat', 'liczba_wplat'], 'oś': ['Oś główna', 'Oś pomocnicza'],
     #             'Opcje': ['Wykres Słupkowy', 'Wykres liniowy']}
     #temp_df_fin = pd.DataFrame(data=test_dict)
-    char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'test', 'test', {},
-                                       pivot_to_return_values, options_char)
+    char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'Wykres ', 'Kolumny', {},
+                                       pivot_to_return_values, options_char, f' za lata {year_int}')
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 
 

@@ -30,6 +30,7 @@ with st.container():
                                                                             columns_options, corr_method, options_data_frame
                                                                             )
             st.dataframe(data)
+            st.download_button('test', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
 
 
             with tab3:
@@ -42,6 +43,8 @@ with st.container():
     with tab2:
         if test:
             create_pivot()
+
+
     st.header('Wykresy w dniach od nadania')
     charts(qamp, con, years, refresh_data, engine)
 
