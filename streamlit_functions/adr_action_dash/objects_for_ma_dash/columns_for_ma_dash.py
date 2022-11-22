@@ -1,7 +1,8 @@
 import streamlit as st
+
 from streamlit_functions.dashboard.create_df_for_pivot import create_df
 
-# todo moze przerobic na funckej for z listy
+
 def column_sum_amount(dictionary_options):
     sc = st.checkbox('Suma wpłat', value=True, on_change=create_df(dictionary_options, "sw",
                                                                    st.session_state.sw),

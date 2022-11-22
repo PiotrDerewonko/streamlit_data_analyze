@@ -13,7 +13,6 @@ with st.container():
     refresh_data = 'False'
 
     st.header("Odległość między pierwszą a drugą wpłatą")
-    #todo dodac plec miejscowosc, rozmiar miejscowosc, okreg pcoztowy
 
     multindex = st.multiselect(options=['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'status_first_pay',
                                         'date_part', 'plec', 'okreg_pocztowy'],

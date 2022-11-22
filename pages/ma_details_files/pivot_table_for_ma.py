@@ -63,10 +63,13 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #tworze wykres korelacji
     for j in columns_options:
         tmp = data_all[j].drop_duplicates().sort_values()
-        tmp = tmp.reset_index()
-        a = tmp.dtypes
-        for k, row in tmp.iterrows():
-            data_all = data_all[j].replace(row, k)
+        tmp = tmp.to_frame()
+        #tmp.reset_index(inplace=True)
+        type_of_tmp = tmp.dtypes
+        if type_of_tmp[j] == 'object':
+            for k, row in tmp.iterrows():
+                data_all[j] = data_all[j].replace(row[j], f'{k}')
+            data_all[j] = data_all[j].astype(int)
     data_all = data_all[columns_options].replace('nie posiada.+?', 0, regex=True)
     data_all= data_all[columns_options].replace('posiada.+?', 1, regex=True)
     korelacja = data_all[columns_options].corr(corr_method)
