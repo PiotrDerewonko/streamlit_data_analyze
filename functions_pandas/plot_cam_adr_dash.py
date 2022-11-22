@@ -35,7 +35,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     else:
         pivot_table_ma = args[0]
         temp_df = args[1]
-        title_fin = title_fin + args[2]
+        title_fin = args[2]
         if len(temp_df.loc[temp_df['oś'] == 'Oś pomocnicza'])>0:
             temp_df_fin_sec = True
         else:

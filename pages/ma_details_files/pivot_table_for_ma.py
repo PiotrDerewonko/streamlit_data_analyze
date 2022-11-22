@@ -61,6 +61,12 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_all_copy = data_all.copy()
 
     #tworze wykres korelacji
+    for j in columns_options:
+        tmp = data_all[j].drop_duplicates().sort_values()
+        tmp = tmp.reset_index()
+        a = tmp.dtypes
+        for k, row in tmp.iterrows():
+            data_all = data_all[j].replace(row, k)
     data_all = data_all[columns_options].replace('nie posiada.+?', 0, regex=True)
     data_all= data_all[columns_options].replace('posiada.+?', 1, regex=True)
     korelacja = data_all[columns_options].corr(corr_method)
@@ -79,7 +85,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #             'Opcje': ['Wykres Słupkowy', 'Wykres liniowy']}
     #temp_df_fin = pd.DataFrame(data=test_dict)
     char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'Wykres ', 'Kolumny', {},
-                                       pivot_to_return_values, options_char, f' za lata {year_int}')
+                                       pivot_to_return_values, options_char, f'Dane dla mailingu {camp} za lata {year_int}')
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 
 

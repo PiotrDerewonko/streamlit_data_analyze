@@ -17,6 +17,10 @@ refresh_data = 'False'
 st.header('Analiza głównych mailingów adresowych ')
 with st.container():
     qamp, years = choose()
+
+    st.header('Wykresy w dniach od nadania')
+    charts(qamp, con, years, refresh_data, engine)
+
     st.header('Wersje z wybranych mailingów ')
     tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu'])
     with tab5:
@@ -45,7 +49,5 @@ with st.container():
             create_pivot()
 
 
-    st.header('Wykresy w dniach od nadania')
-    charts(qamp, con, years, refresh_data, engine)
 
     st.header('Struktura kosztów')
