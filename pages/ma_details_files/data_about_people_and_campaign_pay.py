@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 
 from functions_pandas.short_mailings_names import change_name
@@ -6,16 +8,16 @@ from functions_pandas.short_mailings_names import change_name
 def download_data_about_people(con, refresh_data, engine):
     if refresh_data == 'True':
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
-        list_of_sql = [['''select id_korespondenta, 'jest w \
+        list_of_sql = [['''select id_korespondenta, 'jest w \n
         modlitwie różańcowej' as modlitwa_rozancowa from 
-        t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', 'nie jest \
-        w modlitwie różańcowej'],
+        t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', '''nie jest \n
+        w modlitwie różańcowej'''],
                        ['''select id_korespondenta, 'posiada ' ||count(id_materialu)::text||' dziesiątek' as ilosc_dziesiatek from 
                 (select distinct id_korespondenta, id_materialu from t_akcje_korespondenci tak
                 left outer join t_akcje_materialy tam
                 on tam.id_akcji=tak.id_akcji where tam.id_materialu in (694, 673, 652, 625, 620)) dzies
-                group by id_korespondenta''', 'nie ma \
-                żadnej dziesiątki'],
+                group by id_korespondenta''', '''nie ma \n
+                żadnej dziesiątki'''],
                        ['''select id_korespondenta, 'dawne wojewodzkie' as typ_miejscowosci 
                        from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all
                        where miejscowosc in ( 'BIAŁA PODLASKA'	,
@@ -64,15 +66,68 @@ def download_data_about_people(con, refresh_data, engine):
  'WARSZAWA'	,
  'WŁOCŁAWEK'	,
  'ZAMOŚĆ'	,
- 'ZIELONA GÓRA'	)''', 'pozostałe']]
+ 'ZIELONA GÓRA'	)''', 'pozostałe'],['''select id_korespondenta,
+       case
+           when okreg_pocztowy = 0 then 'warszawski'
+           when okreg_pocztowy = 1 then 'olsztyński'
+           when okreg_pocztowy = 2 then 'lubelski'
+           when okreg_pocztowy = 3 then 'krakowski'
+           when okreg_pocztowy = 4 then 'katowicki'
+           when okreg_pocztowy = 5 then 'wrocławski'
+           when okreg_pocztowy = 6 then 'poznański'
+           when okreg_pocztowy = 7 then 'szczeciński'
+           when okreg_pocztowy = 8 then 'gdański'
+           when okreg_pocztowy = 9 then 'łódzki'
+           end as okreg_pocztowy       from (
+select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all) a''', 'brak'
+], ['''select id_korespondenta, grupa_akcji_1 as grupa_akcji_1_dodania, grupa_akcji_2 as grupa_akcji_2_dodania, grupa_akcji_3 as grupa_akcji_3_dodania ,
+ date_part('year', data ) as rok_dodania from v_akcja_dodania_korespondenta2''',
+    '']]
 
         data_tmp_1 = pd.read_sql_query('select id_korespondenta from t_korespondenci', con)
         for j in list_of_sql:
             sql = j[0]
             data_tmp_2 = pd.read_sql_query(sql, con)
             data_tmp_1 = data_tmp_1.merge(data_tmp_2, on='id_korespondenta', how='left')
-            data_tmp_1[data_tmp_2.columns[1]].fillna(j[1], inplace=True)
+            try:
+                data_tmp_1[data_tmp_2.columns[1]].fillna(j[1], inplace=True)
+            except:
+                a=""
+        # okreslenie typu korespondenta
+        try:
+            rok = datetime.now().year
+            liczba_lat = 3
+            for i in range(rok-liczba_lat, rok+1):
+                sql = f'''select id_korespondenta, count(kwota) as liczba_wplat_{i} from t_transakcje where data_wplywu_srodkow between '{i}-01-01' and '{i}-12-31'
+                    group by id_korespondenta'''
+                data_tmp_3 = pd.read_sql_query(sql, con)
+                data_tmp_1 = data_tmp_1.merge(data_tmp_3, on='id_korespondenta', how='left')
+                data_tmp_1[f'liczba_wplat_{i}'].fillna(0, inplace=True)
+            data_tmp_1['liczba_lat_placacych'] = 0
+            data_tmp_1['laczna_liczba_wplat'] = 0
+            for i in range(rok - liczba_lat, rok+1):
+                data_tmp_1['liczba_lat_placacych'].loc[data_tmp_1[f'liczba_wplat_{i}']>=1] = data_tmp_1['liczba_lat_placacych'] + 1
+                data_tmp_1['laczna_liczba_wplat'] = data_tmp_1['laczna_liczba_wplat'] + data_tmp_1[f'liczba_wplat_{i}']
+            data_tmp_1['średnia_liczba_wplat'] = data_tmp_1['laczna_liczba_wplat']/data_tmp_1['liczba_lat_placacych']
+            data_tmp_1['typ_darczyńcy'] ='pozostali'
+            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']>=2) &
+                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
+                                            (data_tmp_1['liczba_lat_placacych']==4)] = 'lojalny darczyńca'
+            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
+                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
+                                            (data_tmp_1['liczba_lat_placacych']==4)] = 'systematyczny darczyńca'
+            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
+                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
+                                            (data_tmp_1['liczba_lat_placacych']==3)] = 'systematyczny z jedna przerwa darczyńca'
+            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
+                                            (data_tmp_1['rok_dodania']>=rok-1) &
+                                            (data_tmp_1['liczba_lat_placacych']==2)] = 'potencjalny systematyczny'
+            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']>=2) &
+                                            (data_tmp_1['rok_dodania']>=rok-1) &
+                                            (data_tmp_1['liczba_lat_placacych']==2)] = 'potencjalny lojalny'
 
+        except:
+            a=""
 
         # tutaj dajemy tylko materialy z bazy
         sql = '''select id_materialu from public.t_materialy where id_typu_materialu in (8, 12)'''
@@ -82,8 +137,8 @@ def download_data_about_people(con, refresh_data, engine):
             print(f'dodawanie material o id {i}')
             name = pd.read_sql_query(f'''select kod_materialu from t_materialy where id_materialu = {i}''', con)
             name = name['kod_materialu'].iloc[0]
-            sql_2 = f'''select distinct id_korespondenta, 'posiada \
-            '||kod_materialu as "{name}" from t_akcje_korespondenci tak
+            sql_2 = f'''select distinct id_korespondenta, 'posiada \n'
+            ||kod_materialu as "{name}" from t_akcje_korespondenci tak
             left outer join t_akcje_materialy tam on tam.id_akcji=tak.id_akcji
             left outer join t_materialy tm on tam.id_materialu = tm.id_materialu
             where tam.id_materialu = {i}'''

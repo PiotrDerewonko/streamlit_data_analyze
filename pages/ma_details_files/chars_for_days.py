@@ -50,22 +50,22 @@ def charts(mailing, con, years, refresh_data, engine):
             char_profit = line_chart_for_m(pivot_profit, f'''Wykres profitu {mailings_string} {years_string}''',
                                          'Profit zł')
         with tab5:
-            st.bokeh_chart(char_profit)
+            st.bokeh_chart(char_profit, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_profit)
         with tab4:
-            st.bokeh_chart(char_roi)
+            st.bokeh_chart(char_roi, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_roi)
         with tab3:
-            st.bokeh_chart(char_szlw)
+            st.bokeh_chart(char_szlw, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_szlw)
         with tab2:
-            st.bokeh_chart(char_count_of_amount)
+            st.bokeh_chart(char_count_of_amount, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_count_amount)
         with tab1:
-            st.bokeh_chart(char_sum_of_amount)
+            st.bokeh_chart(char_sum_of_amount, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
                 st.dataframe(pivot_count_amount)

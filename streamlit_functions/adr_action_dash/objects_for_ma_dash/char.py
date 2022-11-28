@@ -4,7 +4,7 @@ from bokeh.palettes import Dark2_5 as palette
 from bokeh.transform import dodge
 
 
-def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
+def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma,*args):
     temp_df = temp_df.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
     len_y_prime_positions = len(temp_df.loc[temp_df['oś'] == 'default'])
     len_y_second_positions = len(temp_df.loc[temp_df['oś'] == 'secon_axis'])
@@ -33,6 +33,14 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma):
             p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
                    y_range_name=row['oś'],
                    legend=row['Nazwa parametru'], color=colors_fin[j])
+            if row['Nazwa parametru']=='naklad':
+                type = args[0]
+                if type == 'me_detail':
+                    index_for_char = args[1]
+                    #labels = LabelSet(x = pivot_table_ma.index, y=100, text='naklad', source=source, render_mode='canvas')
+                    #p.add_layout(labels)
+                    #test = Label(x=index_for_char, y='naklad', text='naklad', source=source)
+                    #p.add_layout(test)
             p.circle(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''],
                    y_range_name=row['oś'],
                    legend=row['Nazwa parametru'], color=colors_fin[j])

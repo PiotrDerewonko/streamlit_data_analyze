@@ -89,7 +89,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
     # tworze wykresy
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
-        char_opt.char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma)
+        char_opt.char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma, type, index_for_char)
     else:
         pt_columns = pivot_table_ma.columns
         pt_columns = pt_columns.to_list()

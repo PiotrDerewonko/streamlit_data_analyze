@@ -37,7 +37,7 @@ def column_options(con):
                                         label='Prosze wybrac kolumny2_1', on_change=test_1(), key='text_key_1')
     columns_options3 = st.multiselect(options=final_option_list,
                                       label='Prosze wybrac kolumny3')
-    corr_method = st.selectbox(options=['pearson', 'spearman'], label='Metoda korelacji')
+    corr_method = st.selectbox(options=['spearman', 'pearson'], label='Metoda korelacji')
 
     return columns_options, corr_method
 

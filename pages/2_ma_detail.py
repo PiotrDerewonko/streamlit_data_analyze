@@ -18,36 +18,37 @@ st.header('Analiza głównych mailingów adresowych ')
 with st.container():
     qamp, years = choose()
 
+
+    with st.container():
+        st.header('Wersje z wybranych mailingów ')
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu'])
+        with tab5:
+            options_char = char_options()
+        with tab4:
+            columns_options, corr_method = column_options(con)
+
+            def create_pivot():
+                options_data_frame = pd.DataFrame(data=options_char)
+                data, char_corr, data_values, char_default = create_pivot_table(con, refresh_data, engine, qamp, years,
+                                                                                columns_options, corr_method, options_data_frame
+                                                                                )
+                st.dataframe(data)
+                st.download_button('test', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
+
+
+                with tab3:
+                    st.pyplot(char_corr)
+                with tab1:
+                    st.bokeh_chart(char_default, use_container_width=True)
+            test = st.button('Przelicz dane')
+
+
+        with tab2:
+            if test:
+                create_pivot()
+
+
     st.header('Wykresy w dniach od nadania')
     charts(qamp, con, years, refresh_data, engine)
-
-    st.header('Wersje z wybranych mailingów ')
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu'])
-    with tab5:
-        options_char = char_options()
-    with tab4:
-        columns_options, corr_method = column_options(con)
-
-        def create_pivot():
-            options_data_frame = pd.DataFrame(data=options_char)
-            data, char_corr, data_values, char_default = create_pivot_table(con, refresh_data, engine, qamp, years,
-                                                                            columns_options, corr_method, options_data_frame
-                                                                            )
-            st.dataframe(data)
-            st.download_button('test', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
-
-
-            with tab3:
-                st.pyplot(char_corr)
-            with tab1:
-                st.bokeh_chart(char_default)
-        test = st.button('Przelicz dane')
-
-
-    with tab2:
-        if test:
-            create_pivot()
-
-
 
     st.header('Struktura kosztów')
