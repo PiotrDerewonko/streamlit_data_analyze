@@ -5,7 +5,7 @@ import pandas as pd
 from functions_pandas.short_mailings_names import change_name
 
 
-def download_data_about_people(con, refresh_data, engine):
+def download_data_about_people(con, refresh_data, limit, filtr_column):
     if refresh_data == 'True':
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
         list_of_sql = [['''select id_korespondenta, 'jest w \n
@@ -97,34 +97,45 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
         try:
             rok = datetime.now().year
             liczba_lat = 3
-            for i in range(rok-liczba_lat, rok+1):
+            for i in range(rok-liczba_lat-1, rok+1):
                 sql = f'''select id_korespondenta, count(kwota) as liczba_wplat_{i} from t_transakcje where data_wplywu_srodkow between '{i}-01-01' and '{i}-12-31'
                     group by id_korespondenta'''
                 data_tmp_3 = pd.read_sql_query(sql, con)
                 data_tmp_1 = data_tmp_1.merge(data_tmp_3, on='id_korespondenta', how='left')
                 data_tmp_1[f'liczba_wplat_{i}'].fillna(0, inplace=True)
+            # dane do okreslenia typu darczyncy biezacego
             data_tmp_1['liczba_lat_placacych'] = 0
             data_tmp_1['laczna_liczba_wplat'] = 0
             for i in range(rok - liczba_lat, rok+1):
                 data_tmp_1['liczba_lat_placacych'].loc[data_tmp_1[f'liczba_wplat_{i}']>=1] = data_tmp_1['liczba_lat_placacych'] + 1
                 data_tmp_1['laczna_liczba_wplat'] = data_tmp_1['laczna_liczba_wplat'] + data_tmp_1[f'liczba_wplat_{i}']
             data_tmp_1['średnia_liczba_wplat'] = data_tmp_1['laczna_liczba_wplat']/data_tmp_1['liczba_lat_placacych']
-            data_tmp_1['typ_darczyńcy'] ='pozostali'
-            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']>=2) &
+            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'] ='pozostali'
+            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'].loc[(data_tmp_1['średnia_liczba_wplat']>=2) &
                                             (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
                                             (data_tmp_1['liczba_lat_placacych']==4)] = 'lojalny darczyńca'
-            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
+            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
                                             (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
                                             (data_tmp_1['liczba_lat_placacych']==4)] = 'systematyczny darczyńca'
-            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
-                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
-                                            (data_tmp_1['liczba_lat_placacych']==3)] = 'systematyczny z jedna przerwa darczyńca'
-            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
-                                            (data_tmp_1['rok_dodania']>=rok-1) &
-                                            (data_tmp_1['liczba_lat_placacych']==2)] = 'potencjalny systematyczny'
-            data_tmp_1['typ_darczyńcy'].loc[(data_tmp_1['średnia_liczba_wplat']>=2) &
-                                            (data_tmp_1['rok_dodania']>=rok-1) &
-                                            (data_tmp_1['liczba_lat_placacych']==2)] = 'potencjalny lojalny'
+            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'].loc[(data_tmp_1['rok_dodania']==rok)] = 'nowy darczyńca'
+            #dane do określenia typu darczyncy na dany rok
+            data_tmp_1['liczba_lat_placacych_bis'] = 0
+            data_tmp_1['laczna_liczba_wplat_bis'] = 0
+            for i in range(rok - liczba_lat-1, rok):
+                data_tmp_1['liczba_lat_placacych_bis'].loc[data_tmp_1[f'liczba_wplat_{i}'] >= 1] = data_tmp_1[
+                                                                                                   'liczba_lat_placacych_bis'] + 1
+                data_tmp_1['laczna_liczba_wplat_bis'] = data_tmp_1['laczna_liczba_wplat_bis'] + data_tmp_1[f'liczba_wplat_{i}']
+            data_tmp_1['średnia_liczba_wplat_bis'] = data_tmp_1['laczna_liczba_wplat_bis']/data_tmp_1['liczba_lat_placacych_bis']
+
+            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'] ='pozostali'
+            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'].loc[(data_tmp_1['średnia_liczba_wplat_bis']>=2) &
+                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat) &
+                                            (data_tmp_1['liczba_lat_placacych_bis']==4)] = 'lojalny darczyńca'
+            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'].loc[(data_tmp_1['średnia_liczba_wplat_bis']<2) & (data_tmp_1['średnia_liczba_wplat_bis']>=1) &
+                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat) &
+                                            (data_tmp_1['liczba_lat_placacych_bis']==4)] = 'systematyczny darczyńca'
+            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'].loc[(data_tmp_1['rok_dodania']==rok)] = 'nowy darczyńca'
+
 
         except:
             a=""
@@ -153,8 +164,23 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
 
         #dodanie do bazy danych utowroznej tyabeli
         data_tmp_1.to_csv('./pages/ma_details_files/tmp_file/people.csv')
-    data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+    if limit == 0:
+        data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                  low_memory=False)
+    else:
+        data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+                                     low_memory=False, nrows=limit)
+    if len(filtr_column)>=1:
+        tmp  = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv',
+                                     low_memory=False, usecols=filtr_column).drop_duplicates()
+        data_to_return = []
+        for i, row in tmp.iterrows():
+            data_to_return.append(row.iloc[0])
+    else:
+        data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+                                     low_memory=False, nrows=limit)
+
+
     return data_to_return
 
 def download_data_about_people_camp_pay(con, refresh_data, engine):
@@ -200,5 +226,26 @@ def download_data_about_people_camp(con, refresh_data, engine):
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
+
+def distinct_options(refresh_data):
+    if refresh_data == 'True':
+        tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+                                     low_memory=False)
+        data_about_people = tmp.drop('id_korespondenta', axis=1)
+        list = data_about_people.columns
+        data_to_save = pd.DataFrame()
+        for i in list:
+            tmp_2 = tmp[i]
+            tmp_2 = tmp_2.to_frame()
+            tmp_2 = tmp_2.rename({"0": f"{i}"}, axis=1)
+            tmp_2.drop_duplicates(inplace=True)
+            data_to_save = pd.concat([data_to_save, tmp_2])
+        data_to_save.to_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
+    else:
+        data_to_save = pd.read_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
+        data_to_save[' '] = ' '
+    return data_to_save
+
+
 
 

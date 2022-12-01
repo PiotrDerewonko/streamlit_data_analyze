@@ -19,7 +19,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     for i in year:
         year_int.append(int(i))
     mail, con, engine = deaful_set(sorce_main)
-    data_about_people = download_data_about_people(con, refresh_data, engine)
+    data_about_people = download_data_about_people(con, refresh_data, 0, [])
     data_about_pay = download_data_about_people_camp_pay(con, refresh_data, engine)
     data_about_camp = download_data_about_people_camp(con, refresh_data, engine)
 

@@ -17,7 +17,7 @@ def char_options_part1():
                           [c2, 'liczba_wplat', 'Liczba wpłat', 'lwax', 'Oś dla liczby wpłat', axis_2,
                            'lwchar', 'Rodzaj wykresu dla Liczby wpłat', char_2, True],
                           [c3, 'koszt', 'Koszt', 'kcax', 'Oś dla kosztu', axis_1,
-                           'kcchar', 'Rodzaj wykresu dla Kosztu', char_2, True],
+                           'kcchar', 'Rodzaj wykresu dla Kosztu', char_1, True],
                           [c4, 'naklad', 'Nakład', 'ncax', 'Oś dla nakładu', axis_2,
                            'ncchar', 'Rodzaj wykresu dla Nakładu', char_2, True]]
 
@@ -37,9 +37,6 @@ def char_options_part1():
         with c4:
             k_dict, k_df = ch_1.options_col1_koszt(axis_1, char_1)
 
-        st.markdown(sw_dict)
-        st.markdown(lw_dict)
-        st.markdown(n_dict)
         test_df = pd.DataFrame()
         test_df = pd.concat([test_df, sw_df, lw_df, n_df, k_df])
         return test_df

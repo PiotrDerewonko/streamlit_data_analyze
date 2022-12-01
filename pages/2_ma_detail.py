@@ -7,6 +7,7 @@ from pages.ma_details_files.char_options.char_options import char_options
 from pages.ma_details_files.chars_for_days import charts
 from pages.ma_details_files.chose_campaign import choose
 from pages.ma_details_files.column_order import column_options
+from pages.ma_details_files.filter import filtr_options
 from pages.ma_details_files.pivot_table_for_ma import create_pivot_table
 
 sorce_main = dotenv_values('.env')
@@ -21,7 +22,9 @@ with st.container():
 
     with st.container():
         st.header('Wersje z wybranych mailingów ')
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu'])
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu', 'Filtry'])
+        with tab6:
+            filtr_options = filtr_options(con)
         with tab5:
             options_char = char_options()
         with tab4:
@@ -33,7 +36,7 @@ with st.container():
                                                                                 columns_options, corr_method, options_data_frame
                                                                                 )
                 st.dataframe(data)
-                st.download_button('test', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
+                st.download_button('Pobierz dane w formacie .csv', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
 
 
                 with tab3:

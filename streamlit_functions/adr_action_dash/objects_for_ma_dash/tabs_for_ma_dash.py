@@ -45,6 +45,6 @@ def columns_order(dictionary_options, data_to_show_ma, filtr_ma):
         if len(filtr_ma) >=1:
             data_to_show_ma = data_to_show_ma[data_to_show_ma['grupa_akcji_2'].isin(filtr_ma)]
         cam_adr_plot_ma, test_pivot_ma = pivot_and_chart_for_dash(data_to_show_ma, levels_ma, 'address',
-                                                                  'Wyniki mailingów adresowych za lata ',
+                                                                  'Wyniki mailingów adresowych',
                                                                   'Malingi', dictionary_options)
         return cam_adr_plot_ma, test_pivot_ma
