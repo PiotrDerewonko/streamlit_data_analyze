@@ -11,7 +11,7 @@ from pages.ma_details_files.pivot_table.pivot_table_for_ma_details import create
     style_pivot_table_for_ma
 
 
-def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char):
+def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char, filtr):
     sorce_main = dotenv_values('.env')
     sorce_main = list(sorce_main.values())[0]
     refresh_data = 'False'
@@ -45,6 +45,17 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_all = pd.merge(data_about_camp, data_about_pay, left_on=['id_korespondenta', 'kod_akcji_wysylki'],
                         right_on=['id_korespondenta', 'kod_akcji_wplaty'], how='left')
     data_all = pd.merge(data_all, data_about_people, on='id_korespondenta', how='left')
+    title_with_filtr = 'z filtrami '
+    for i in filtr:
+        a = i[0]
+        b = i[1]
+        if i[0] != ' ':
+            if len(i[1]) >= 1:
+                data_all = data_all.loc[data_all[i[0]].isin(i[1])]
+                title_with_filtr = title_with_filtr + f'{i[0]}' + ' ' + f'{i[1]}' + ', '
+    if title_with_filtr == 'z filtrami ':
+        title_with_filtr = ''
+
     data_all['grupa_akcji_3_wysylki'] = data_all['grupa_akcji_3_wysylki'].astype(str)
     data_all['naklad'] = 1
     data_all['suma_wplat_stand'] = data_all['suma_wplat'].loc[(data_all['suma_wplat']>=10) & (data_all['suma_wplat']<=10000)]
@@ -85,7 +96,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
         columns_options = columns_options[:3]
         pivot_to_return_values = create_pivot_table_for_ma_details(data_all_copy, columns_options)
     char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'Wykres ', 'Kolumny', {},
-                                       pivot_to_return_values, options_char, f'Dane dla mailingu {camp} za lata {year_int}')
+                                       pivot_to_return_values, options_char, f'Dane dla mailingu {camp} za lata {year_int} {title_with_filtr}')
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 
 

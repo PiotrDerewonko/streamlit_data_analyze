@@ -170,15 +170,6 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
     else:
         data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                      low_memory=False, nrows=limit)
-    if len(filtr_column)>=1:
-        tmp  = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv',
-                                     low_memory=False, usecols=filtr_column).drop_duplicates()
-        data_to_return = []
-        for i, row in tmp.iterrows():
-            data_to_return.append(row.iloc[0])
-    else:
-        data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
-                                     low_memory=False, nrows=limit)
 
 
     return data_to_return

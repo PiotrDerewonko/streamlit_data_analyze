@@ -34,7 +34,7 @@ with st.container():
                 options_data_frame = pd.DataFrame(data=options_char)
                 data, char_corr, data_values, char_default = create_pivot_table(con, refresh_data, engine, qamp, years,
                                                                                 columns_options, corr_method, options_data_frame
-                                                                                )
+                                                                                , filtr_options)
                 st.dataframe(data)
                 st.download_button('Pobierz dane w formacie .csv', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
 
