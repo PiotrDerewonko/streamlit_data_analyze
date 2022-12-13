@@ -188,10 +188,11 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         left outer join t_grupy_akcji_2 gr2
         on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2    
         left outer join t_grupy_akcji_3 gr3
-        on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3         
+        on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3  
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,101) and tak.id_transakcji is not null
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
         data = pd.read_sql_query(sql, con)
+
 
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
@@ -200,7 +201,8 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
 def download_data_about_people_camp(con, refresh_data, engine):
     if refresh_data == 'True':
         sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_2 as grupa_akcji_2_wysylki, 
-        grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad
+        grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad,
+       takpog.nazwa_szczegolowa as powod_otrzymania_giftu
         from t_akcje_korespondenci tak
         left outer join t_akcje ta 
         on ta.id_akcji=tak.id_akcji
@@ -210,8 +212,12 @@ def download_data_about_people_camp(con, refresh_data, engine):
         on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
         left outer join public.v_koszt_korespondenta_w_akcjach koszt
         on koszt.id_korespondenta = tak.id_korespondenta and koszt.id_akcji = tak.id_akcji
+        left outer join t_akcje_korespondenci_powod_otrzymania_giftu takpog
+on takpog.id_korespondenta=tak.id_korespondenta and takpog.id_grupy_akcji_1=ta.id_grupy_akcji_1
+and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.id_grupy_akcji_3      
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)'''
         data = pd.read_sql_query(sql, con)
+        data['powod_otrzymania_giftu'].fillna('brak', inplace=True)
         data.fillna(0, inplace=True)
         data = change_name(data)
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')

@@ -48,7 +48,9 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
         year_int.sort()
     data_all = pd.merge(data_about_camp, data_about_pay, left_on=['id_korespondenta', 'kod_akcji_wysylki'],
                         right_on=['id_korespondenta', 'kod_akcji_wplaty'], how='left')
+    #todo tu dodac nowych korespondentow(DN), nie wchodza bo podsawa jest osoby z mailingu
     data_all = pd.merge(data_all, data_about_people, on='id_korespondenta', how='left')
+    data_all.drop_duplicates(inplace=True)
     title_with_filtr = 'z filtrami '
     for i in filtr:
         a = i[0]

@@ -10,6 +10,7 @@ def column_options(con):
     list_options.append('grupa_akcji_2_wysylki')
     list_options.append('grupa_akcji_3_wysylki')
     list_options.append('kod_akcji_wysylki')
+    list_options.append('powod_otrzymania_giftu')
     final_option_list = ['']
     if 'text_key' not in st.session_state:
         st.session_state.text_key = ''
