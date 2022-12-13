@@ -226,9 +226,10 @@ and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.i
 
 def distinct_options(refresh_data):
     if refresh_data == 'True':
+        #plik z danymi ludzi
         tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                      low_memory=False)
-        data_about_people = tmp.drop('id_korespondenta', axis=1)
+        data_about_people = tmp.drop(['id_korespondenta'], axis=1)
         list = data_about_people.columns
         data_to_save = pd.DataFrame()
         for i in list:
@@ -237,6 +238,30 @@ def distinct_options(refresh_data):
             tmp_2 = tmp_2.rename({"0": f"{i}"}, axis=1)
             tmp_2.drop_duplicates(inplace=True)
             data_to_save = pd.concat([data_to_save, tmp_2])
+
+        # plik z wplatami ludzi
+        tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
+        data_about_people = tmp.drop(['id_korespondenta', 'suma_wplat', 'liczba_wplat'], axis=1)
+        list = data_about_people.columns
+        for i in list:
+            tmp_2 = tmp[i]
+            tmp_2 = tmp_2.to_frame()
+            tmp_2 = tmp_2.rename({"0": f"{i}"}, axis=1)
+            tmp_2.drop_duplicates(inplace=True)
+            data_to_save = pd.concat([data_to_save, tmp_2])
+
+        # plik z danymi ludzmi z kmapanii
+        tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+        data_about_people = tmp.drop(['id_korespondenta', 'koszt', 'naklad'], axis=1)
+        list = data_about_people.columns
+        for i in list:
+            tmp_2 = tmp[i]
+            tmp_2 = tmp_2.to_frame()
+            tmp_2 = tmp_2.rename({"0": f"{i}"}, axis=1)
+            tmp_2.drop_duplicates(inplace=True)
+            data_to_save = pd.concat([data_to_save, tmp_2])
+
+
         data_to_save.to_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
     else:
         data_to_save = pd.read_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
