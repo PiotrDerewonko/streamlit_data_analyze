@@ -35,6 +35,10 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
                 camp2[z] = 'Q3.1'
             if j == 'MAILING Q4':
                 camp2[z] = 'Q4'
+            if j == 'KARDYNALSKA LUTY':
+                camp2[z] = 'Q1.0 KARD'
+            if j == 'KARDYNALSKA SIERPIEŃ':
+                camp2[z] = 'Q3.0 KARD'
             z += 1
 
 
