@@ -4,7 +4,8 @@ def create_pivot_table_for_ma_details(data_all, columns_options):
     pivot_to_return = data_all.pivot_table(values=['suma_wplat', 'liczba_wplat',
                                                    'koszt', 'naklad', 'suma_wplat_stand'],
                                            aggfunc='sum',
-                                           index=columns_options)
+                                           index=columns_options, margins=True)
+
 
     def my25(g):
         return g.quantile(0.25)
@@ -13,7 +14,8 @@ def create_pivot_table_for_ma_details(data_all, columns_options):
         return g.quantile(0.75)
 
     pivot_to_return_2 = data_all.pivot_table(values=['suma_wplat_stand'], aggfunc=[my25, np.median, my75, np.std],
-                                             index=columns_options)
+                                             index=columns_options, margins=True)
+
     pivot_to_return = pivot_to_return.merge(pivot_to_return_2, how='left', left_index=True, right_index=True)
     a = pivot_to_return.columns
     pivot_to_return.rename(columns={a[5]: 'Pierwszy_percentyl'}, inplace=True)

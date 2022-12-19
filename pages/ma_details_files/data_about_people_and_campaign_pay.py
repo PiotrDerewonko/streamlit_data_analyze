@@ -8,16 +8,13 @@ from functions_pandas.short_mailings_names import change_name
 def download_data_about_people(con, refresh_data, limit, filtr_column):
     if refresh_data == 'True':
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
-        list_of_sql = [['''select id_korespondenta, 'jest w \n
-        modlitwie różańcowej' as modlitwa_rozancowa from 
-        t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', '''nie jest \n
-        w modlitwie różańcowej'''],
+        list_of_sql = [['''select id_korespondenta, 'jest w \nmodlitwie różańcowej' as modlitwa_rozancowa from 
+        t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', '''nie jest \nw modlitwie różańcowej'''],
                        ['''select id_korespondenta, 'posiada ' ||count(id_materialu)::text||' dziesiątek' as ilosc_dziesiatek from 
                 (select distinct id_korespondenta, id_materialu from t_akcje_korespondenci tak
                 left outer join t_akcje_materialy tam
                 on tam.id_akcji=tak.id_akcji where tam.id_materialu in (694, 673, 652, 625, 620)) dzies
-                group by id_korespondenta''', '''nie ma \n
-                żadnej dziesiątki'''],
+                group by id_korespondenta''', '''nie ma \nżadnej dziesiątki'''],
                        ['''select id_korespondenta, 'dawne wojewodzkie' as typ_miejscowosci 
                        from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all
                        where miejscowosc in ( 'BIAŁA PODLASKA'	,
@@ -148,16 +145,15 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
             print(f'dodawanie material o id {i}')
             name = pd.read_sql_query(f'''select kod_materialu from t_materialy where id_materialu = {i}''', con)
             name = name['kod_materialu'].iloc[0]
-            sql_2 = f'''select distinct id_korespondenta, 'posiada \n'
-            ||kod_materialu as "{name}" from t_akcje_korespondenci tak
+            sql_2 = f'''select distinct id_korespondenta, 'posiada \n'||kod_materialu as "{name}" 
+            from t_akcje_korespondenci tak
             left outer join t_akcje_materialy tam on tam.id_akcji=tak.id_akcji
             left outer join t_materialy tm on tam.id_materialu = tm.id_materialu
             where tam.id_materialu = {i}'''
             tmp = pd.read_sql_query(sql_2, con)
             try:
                 data_tmp_1 = data_tmp_1.merge(tmp, on='id_korespondenta', how='left')
-                data_tmp_1[tmp.columns[1]].fillna(f'nie posiada \
-                {name}', inplace=True)
+                data_tmp_1[tmp.columns[1]].fillna(f'nie posiada \n{name}', inplace=True)
                 print(f'dodano material o id {i}')
             except:
                 print(f'nie dodano materialu o id {i}')

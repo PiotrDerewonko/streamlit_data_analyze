@@ -25,7 +25,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
     y_label = 'Ilość pozyskanych'
 
-    index_for_char = data.groupby(multindex)
+    index_for_char = data.groupby(multindex, dropna=True)
     if type != 'me_detail':
         pivot_table_ma = create_pivot_table(data, multindex, type)
         if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
@@ -61,9 +61,19 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label)
-
-    p.title.text_font_size = '18pt'
+    p.title.text_font_size = '14pt'
+    #p.xaxis.major_label_orientation = "vertical"
+    #p.yaxis.major_label_text_font_size = "18pt"
+    #p.xaxis.major_label_text_font_size = "18pt"
+    p.xaxis.major_label_text_font_size = "13pt"
+    p.xaxis.axis_label_text_font_size = "13pt"
+    p.yaxis.major_label_text_font_size = "13pt"
+    p.xaxis.subgroup_text_font_size = "13pt"
+    p.xaxis.group_text_font_size = "14pt"
     p.xaxis.major_label_orientation = "vertical"
+    p.xaxis.group_label_orientation = "vertical"
+    p.xaxis.subgroup_label_orientation = "vertical"
+
 
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):

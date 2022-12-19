@@ -48,7 +48,7 @@ def filtr_options(con):
         tmp.dropna(inplace=True)
         for z, row in tmp.items():
             list_values_4.append(row)
-    # funkcje do tworzenie finalnego slownika z filtrami
+    # funkcje do tworzenie fina lnego slownika z filtrami
     def filtr_falue_1(value1, value2):
         list_of_final_filtr[0] = [value1, value2]
     def filtr_falue_2(value1, value2):

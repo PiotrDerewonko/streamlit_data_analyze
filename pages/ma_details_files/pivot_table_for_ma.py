@@ -101,8 +101,8 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     if len(columns_options) > 3:
         columns_options = columns_options[:3]
         pivot_to_return_values = create_pivot_table_for_ma_details(data_all_copy, columns_options)
-    char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'Wykres ', 'Kolumny', {},
-                                       pivot_to_return_values, options_char, f'Dane dla mailingu {camp} za lata {year_int} {title_with_filtr}')
+    char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
+                                       pivot_to_return_values, options_char, f'''Dane dla mailingu {camp} za lata {year_int}\n{title_with_filtr}''')
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 
 
