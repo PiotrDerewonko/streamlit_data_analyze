@@ -28,21 +28,21 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
         camp2 = camp.copy()
         for j in camp2:
             if j == 'MAILING Q1':
-                camp2[z] = 'Q1.1'
+                camp2[z] = 'MAILING Q1'
             if j == 'MAILING Q2':
-                camp2[z] = 'Q2'
+                camp2[z] = 'MAILING Q2'
             if j == 'MAILING Q3':
-                camp2[z] = 'Q3.1'
+                camp2[z] = 'MAILING Q3'
             if j == 'MAILING Q4':
-                camp2[z] = 'Q4'
+                camp2[z] = 'MAILING Q4'
             if j == 'KARDYNALSKA LUTY':
-                camp2[z] = 'Q1.0 KARD'
+                camp2[z] = 'KARDYNALSKA LUTY'
             if j == 'KARDYNALSKA SIERPIEŃ':
-                camp2[z] = 'Q3.0 KARD'
+                camp2[z] = 'KARDYNALSKA SIERPIEŃ'
             z += 1
 
 
-        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp2)]
+        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp)]
     if len(year_int)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
         year_int.sort()
