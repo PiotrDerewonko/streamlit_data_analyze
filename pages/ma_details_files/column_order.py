@@ -7,10 +7,13 @@ def column_options(con):
     tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0', nrows=1)
     list_options = tmp.columns.to_list()
     list_options = sorted(list_options)
+
+    #tu dopisuje dodatkowe elementy ktore maja znalesc sie na listach
     list_options.append('grupa_akcji_2_wysylki')
     list_options.append('grupa_akcji_3_wysylki')
     list_options.append('kod_akcji_wysylki')
     list_options.append('powod_otrzymania_giftu')
+    list_options.append('akcja')
     final_option_list = ['']
     if 'text_key' not in st.session_state:
         st.session_state.text_key = ''

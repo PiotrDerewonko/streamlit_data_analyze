@@ -14,7 +14,7 @@ def non_action_main_conf(data_to_show_db):
         with tab3:
             levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac', 'kod_akcji'],
                                        label='Proszę wybrać kolejność dla mailingów bezadresowych',
-                                       default=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac'])
+                                       default=['grupa_akcji_3', 'grupa_akcji_2'])
             cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
                                                                       'Wyniki wrzutek bezadresowych za lata ',
                                                                       'Wrzutki', dictionary_options)

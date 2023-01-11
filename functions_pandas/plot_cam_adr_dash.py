@@ -45,7 +45,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         y_label, y_sec_label = label_of_axis(temp_df)
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
-        max_value_for_y_prime = check_max_value(pivot_table_ma, temp_df, 'Oś główna')
+        max_value_for_y_prime = check_max_value(pivot_table_ma.iloc[0:-1], temp_df, 'Oś główna')
         try:
             max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
         except:

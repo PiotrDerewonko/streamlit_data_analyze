@@ -94,44 +94,33 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
         try:
             rok = datetime.now().year
             liczba_lat = 3
-            for i in range(rok-liczba_lat-1, rok+1):
+            for i in range(rok-liczba_lat-2, rok+1):
                 sql = f'''select id_korespondenta, count(kwota) as liczba_wplat_{i} from t_transakcje where data_wplywu_srodkow between '{i}-01-01' and '{i}-12-31'
                     group by id_korespondenta'''
                 data_tmp_3 = pd.read_sql_query(sql, con)
                 data_tmp_1 = data_tmp_1.merge(data_tmp_3, on='id_korespondenta', how='left')
                 data_tmp_1[f'liczba_wplat_{i}'].fillna(0, inplace=True)
-            # dane do okreslenia typu darczyncy biezacego
-            data_tmp_1['liczba_lat_placacych'] = 0
-            data_tmp_1['laczna_liczba_wplat'] = 0
-            for i in range(rok - liczba_lat, rok+1):
-                data_tmp_1['liczba_lat_placacych'].loc[data_tmp_1[f'liczba_wplat_{i}']>=1] = data_tmp_1['liczba_lat_placacych'] + 1
-                data_tmp_1['laczna_liczba_wplat'] = data_tmp_1['laczna_liczba_wplat'] + data_tmp_1[f'liczba_wplat_{i}']
-            data_tmp_1['średnia_liczba_wplat'] = data_tmp_1['laczna_liczba_wplat']/data_tmp_1['liczba_lat_placacych']
-            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'] ='pozostali'
-            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'].loc[(data_tmp_1['średnia_liczba_wplat']>=2) &
-                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
-                                            (data_tmp_1['liczba_lat_placacych']==4)] = 'lojalny darczyńca'
-            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'].loc[(data_tmp_1['średnia_liczba_wplat']<2) & (data_tmp_1['średnia_liczba_wplat']>=1) &
-                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat+1) &
-                                            (data_tmp_1['liczba_lat_placacych']==4)] = 'systematyczny darczyńca'
-            data_tmp_1['TYP DARCZYŃCY BIEŻĄCY'].loc[(data_tmp_1['rok_dodania']==rok)] = 'nowy darczyńca'
             #dane do określenia typu darczyncy na dany rok
-            data_tmp_1['liczba_lat_placacych_bis'] = 0
-            data_tmp_1['laczna_liczba_wplat_bis'] = 0
-            for i in range(rok - liczba_lat-1, rok):
-                data_tmp_1['liczba_lat_placacych_bis'].loc[data_tmp_1[f'liczba_wplat_{i}'] >= 1] = data_tmp_1[
-                                                                                                   'liczba_lat_placacych_bis'] + 1
-                data_tmp_1['laczna_liczba_wplat_bis'] = data_tmp_1['laczna_liczba_wplat_bis'] + data_tmp_1[f'liczba_wplat_{i}']
-            data_tmp_1['średnia_liczba_wplat_bis'] = data_tmp_1['laczna_liczba_wplat_bis']/data_tmp_1['liczba_lat_placacych_bis']
+            for year in range(rok-2, rok+1):
+                data_tmp_1[f'liczba_lat_placacych_do_{year}'] = 0
+                data_tmp_1[f'laczna_liczba_wplat_do_{year}'] = 0
+                for i in range(year - liczba_lat, year):
+                    data_tmp_1[f'liczba_lat_placacych_do_{year}'].loc[data_tmp_1[f'liczba_wplat_{i}'] >= 1] = \
+                        data_tmp_1[f'liczba_lat_placacych_do_{year}'] + 1
+                    data_tmp_1[f'laczna_liczba_wplat_do_{year}'] = data_tmp_1[f'laczna_liczba_wplat_do_{year}'] + \
+                                                                   data_tmp_1[f'liczba_wplat_{i}']
+                data_tmp_1[f'średnia_liczba_wplat_do_{year}'] = data_tmp_1[f'laczna_liczba_wplat_do_{year}']/\
+                                                                data_tmp_1[f'liczba_lat_placacych_do_{year}']
 
-            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'] ='pozostali'
-            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'].loc[(data_tmp_1['średnia_liczba_wplat_bis']>=2) &
-                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat) &
-                                            (data_tmp_1['liczba_lat_placacych_bis']==4)] = 'lojalny darczyńca'
-            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'].loc[(data_tmp_1['średnia_liczba_wplat_bis']<2) & (data_tmp_1['średnia_liczba_wplat_bis']>=1) &
-                                            (data_tmp_1['rok_dodania']<=rok-liczba_lat) &
-                                            (data_tmp_1['liczba_lat_placacych_bis']==4)] = 'systematyczny darczyńca'
-            data_tmp_1[f'TYP DARCZYŃCY NA {rok}'].loc[(data_tmp_1['rok_dodania']==rok)] = 'nowy darczyńca'
+                data_tmp_1[f'TYP DARCZYŃCY NA {year}'] ='pozostali'
+                data_tmp_1[f'TYP DARCZYŃCY NA {year}'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=2) &
+                                                (data_tmp_1['rok_dodania']<=year-liczba_lat) &
+                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)] = 'lojalny darczyńca'
+                data_tmp_1[f'TYP DARCZYŃCY NA {year}'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']<2) &
+                                                          (data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=1) &
+                                                (data_tmp_1['rok_dodania']<=year-liczba_lat) &
+                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)] = 'systematyczny darczyńca'
+                data_tmp_1[f'TYP DARCZYŃCY NA {year}'].loc[(data_tmp_1['rok_dodania']==year)] = 'nowy darczyńca'
 
 
         except:

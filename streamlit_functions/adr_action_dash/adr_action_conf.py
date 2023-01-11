@@ -22,7 +22,7 @@ def main_action_config(data_to_show_ma, show_filter):
         with tab3:
             cam_adr_plot_ma, test_pivot_ma = tabs_ma.columns_order(dictionary_options, data_to_show_ma, filtr_ma)
         with tab1:
-            st.bokeh_chart(cam_adr_plot_ma)
+            st.bokeh_chart(cam_adr_plot_ma, use_container_width=True)
         with tab2:
             st.dataframe(test_pivot_ma, 1200, 400)
             label_of_file = f'dane mailing_adresowy.xlsx'

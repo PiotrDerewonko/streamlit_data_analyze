@@ -4,7 +4,7 @@ from database.dowload_data import download_dash_address_data, download_increase_
 from database.source_db import deaful_set
 from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
     distance_between_first_and_second_pay
-from pages.ma_details_files.add_prefix import add_prefiex
+from pages.ma_details_files.add_prefix import add_prefix
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people_camp, distinct_options, \
     download_data_about_people_camp_pay, download_data_about_people
 from pages.ma_details_files.download_data_fo_char_line import down_data_sum_and_count, down_data_cost_and_circulation
@@ -23,7 +23,7 @@ down_data_sum_and_count(con, refresh_data, engine)
 download_data_about_people(con, refresh_data, 0, [])
 download_data_about_people_camp_pay(con, refresh_data, engine)
 download_data_about_people_camp(con, refresh_data, engine)
-add_prefiex(con, refresh_data, engine)
+add_prefix(con, refresh_data, engine)
 distinct_options(refresh_data)
 
 print('zakonczono przeladowanie danych')
