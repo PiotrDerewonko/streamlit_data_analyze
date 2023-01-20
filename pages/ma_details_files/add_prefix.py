@@ -8,6 +8,11 @@ from functions_pandas.short_mailings_names import change_name_shot_to_long
 def add_prefix(con, refresh_data, engine):
     if refresh_data=='True':
         data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+        #tmp = pd.read_excel('./pages/ma_details_files/tmp_file/zastepcze.xlsx', sheet_name='Arkusz1')
+        #data = pd.merge(data, tmp, on='kod_akcji_wysylki', how='left')
+
+        #data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+        #print('zapisano')
         data = change_name_shot_to_long(data)
         sql = '''
 select kod_akcji,grupa_akcji_2, grupa_akcji_3::int, fcma.name as akcja_glowna_mailingu, fca.name as akcja_mailingu 
@@ -19,7 +24,7 @@ from t_akcje ta
 left outer join fsaps_campaign_campaign fcc
 on fcc.action_group_one_id=ta.id_grupy_akcji_1 and fcc.action_group_two_id = ta.id_grupy_akcji_2 and
    fcc.action_group_three_id = ta.id_grupy_akcji_3
-left outer join fsaps_campaign_main_action fcma on fcc.id = fcma.campaign_id and
+left outer join (select * from fsaps_campaign_main_action where newly_acquired=False) fcma on fcc.id = fcma.campaign_id and
                                                    ta.kod_akcji like '%'||fcma.prefix||'%'
 left outer join fsaps_campaign_action fca on fcma.id = fca.action_main_id and
                                                    ta.kod_akcji like '%'||fca.prefix||'%'
@@ -31,22 +36,23 @@ where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
                         right_on=['kod_akcji', 'grupa_akcji_2', 'grupa_akcji_3'])
 
         #dodaje naglowki kolumn na podsatwie slownika z rodzajammi wspolczynnikow
-        sql = f'''select text from fsaps_dictionary_shipping_factor_condition order by text'''
+        sql = f'''select text, text_negative from fsaps_dictionary_shipping_factor_condition order by text'''
         tmp = pd.read_sql_query(sql, con)
         for it in tmp.iterrows():
             text = it[1][0]
-            data[text] = ''
+            text_default = it[1][1]
+            data[text] = text_default
 
         #dodaje dane do dodanych kolumn
         sql = '''select text from fsaps_dictionary_action_group_two where is_for_billing = True'''
         group_two = pd.read_sql_query(sql, con)
         rok = datetime.now().year
-        for year in range(2022, rok+1):
+        for year in range(2020, rok+1):
             for gr2, row_1 in group_two.iterrows():
                 sql = f'''select prefix_correct as prefiks_wspolczynnika, fcma.name as akcja_glowna,
                 text as rodzaj_wspolczynnika from fsaps_campaign_shipping_indicator fcsi 
                 left outer join fsaps_dictionary_shipping_factor_condition fdsfc 
-                on fcsi.shiping_type = fdsfc.id
+                on fcsi.shipping_factor_condition_id = fdsfc.id
                 left outer join fsaps_campaign_main_action fcma 
                 on fcsi.main_action_address_id = fcma.id
                 where main_action_address_id in (
@@ -68,6 +74,20 @@ where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
                                                               ] = \
                         row['rodzaj_wspolczynnika']
                         print('dodano')
+
+        #dodaje dodatkowa kolumne zwiazana z kartami darczyncow
+        data['KARTY'] = 'BEZ KARTY'
+        lista_warunkow = {'UPGRADE KARTY': ['UPGR', 'WYMIANA'],
+                          'WYDANIE NOWEJ KARTY': ['WYDANIE', 'A_NIEBIESKA'],
+                          'PRZEDŁUŻENIE KARTY': ['PRZED'],
+                          'WAŻNA KARTA': ['WAŻNA']
+                          }
+        for key, value in lista_warunkow.items():
+            for i in value:
+                data['KARTY'].loc[(data['grupa_akcji_2_wysylki'].str.contains('KARDYNALS')) &
+                                                      (data['kod_akcji_wysylki'].str.contains(i))] = key
+
+
 
 
 

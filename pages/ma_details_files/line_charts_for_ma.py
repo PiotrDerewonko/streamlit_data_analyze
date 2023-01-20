@@ -25,6 +25,9 @@ def line_chart_for_m(pivot, title, y_axis_label):
         j += 1
     p.legend.location = 'top_left'
     p.yaxis.formatter.use_scientific = False
+    p.background_fill_color = None
+    p.border_fill_color = None
+    p.title.text_font_size = '14pt'
 
     return p
 

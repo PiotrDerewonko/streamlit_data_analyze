@@ -11,7 +11,7 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma,*args):
     colors_fin = []
     colors = itertools.cycle(palette)
     #  todo dorobic mechanim automatycznego doboru grubosci kolumn i przesuniecia w zaleznosci od ilosc argumentow
-    list_tmp = [0, -0.15, 0.15, -0.3, 0.30, -0.45, 0.450]
+    list_tmp = [0, -0.35, 0.35, -0.70, 0.70, -0.60, 0.60]
     for m, color in zip(range(len(temp_df)), colors):
         colors_fin.append(color)
     j = 0
@@ -27,7 +27,7 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma,*args):
         if row['Opcje'] == 'Wykres Słupkowy':
             p.vbar(x=dodge(str_mutlindex, position,
                            range=p.x_range), top=row['Nazwa parametru'], source=source,
-                   width=0.15, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
+                   width=0.35, legend_label=row['Nazwa parametru'], y_range_name=row['oś'], color=colors_fin[j])
 
         elif row['Opcje'] == 'Wykres liniowy':
             p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,

@@ -3,11 +3,12 @@ import numpy as np
 def create_pivot_table_for_ma_details(data, columns_options):
     data_all = data.copy()
     for i in columns_options:
-        data_all[i] = data_all[i].astype(str)
+        if data_all.dtypes[i] != np.object:
+            data_all[i] = data_all[i].astype(str)
     pivot_to_return = data_all.pivot_table(values=['suma_wplat', 'liczba_wplat',
                                                    'koszt', 'naklad', 'suma_wplat_stand'],
                                            aggfunc='sum',
-                                           index=columns_options, margins=True)
+                                           index=columns_options)
 
 
     def my25(g):

@@ -42,7 +42,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
             z += 1
 
 
-        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp2)]
+        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp)]
     if len(year_int)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
         year_int.sort()

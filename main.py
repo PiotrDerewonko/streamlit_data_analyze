@@ -33,7 +33,7 @@ data_to_show_db = data_db.loc[(data_db['grupa_akcji_3'] >= year_from) & (data_db
 data_increase = download_increase_data(con, refresh_data, engine)
 data_to_show_increase = data_increase.loc[(data_increase['rok_dodania'] >= year_from) & (data_increase['rok_dodania'] <= year_to)]
 # tworze pierwsza 3 zakladki dal mailnigu adresowego
-st.header('Dane z głównych mailingów adresowych')
+st.header('Dane z głównych mailingów adresowych a')
 
 with st.container():
     # odwoluje sie do funkcji ktore generuje caly modul odpowiedzialny za mailingi adresowe

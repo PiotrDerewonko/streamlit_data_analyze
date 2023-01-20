@@ -13,7 +13,12 @@ def column_options(con):
     list_options.append('grupa_akcji_3_wysylki')
     list_options.append('kod_akcji_wysylki')
     list_options.append('powod_otrzymania_giftu')
-    list_options.append('akcja')
+    list_options.append('akcja_glowna_mailingu')
+    #todo tu ma sie pobierac z automatu a nie z palca
+    list_options.append('GIFT')
+    list_options.append('KSIĄŻECZKA Z DNIA SKUPIENIA')
+    list_options.append('KARTY')
+    list_options.append('WPLATA')
     final_option_list = ['']
     if 'text_key' not in st.session_state:
         st.session_state.text_key = ''
