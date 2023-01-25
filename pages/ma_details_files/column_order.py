@@ -14,6 +14,8 @@ def column_options(con):
     list_options.append('kod_akcji_wysylki')
     list_options.append('powod_otrzymania_giftu')
     list_options.append('akcja_glowna_mailingu')
+    list_options.append('Obiecany gift')
+    list_options.append('Rodzaj giftu')
     #todo tu ma sie pobierac z automatu a nie z palca
     list_options.append('GIFT')
     list_options.append('KSIĄŻECZKA Z DNIA SKUPIENIA')

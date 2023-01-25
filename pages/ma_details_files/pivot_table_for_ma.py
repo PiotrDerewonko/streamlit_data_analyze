@@ -46,9 +46,10 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     if len(year_int)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
         year_int.sort()
+    #todo tu sprawdzic czemu sa duze roznice miedzy tymi danymi a dashoboderm ogolnym
     data_all = pd.merge(data_about_camp, data_about_pay, left_on=['id_korespondenta', 'kod_akcji_wysylki'],
                         right_on=['id_korespondenta', 'kod_akcji_wplaty'], how='left')
-    #todo tu dodac nowych korespondentow(DN), nie wchodza bo podsawa jest osoby z mailingu
+
     data_all = pd.merge(data_all, data_about_people, on='id_korespondenta', how='left')
     data_all.drop_duplicates(inplace=True)
     title_with_filtr = 'z filtrami '

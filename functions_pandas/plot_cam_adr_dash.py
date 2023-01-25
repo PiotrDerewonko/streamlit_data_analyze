@@ -43,7 +43,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             temp_df_fin_sec = False
     pivot_table_ma.fillna(0, inplace=True)
     index_for_char = data.groupby(multindex, dropna=True)
-    print(index_for_char.head(10))
 
 
 
