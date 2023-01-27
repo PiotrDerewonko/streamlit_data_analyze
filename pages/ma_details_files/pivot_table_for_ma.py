@@ -46,11 +46,18 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     if len(year_int)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
         year_int.sort()
-    #todo tu sprawdzic czemu sa duze roznice miedzy tymi danymi a dashoboderm ogolnym
-    data_all = pd.merge(data_about_camp, data_about_pay, left_on=['id_korespondenta', 'kod_akcji_wysylki'],
-                        right_on=['id_korespondenta', 'kod_akcji_wplaty'], how='left')
+
+    #data_about_camp= data_about_camp['kod_akcji_wysylki'].replace('_', ' ', regex=True)
+
+    data_uniq = data_about_camp.loc[data_about_camp['row_number'] == 1]
+    data_not_uniq = data_about_camp.loc[data_about_camp['row_number'] != 1]
+    data_all = pd.merge(data_uniq, data_about_pay, left_on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'],
+                        right_on=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'], how='left')
+    data_all = pd.concat([data_all, data_not_uniq])
 
     data_all = pd.merge(data_all, data_about_people, on='id_korespondenta', how='left')
+    data_all['kod_akcji_wysylki'] = data_all['kod_akcji_wysylki'].replace('_', ' ', regex=True)
+    data_all['kod_akcji_wysylki'] = data_all['kod_akcji_wysylki'].str[12:]
     data_all.drop_duplicates(inplace=True)
     title_with_filtr = 'z filtrami '
     for i in filtr:
@@ -102,7 +109,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     if len(columns_options) > 3:
         columns_options = columns_options[:3]
         pivot_to_return_values = create_pivot_table_for_ma_details(data_all_copy, columns_options)
-    char, a = pivot_and_chart_for_dash(data_all_copy, columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
+    char, a = pivot_and_chart_for_dash(data_all_copy[columns_options], columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
                                        pivot_to_return_values, options_char, f'''Dane dla mailingu {camp} za lata {year_int}\n{title_with_filtr}''')
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 

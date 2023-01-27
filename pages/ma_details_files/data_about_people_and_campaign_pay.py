@@ -162,7 +162,9 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
 def download_data_about_people_camp_pay(con, refresh_data, engine):
     if refresh_data == 'True':
         sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
-         grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty
+         grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty, 
+         row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by
+       tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3) as numer
          from t_aktywnosci_korespondentow tak
         left outer join t_akcje ta
         on ta.id_akcji = tak.id_akcji
@@ -187,7 +189,8 @@ def download_data_about_people_camp(con, refresh_data, engine):
     if refresh_data == 'True':
         sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_2 as grupa_akcji_2_wysylki, 
         grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad,
-       takpog.nazwa_szczegolowa as powod_otrzymania_giftu
+       takpog.nazwa_szczegolowa as powod_otrzymania_giftu, row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by 
+       tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3)
         from t_akcje_korespondenci tak
         left outer join t_akcje ta 
         on ta.id_akcji=tak.id_akcji
