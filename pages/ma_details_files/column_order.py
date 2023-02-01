@@ -20,7 +20,8 @@ def column_options(con):
     list_options.append('GIFT')
     list_options.append('KSIĄŻECZKA Z DNIA SKUPIENIA')
     list_options.append('KARTY')
-    list_options.append('WPLATA')
+    list_options.append('KOLOR KARTY')
+    list_options.append('WPŁATA')
     final_option_list = ['']
     if 'text_key' not in st.session_state:
         st.session_state.text_key = ''

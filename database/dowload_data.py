@@ -52,7 +52,7 @@ def download_dash_address_data(con, refresh, engine, type):
     if refresh == 'True':
         # todo w przypadku danych bezadresowych dodac material
         sql = f'''select grupa_akcji_3, grupa_akcji_2,kod_akcji, sum(kwota) as suma_wplat, count(tr.id_transakcji)
-                 as liczba_wplat, 0 as koszt_calkowity, 0 as naklad_calkowity {extra}, 0 as pozyskano from public.t_aktywnosci_korespondentow tak
+                 as liczba_wplat {extra} from public.t_aktywnosci_korespondentow tak
                 left outer join public.t_transakcje tr
                 on tr.id_transakcji = tak.id_transakcji
                 left outer join t_akcje ta
@@ -62,28 +62,43 @@ def download_dash_address_data(con, refresh, engine, type):
 
                 where tak.id_akcji in ( select id_akcji from t_akcje where  id_grupy_akcji_2 in {id_group_two} and t_akcje.id_grupy_akcji_3 !=7)
                 group by --rok_i_mailing, 
-                grupa_akcji_3,grupa_akcji_2, kod_akcji{extra_group}
-                union
-                select distinct --grupa_akcji_2||' '|| grupa_akcji_3 as rok_i_mailing,
-                grupa_akcji_3,grupa_akcji_2,kod_akcji, 0, 0, sum(koszt_calkowity), sum(naklad_calkowity) {extra},0 from v_akcje_naklad_koszt_calkowity vankc
+                grupa_akcji_3,grupa_akcji_2, kod_akcji{extra_group}'''
+        to_insert = pd.read_sql_query(sql, con)
+
+        sql2 = f'''select distinct kod_akcji, sum(koszt_calkowity) as koszt_calkowity, sum(naklad_calkowity) as naklad_calkowity
+         from v_akcje_naklad_koszt_calkowity vankc
             left outer join t_akcje ta on vankc.id_akcji = ta.id_akcji
             left outer join t_grupy_akcji_2 t on ta.id_grupy_akcji_2 = t.id_grupy_akcji_2
             left outer join t_grupy_akcji_3 a on ta.id_grupy_akcji_3 = a.id_grupy_akcji_3
             where vankc.id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two} and t_akcje.id_grupy_akcji_3 !=7)
-            group by --rok_i_mailing,
-                grupa_akcji_3,grupa_akcji_2, kod_akcji{extra_group}
-                {extra_union}
+            group by kod_akcji
 
                 '''
-        to_insert = pd.read_sql_query(sql, con)
-        a = '''                union select grupa_akcji_3,grupa_akcji_2,kod_akcji, 0,0,0,0 {extra}, count(id_korespondenta) as pozyskano
-                from v_akcja_dodania_korespondenta2
-                group by grupa_akcji_3,grupa_akcji_2, kod_akcji'''
+        to_insert_2 = pd.read_sql_query(sql2, con)
+        to_insert = pd.merge(to_insert, to_insert_2, how='left', on='kod_akcji')
+
         if type == 'address':
+            to_insert['pozyskano'] = 0
             to_insert.to_sql('dash_ma_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard adresowy')
 
         else:
+            extra_data = pd.read_sql_query(f'''select distinct k.kod_akcji, laczna_suma_wplat, laczny_koszt_utrzymania from v_akcja_dodania_korespondenta2 k
+left outer join (select kod_akcji,  sum(kwota) as laczna_suma_wplat from t_transakcje tr
+    left outer join v_akcja_dodania_korespondenta vadk on tr.id_korespondenta = vadk.id_korespondenta
+    group by kod_akcji) tr
+on tr.kod_akcji = k.kod_akcji
+left outer join (select dod.kod_akcji,  sum(koszt) laczny_koszt_utrzymania
+from v_koszt_korespondenta_w_akcjach_z_szczegolowa vkkwazs
+    left outer join v_akcja_dodania_korespondenta2 dod on dod.id_korespondenta = vkkwazs.id_korespondenta
+    group by dod.kod_akcji)koszt
+on koszt.kod_akcji = k.kod_akcji''', con)
+            to_insert = pd.merge(to_insert, extra_data, how='left', on='kod_akcji')
+            new_people_sql = ''' select kod_akcji ,count(id_korespondenta) as pozyskano
+                    from v_akcja_dodania_korespondenta2
+                    group by kod_akcji'''
+            new_people = pd.read_sql_query(new_people_sql, con)
+            to_insert = pd.merge(to_insert, new_people, how='left', on='kod_akcji')
             to_insert.to_sql('dash_db_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard bezadresowy')
     if type == 'address':

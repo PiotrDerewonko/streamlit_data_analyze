@@ -111,3 +111,49 @@ def szp(dictionary_options):
                          on_change=create_df(dictionary_options, "szp_char_db",
                                              st.session_state.szp_char_db)
                          )
+
+def column_total_sum_amount(dictionary_options):
+    sct = st.checkbox('Łączna Suma wpłat', value=True, on_change=create_df(dictionary_options, "swt_db",
+                                                                   st.session_state.swt_db),
+                     key="swt_db")
+    sct_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Rodzaj wykresu dla łącznej sumy wpłat',
+                           on_change=create_df(dictionary_options, "swt_axis_db",
+                                               st.session_state.swt_axis_db),
+                           key="swt_axis_db")
+    sct_char = st.selectbox(options=['Wykres Słupkowy', 'Wykres liniowy'],
+                           label='Oś dla łącznej sumy wplat',
+                           on_change=create_df(dictionary_options, "swt_char_db",
+                                               st.session_state.swt_char_db)
+                           , key="swt_char_db")
+
+def cost_total(dictionary_options):
+    kc = st.checkbox('Koszt całkowity', value=True, on_change=create_df(dictionary_options, 'kct_db',
+                                                                        st.session_state.kct_db),
+                     key='kct_db')
+    kc_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Rodzaj wykresu dla kosztu',
+                           key='kct_axis_db',
+                           on_change=create_df(dictionary_options, "kct_axis_db",
+                                               st.session_state.kct_axis_db)
+                           )
+    kc_char = st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy'], label='Oś dla kosztu',
+                           key='kct_char_db',
+                           on_change=create_df(dictionary_options, "kct_char_db",
+                                               st.session_state.kct_char_db)
+                           )
+def acquisition(dictionary_options):
+    poz = st.checkbox('Pozyskanie', value=True, on_change=create_df(dictionary_options, 'poz_db',
+                                                                        st.session_state.poz_db),
+                     key='poz_db')
+    poz_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Rodzaj wykresu dla pozyskania',
+                           key='poz_axis_db',
+                           on_change=create_df(dictionary_options, "poz_axis_db",
+                                               st.session_state.poz_axis_db)
+                           )
+    poz_char = st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy'], label='Oś dla kosztu',
+                           key='poz_char_db',
+                           on_change=create_df(dictionary_options, "poz_char_db",
+                                               st.session_state.poz_char_db)
+                           )

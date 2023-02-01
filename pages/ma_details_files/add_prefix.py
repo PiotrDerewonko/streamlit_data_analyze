@@ -87,6 +87,24 @@ where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
                 data['KARTY'].loc[(data['grupa_akcji_2_wysylki'].str.contains('KARDYNALS')) &
                                                       (data['kod_akcji_wysylki'].str.contains(i))] = key
 
+        #dodaje dodatkowa kolumne zwiazana z kolorem karty darczyncow
+        data['KOLOR KARTY'] = 'BEZ KARTY'
+        lista_warunkow = {'ZŁOTA': ['ZŁOT'],
+                          'SREBRNA': ['SREBR'],
+                          'NIEBIESKA': ['NIEBIE']
+                          }
+        for key, value in lista_warunkow.items():
+            for i in value:
+                data['KOLOR KARTY'].loc[(data['grupa_akcji_2_wysylki'].str.contains('KARDYNALS')) &
+                                                      (data['kod_akcji_wysylki'].str.contains(i))] = key
+
+        #dodaje dodatkowa kolumne zwiazana z potwierdzeniem wplaty
+        data['WPŁATA'] = 'BEZ POTWIERDZENIA'
+        lista_warunkow = {'Z POTWIERDZENIEM': ['_ZW']}
+        for key, value in lista_warunkow.items():
+            for i in value:
+                data['WPŁATA'].loc[(data['kod_akcji_wysylki'].str.contains(i))] = key
+
 
 
 

@@ -35,14 +35,16 @@ def check_max_value(pivot, data, axis):
 
 def change_short_names_ma(data):
     data = data.replace({'sw': 'suma_wplat', 'lw': 'liczba_wplat', 'nc': 'naklad_calkowity',
-                         'kc': 'koszt_calkowity', 'roi': 'ROI', 'szlw': 'Stopa zwrotu l.w.'})
+                         'kc': 'koszt_calkowity', 'roi': 'ROI', 'szlw': 'Stopa zwrotu l.w.',
+                        })
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
 def change_short_names_db(data):
     data = data.replace({'sw_db': 'suma_wplat', 'lw_db': 'liczba_wplat', 'nc_db': 'naklad_calkowity',
                          'kc_db': 'koszt_calkowity', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.',
-                         'szp_db': 'Stopa pozyskania'})
+                         'szp_db': 'Stopa pozyskania',  'swt_db': 'laczna_suma_wplat',
+                         'kct_db': 'laczny_koszt_utrzymania', 'poz_db': 'pozyskano' })
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
@@ -115,6 +117,9 @@ def create_pivot_table(data, multindex, type):
         pivot_table_ma['Średnia wpłata'] = pivot_table_ma['suma_wplat']/pivot_table_ma['liczba_wplat']
         if type == 'nonaddress':
             pivot_table_ma['Stopa pozyskania'] = (pivot_table_ma['pozyskano']/pivot_table_ma['naklad_calkowity'])*100
+            pivot_table_ma_extra = pd.pivot_table(data, index=multindex,
+                                            values=['laczna_suma_wplat', 'laczny_koszt_utrzymania'], aggfunc='sum')
+            pivot_table_ma = pd.merge(pivot_table_ma, pivot_table_ma_extra, how='left', left_index=True, right_index=True)
         elif type == 'address':
             pivot_table_ma.drop(columns='pozyskano', inplace=True)
         if type == 'address':

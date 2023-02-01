@@ -15,4 +15,6 @@ def char_options():
         st.subheader("Współczynniki")
         option_2 = char_options_part2()
         all = pd.concat([option_1, option_2])
-    return all
+        title = st.text_input('Miejsce na tytuł')
+        sub_title = st.text_input('Miejsce na pod tytuł')
+    return all, title, sub_title

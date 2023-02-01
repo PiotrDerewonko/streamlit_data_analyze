@@ -15,6 +15,9 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     data,  title_fin = modifcate_data(data, type, multindex, title)
+    if type == 'nonaddress':
+        if args[0] !='':
+            title_fin = args[0]
 
     if type != 'me_detail':
         data = change_name(data)
@@ -41,6 +44,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
+
     pivot_table_ma.fillna(0, inplace=True)
     index_for_char = data.groupby(multindex, dropna=True)
 
@@ -67,7 +71,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label)
-    p.title.text_font_size = '14pt'
+    p.title.text_font_size = '12pt'
     #p.xaxis.major_label_orientation = "vertical"
     #p.yaxis.major_label_text_font_size = "18pt"
     #p.xaxis.major_label_text_font_size = "18pt"
