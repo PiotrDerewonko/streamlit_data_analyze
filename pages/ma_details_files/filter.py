@@ -70,8 +70,8 @@ def filtr_options(con):
         st.multiselect(label='Wartosc filtru 3', options=list_values_3,
                        on_change=filtr_falue_3(st.session_state.f3, st.session_state.f3_value), key='f3_value')
     with c4:
-        st.selectbox(label="Czwarty filtr", options=list, on_change=change_options_4(st.session_state.f4), key='f4')
-        st.multiselect(label='Wartosc filtru 4', options=list_values_4,
-                       on_change=filtr_falue_4(st.session_state.f4, st.session_state.f4_value), key='f4_value')
+        st.selectbox(label="Czwarty filtr", options=[' ', 'Taki sam zakres dni'], on_change=filtr_falue_4(st.session_state.f4,
+                                                                                                     st.session_state.f4_value), key='f4_value')
+
     st.markdown(list_of_final_filtr)
     return list_of_final_filtr

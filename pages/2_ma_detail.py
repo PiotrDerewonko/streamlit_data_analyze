@@ -21,7 +21,7 @@ with st.container():
 
 
     with st.container():
-        st.header('Wersje z wybranych mailingów  aa')
+        st.header('Wersje z wybranych mailingów')
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Kolejność kolumn', 'Opcje wykresu', 'Filtry'])
         with tab6:
             filtr_options = filtr_options(con)

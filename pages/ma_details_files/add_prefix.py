@@ -76,11 +76,11 @@ where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
                         print('dodano')
 
         #dodaje dodatkowa kolumne zwiazana z kartami darczyncow
-        data['KARTY'] = 'BEZ KARTY'
+        data['KARTY'] = 'BRAK WPŁATY'
         lista_warunkow = {'UPGRADE KARTY': ['UPGR', 'WYMIANA'],
                           'WYDANIE NOWEJ KARTY': ['WYDANIE', 'A_NIEBIESKA'],
                           'PRZEDŁUŻENIE KARTY': ['PRZED'],
-                          'WAŻNA KARTA': ['WAŻNA']
+                          'BRAK KOMUNIKATU': ['WAŻNA', 'WAZNA']
                           }
         for key, value in lista_warunkow.items():
             for i in value:
@@ -91,7 +91,8 @@ where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
         data['KOLOR KARTY'] = 'BEZ KARTY'
         lista_warunkow = {'ZŁOTA': ['ZŁOT'],
                           'SREBRNA': ['SREBR'],
-                          'NIEBIESKA': ['NIEBIE']
+                          'NIEBIESKA': ['NIEBIE'],
+                          'WAŻNA KARTA': ['WAŻNA', 'WAZNA']
                           }
         for key, value in lista_warunkow.items():
             for i in value:

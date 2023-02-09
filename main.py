@@ -40,7 +40,7 @@ with st.container():
     main_action_config(data_to_show_ma, True)
     st.header('Dane z głównych wrzutek bezadresowych')
     non_action_main_conf(data_to_show_db)
-    st.header('Dane dotyczące przyrostu korespondentów')
+    st.header('Dane dotyczące przyrostu korespondentów a')
     tab7, tab8, tab9 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
     with tab9:
         levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],

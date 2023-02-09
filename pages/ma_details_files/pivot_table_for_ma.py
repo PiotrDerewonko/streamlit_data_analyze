@@ -22,6 +22,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_about_people = download_data_about_people(con, refresh_data, 0, [])
     data_about_pay = download_data_about_people_camp_pay(con, refresh_data, engine)
     data_about_camp = download_data_about_people_camp(con, refresh_data, engine)
+    days = pd.read_excel('./pages/ma_details_files/tmp_file/days.xlsx', sheet_name='Sheet1')
 
     if len(camp)>=1:
         z = 0
@@ -43,9 +44,18 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
 
 
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_2_wysylki'].isin(camp)]
+        days = days[days['grupa_akcji_2_wplaty'].isin(camp)]
     if len(year_int)>=1:
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
+        days = days[days['grupa_akcji_3_wplaty'].isin(year_int)]
         year_int.sort()
+
+    for i in filtr[3:]:
+        if i[1] != ' ':
+            minimum_value = days['dzien_po_mailingu'].min()
+            data_about_pay = data_about_pay.loc[data_about_pay['dzien_po_mailingu']<=minimum_value]
+    data_about_pay = pd.pivot_table(data=data_about_pay, index=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'],
+                                    values=['suma_wplat', 'liczba_wplat'], aggfunc='sum')
 
     #data_about_camp= data_about_camp['kod_akcji_wysylki'].replace('_', ' ', regex=True)
 
@@ -60,13 +70,14 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_all['kod_akcji_wysylki'] = data_all['kod_akcji_wysylki'].str[12:]
     data_all.drop_duplicates(inplace=True)
     title_with_filtr = 'z filtrami '
-    for i in filtr:
+    for i in filtr[0:3]:
         a = i[0]
         b = i[1]
         if i[0] != ' ':
             if len(i[1]) >= 1:
                 data_all = data_all.loc[data_all[i[0]].isin(i[1])]
                 title_with_filtr = title_with_filtr + f'{i[0]}' + ' ' + f'{i[1]}' + ', '
+
     if title_with_filtr == 'z filtrami ':
         title_with_filtr = ''
 

@@ -94,14 +94,16 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
         try:
             rok = datetime.now().year
             liczba_lat = 3
-            for i in range(rok-liczba_lat-2, rok+1):
+            for i in range(2008, rok+1):
                 sql = f'''select id_korespondenta, count(kwota) as liczba_wplat_{i} from t_transakcje where data_wplywu_srodkow between '{i}-01-01' and '{i}-12-31'
                     group by id_korespondenta'''
                 data_tmp_3 = pd.read_sql_query(sql, con)
                 data_tmp_1 = data_tmp_1.merge(data_tmp_3, on='id_korespondenta', how='left')
                 data_tmp_1[f'liczba_wplat_{i}'].fillna(0, inplace=True)
+            people_camp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+            people_camp['TYP DARCZYŃCY'] = 'pozostali'
             #dane do określenia typu darczyncy na dany rok
-            for year in range(rok-2, rok+1):
+            for year in range(2011, rok+1):
                 data_tmp_1[f'liczba_lat_placacych_do_{year}'] = 0
                 data_tmp_1[f'laczna_liczba_wplat_do_{year}'] = 0
                 for i in range(year - liczba_lat, year):
@@ -113,16 +115,24 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
                                                                 data_tmp_1[f'liczba_lat_placacych_do_{year}']
 
                 data_tmp_1[f'TYP DARCZYŃCY NA {year}'] ='pozostali'
-                data_tmp_1[f'TYP DARCZYŃCY NA {year}'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=2) &
+                lojalni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=2) &
                                                 (data_tmp_1['rok_dodania']<=year-liczba_lat) &
-                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)] = 'lojalny darczyńca'
-                data_tmp_1[f'TYP DARCZYŃCY NA {year}'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']<2) &
+                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)]
+                people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
+                                                 (people_camp['id_korespondenta'].isin(lojalni))] = 'lojalny darczyńca'
+
+                systematyczni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']<2) &
                                                           (data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=1) &
                                                 (data_tmp_1['rok_dodania']<=year-liczba_lat) &
-                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)] = 'systematyczny darczyńca'
-                data_tmp_1[f'TYP DARCZYŃCY NA {year}'].loc[(data_tmp_1['rok_dodania']==year)] = 'nowy darczyńca'
+                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)]
+                people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
+                                                 (people_camp['id_korespondenta'].isin(systematyczni))] = 'systematyczny darczyńca'
 
+                nowi = data_tmp_1['id_korespondenta'].loc[(data_tmp_1['rok_dodania']==year)]
+                people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
+                                                 (people_camp['id_korespondenta'].isin(nowi))] = 'nowi darczyńcy'
 
+            people_camp.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
         except:
             a=""
 
@@ -164,7 +174,7 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
          grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty, 
          row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by
-       tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3) as numer
+       tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3) as numer, dzien_po_mailingu
          from t_aktywnosci_korespondentow tak
         left outer join t_akcje ta
         on ta.id_akcji = tak.id_akcji
@@ -176,8 +186,11 @@ def download_data_about_people_camp_pay(con, refresh_data, engine):
         on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2    
         left outer join t_grupy_akcji_3 gr3
         on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3  
-        where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,101) and tak.id_transakcji is not null
-        group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty'''
+        left outer join raporty.t_dni_po_nadaniu_mailingow dni
+on dni.id_grupy_akcji_2=ta.id_grupy_akcji_2 and dni.id_grupy_akcji_3=ta.id_grupy_akcji_3
+and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
+        where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100) and tak.id_transakcji is not null
+        group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty, dzien_po_mailingu'''
         data = pd.read_sql_query(sql, con)
 
 

@@ -1,6 +1,6 @@
 import itertools
 
-from bokeh.models import LinearAxis, Range1d
+from bokeh.models import LinearAxis, Range1d, Legend
 from bokeh.palettes import Dark2_5 as palette
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.transform import dodge
@@ -60,10 +60,21 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
         except:
             max_value_for_y_second = 0
-
+    pivot_table_ma.fillna(0, inplace=True)
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
+
+    'petla w celu uwtorzenia polaczonych nazws kolumn multindexu potrzebnych do wykresu'
+    str_mutlindex=''
+    j = 0
+    for i in multindex:
+        if j == 0:
+            str_mutlindex = i
+            j += 1
+        else:
+            str_mutlindex = str_mutlindex + "_" + i
     #tworze figure do ktorej bede dolaczac wykresy
+    test =pivot_table_ma.index.values
     p = figure(x_range=index_for_char,
                height=700, width=1300,
                title=f"{title_fin}",
@@ -72,6 +83,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
                x_axis_label=x_label,
                y_axis_label=y_label)
     p.title.text_font_size = '12pt'
+    p.add_layout(Legend(), 'below')
+
     #p.xaxis.major_label_orientation = "vertical"
     #p.yaxis.major_label_text_font_size = "18pt"
     #p.xaxis.major_label_text_font_size = "18pt"
@@ -100,15 +113,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
     #wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
     p.yaxis.formatter.use_scientific = False
-    'petla w celu uwtorzenia polaczonych nazws kolumn multindexu potrzebnych do wykresu'
-    str_mutlindex=''
-    j = 0
-    for i in multindex:
-        if j == 0:
-            str_mutlindex = i
-            j += 1
-        else:
-            str_mutlindex = str_mutlindex + "_" + i
+
 
     # tworze wykresy
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):

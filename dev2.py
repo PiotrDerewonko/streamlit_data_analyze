@@ -1,12 +1,21 @@
-from dotenv import dotenv_values
+import pandas as pd
+from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure, show
 
-from database.source_db import deaful_set
-from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people
+# utwórz DataFrame z multiindexem
+index = pd.MultiIndex.from_tuples([('A', 'foo'), ('A', 'bar'), ('B', 'baz')], names=['one', 'two'])
+df = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]}, index=index)
 
-sorce_main = dotenv_values('.env')
-sorce_main = list(sorce_main.values())[0]
-refresh_data = 'True'
-mail, con, engine = deaful_set(sorce_main)
-from pages.ma_details_files.download_data_fo_char_line import down_data_sum_and_count
-down_data_sum_and_count(con, refresh_data, engine)
-download_data_about_people(con, refresh_data, 0, [])
+# wybierz kolumny i przekształć DataFrame na jednopoziomowy
+df_new = df.reset_index().set_index('one')
+
+# utwórz ColumnDataSource z nowego DataFrame
+source = ColumnDataSource(df_new)
+
+# utwórz wykres słupkowy
+p = figure(x_range=df_new.index.unique().tolist())
+p.vbar(x='one', top='y', width=0.9, source=source)
+
+
+show(p)
+print('ok')

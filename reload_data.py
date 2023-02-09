@@ -9,6 +9,7 @@ from pages.ma_details_files.addpromisegift import promise_gift
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people_camp, distinct_options, \
     download_data_about_people_camp_pay, download_data_about_people
 from pages.ma_details_files.download_data_fo_char_line import down_data_sum_and_count, down_data_cost_and_circulation
+from pages.ma_details_files.max_day import check_max_day
 
 sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
@@ -21,9 +22,10 @@ down_data_cost_and_circulation(con, refresh_data, engine)
 download_increase_data(con, refresh_data, engine)
 distance_between_first_and_second_pay(con, engine, refresh_data)
 down_data_sum_and_count(con, refresh_data, engine)
+download_data_about_people_camp(con, refresh_data, engine)
 download_data_about_people(con, refresh_data, 0, [])
 download_data_about_people_camp_pay(con, refresh_data, engine)
-download_data_about_people_camp(con, refresh_data, engine)
+check_max_day(refresh_data)
 add_prefix(con, refresh_data, engine)
 promise_gift()
 distinct_options(refresh_data)
