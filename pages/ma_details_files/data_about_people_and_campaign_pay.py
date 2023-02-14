@@ -119,18 +119,18 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
                                                 (data_tmp_1['rok_dodania']<=year-liczba_lat) &
                                                 (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
-                                                 (people_camp['id_korespondenta'].isin(lojalni))] = 'lojalny darczyńca'
+                                                 (people_camp['id_korespondenta'].isin(lojalni))] = 'lojalny'
 
                 systematyczni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']<2) &
                                                           (data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=1) &
                                                 (data_tmp_1['rok_dodania']<=year-liczba_lat) &
                                                 (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
-                                                 (people_camp['id_korespondenta'].isin(systematyczni))] = 'systematyczny darczyńca'
+                                                 (people_camp['id_korespondenta'].isin(systematyczni))] = 'systematyczny'
 
-                nowi = data_tmp_1['id_korespondenta'].loc[(data_tmp_1['rok_dodania']==year)]
+                nowi = data_tmp_1['id_korespondenta'].loc[(data_tmp_1['rok_dodania']>=year-liczba_lat+1) & (data_tmp_1['rok_dodania']<=year)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
-                                                 (people_camp['id_korespondenta'].isin(nowi))] = 'nowi darczyńcy'
+                                                 (people_camp['id_korespondenta'].isin(nowi))] = 'znaki zapytania'
 
             people_camp.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
         except:

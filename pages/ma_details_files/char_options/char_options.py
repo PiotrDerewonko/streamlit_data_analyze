@@ -3,6 +3,7 @@ import streamlit as st
 from dotenv import dotenv_values
 
 from pages.ma_details_files.char_options.char_options_part_1 import char_options_part1, char_options_part2
+from pages.ma_details_files.char_options.char_options_part_2 import label_orientations
 
 
 def char_options():
@@ -15,6 +16,9 @@ def char_options():
         st.subheader("Współczynniki")
         option_2 = char_options_part2()
         all = pd.concat([option_1, option_2])
+        st.subheader("Tytuły")
         title = st.text_input('Miejsce na tytuł')
         sub_title = st.text_input('Miejsce na pod tytuł')
-    return all, title, sub_title
+        st.subheader("Ustawienia orientacji osi")
+        dict_of_oriantation = label_orientations()
+    return all, title, sub_title, dict_of_oriantation

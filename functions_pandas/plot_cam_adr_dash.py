@@ -35,6 +35,10 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
+        major = "vertical"
+        group = "horizontal"
+        sub_group = "horizontal"
+
     else:
         pivot_table_ma = args[0]
         pivot_table_ma.fillna(0, inplace=True)
@@ -44,6 +48,10 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
+        dict_of_oriantation = args[3]
+        major = dict_of_oriantation['major']
+        group = dict_of_oriantation['group']
+        sub_group = dict_of_oriantation['sub_group']
 
     pivot_table_ma.fillna(0, inplace=True)
     index_for_char = data.groupby(multindex, dropna=True)
@@ -83,7 +91,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
                x_axis_label=x_label,
                y_axis_label=y_label)
     p.title.text_font_size = '12pt'
-    p.add_layout(Legend(), 'below')
+    p.add_layout(Legend(background_fill_alpha=0.3))
 
     #p.xaxis.major_label_orientation = "vertical"
     #p.yaxis.major_label_text_font_size = "18pt"
@@ -93,9 +101,10 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     p.yaxis.major_label_text_font_size = "13pt"
     p.xaxis.subgroup_text_font_size = "13pt"
     p.xaxis.group_text_font_size = "14pt"
-    p.xaxis.major_label_orientation = "vertical"
-    p.xaxis.group_label_orientation = "vertical"
-    p.xaxis.subgroup_label_orientation = "vertical"
+    p.xaxis.major_label_orientation = major
+    p.xaxis.group_label_orientation = group
+    p.xaxis.subgroup_label_orientation = sub_group
+
     p.background_fill_color = None
     p.border_fill_color = None
     p.title.text_font_size = '18pt'

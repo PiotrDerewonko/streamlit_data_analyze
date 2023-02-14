@@ -11,7 +11,7 @@ from pages.ma_details_files.pivot_table.pivot_table_for_ma_details import create
     style_pivot_table_for_ma
 
 
-def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char, filtr, tit, sub_tit):
+def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char, filtr, tit, sub_tit, dict_of_oriantation):
     sorce_main = dotenv_values('.env')
     sorce_main = list(sorce_main.values())[0]
     refresh_data = 'False'
@@ -128,7 +128,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     else:
         title_fin = f'''Dane dla mailingu {camp} za lata {year_int}\n{title_with_filtr}'''
     char, a = pivot_and_chart_for_dash(data_all_copy[columns_options], columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
-                                       pivot_to_return_values, options_char, title_fin)
+                                       pivot_to_return_values, options_char, title_fin, dict_of_oriantation)
     return pivot_to_return_style, plt,  pivot_to_return_values, char
 
 

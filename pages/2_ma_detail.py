@@ -15,7 +15,7 @@ sorce_main = list(sorce_main.values())[0]
 mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
 
-st.header('Analiza głównych mailingów adresowych ')
+st.header('Analiza głównych mailingów adresowych a')
 with st.container():
     qamp, years = choose()
 
@@ -26,7 +26,7 @@ with st.container():
         with tab6:
             filtr_options = filtr_options(con)
         with tab5:
-            options_char, tit, sub_tit = char_options()
+            options_char, tit, sub_tit, dict_of_oriantation = char_options()
         with tab4:
             columns_options, corr_method = column_options(con)
 
@@ -34,7 +34,7 @@ with st.container():
                 options_data_frame = pd.DataFrame(data=options_char)
                 data, char_corr, data_values, char_default = create_pivot_table(con, refresh_data, engine, qamp, years,
                                                                                 columns_options, corr_method, options_data_frame
-                                                                                , filtr_options, tit, sub_tit)
+                                                                                , filtr_options, tit, sub_tit, dict_of_oriantation)
                 st.dataframe(data)
                 st.download_button('Pobierz dane w formacie .csv', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
 
