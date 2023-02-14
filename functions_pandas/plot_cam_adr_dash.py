@@ -82,7 +82,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         else:
             str_mutlindex = str_mutlindex + "_" + i
     #tworze figure do ktorej bede dolaczac wykresy
-    test =pivot_table_ma.index.values
     p = figure(x_range=index_for_char,
                height=700, width=1300,
                title=f"{title_fin}",

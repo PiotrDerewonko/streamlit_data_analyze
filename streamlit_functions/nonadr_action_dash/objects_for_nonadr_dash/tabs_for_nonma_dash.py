@@ -34,5 +34,4 @@ def char_options():
             columns_for_nonadr_dash.acquisition(dictionary_options)
         title = st.text_input('Miejsce na tytuł')
         sub_title = st.text_input('Miejsce na pod tytuł')
-    st.markdown(dictionary_options)
     return dictionary_options, title, sub_title
