@@ -31,6 +31,17 @@ def check_max_value(pivot, data, axis):
             tmp_sum = pivot[f'''{row['Nazwa parametru']}'''].max()
             if tmp_sum > max:
                 max = tmp_sum
+        tmp_2 = tmp.loc[data['Opcje'] == 'Wykres Słupkowy Skumulowany']
+        if len(tmp_2) >= 1:
+            max_for_stock = 0
+            for j, row2 in tmp_2.iterrows():
+                tmp_sum_2 = pivot[row2['Nazwa parametru']].max()
+                max_for_stock += tmp_sum_2
+            if max_for_stock > max:
+                max = max_for_stock
+
+
+
     return max
 
 def change_short_names_ma(data):
@@ -42,9 +53,10 @@ def change_short_names_ma(data):
 
 def change_short_names_db(data):
     data = data.replace({'sw_db': 'suma_wplat', 'lw_db': 'liczba_wplat', 'nc_db': 'naklad_calkowity',
-                         'kc_db': 'koszt_calkowity', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.',
-                         'szp_db': 'Stopa pozyskania',  'swt_db': 'laczna_suma_wplat',
-                         'kct_db': 'laczny_koszt_utrzymania', 'poz_db': 'pozyskano' })
+                         'kc_db': 'koszt_insertowania', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.',
+                         'szp_db': 'Stopa pozyskania',  'swt_db': 'laczna_suma_wplat_nowych',
+                         'kct_db': 'laczny_koszt_utrzymania', 'poz_db': 'pozyskano' , 'kcin_db': 'koszt_insertu_dla_nowych',
+                         'un_db': 'udzial_nowych', 'swn_db': 'suma_wplat_nowi'})
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
@@ -118,8 +130,14 @@ def create_pivot_table(data, multindex, type):
         if type == 'nonaddress':
             pivot_table_ma['Stopa pozyskania'] = (pivot_table_ma['pozyskano']/pivot_table_ma['naklad_calkowity'])*100
             pivot_table_ma_extra = pd.pivot_table(data, index=multindex,
-                                            values=['laczna_suma_wplat', 'laczny_koszt_utrzymania'], aggfunc='sum')
+                                            values=['laczna_suma_wplat', 'laczny_koszt_utrzymania', 'suma_wplat_nowi',
+                                                    'liczba_wplat_nowi'], aggfunc='sum')
             pivot_table_ma = pd.merge(pivot_table_ma, pivot_table_ma_extra, how='left', left_index=True, right_index=True)
+            pivot_table_ma['udzial_nowych'] = pivot_table_ma['suma_wplat_nowi'] / pivot_table_ma['suma_wplat']
+            pivot_table_ma['koszt_insertu_dla_nowych'] = pivot_table_ma['udzial_nowych'] * pivot_table_ma['koszt_calkowity']
+            pivot_table_ma['koszt_insertu_dla_starych'] = pivot_table_ma['koszt_calkowity'] - pivot_table_ma['koszt_insertu_dla_nowych']
+            pivot_table_ma.rename(columns={'koszt_calkowity': 'koszt_insertowania', 'laczna_suma_wplat':
+                                           'laczna_suma_wplat_nowych'}, inplace=True)
         elif type == 'address':
             pivot_table_ma.drop(columns='pozyskano', inplace=True)
         if type == 'address':

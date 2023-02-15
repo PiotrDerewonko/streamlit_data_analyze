@@ -2,6 +2,7 @@ import streamlit as st
 
 import streamlit_functions.nonadr_action_dash.objects_for_nonadr_dash.tabs_for_nonma_dash as tabs_ma
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
+from streamlit_functions.dashboard.localization_label_db import label_orientations
 
 
 def non_action_main_conf(data_to_show_db):
@@ -9,8 +10,15 @@ def non_action_main_conf(data_to_show_db):
     with prime:
         tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu', 'Ustawienie wykresu',
                                     'Filtr danych'])
+        with tab5:
+            magazine = st.multiselect(options=['GOŚĆ NIEDZIELNY','NIEDZIELA', 'IDZIEMY', 'CUDA I ŁASKI BOŻE',
+                                               'KTÓŻ JAK BÓG', 'DO RZECZY', 'SIECI', 'DOBRY TYDZIEŃ', 'CUDA I OBJAWIENIA',
+                                               'LUDZIE I WIARA', 'TELETYDZIEŃ', 'PRZYJACIÓŁKA'], label='Prosze wybrać gazety')
+            if len(magazine)>=1:
+                data_to_show_db = data_to_show_db.loc[data_to_show_db['grupa_akcji_2'].isin(magazine)]
         with tab4:
             dictionary_options, title, sub_title = tabs_ma.char_options()
+            label = label_orientations()
         with tab3:
             levels_db = st.multiselect(options=['grupa_akcji_3', 'grupa_akcji_2', 'miesiac', 'kod_akcji'],
                                        label='Proszę wybrać kolejność dla mailingów bezadresowych',
@@ -22,9 +30,11 @@ def non_action_main_conf(data_to_show_db):
                     {sub_title}'''
             else:
                 title_fin = ''
+
+
             cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
                                                                       'Wyniki wrzutek bezadresowych za lata ',
-                                                                      'Wrzutki', dictionary_options, title_fin)
+                                                                      'Wrzutki', dictionary_options, title_fin, label)
         with tab2:
             st.dataframe(test_pivot_db, 900, 400)
         with tab1:

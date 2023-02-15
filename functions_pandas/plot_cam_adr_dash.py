@@ -15,9 +15,20 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     data,  title_fin = modifcate_data(data, type, multindex, title)
+
+    major = "vertical"
+    group = "horizontal"
+    sub_group = "horizontal"
+
     if type == 'nonaddress':
         if args[0] !='':
             title_fin = args[0]
+        dict_of_oriantation = args[1]
+        major = dict_of_oriantation['major_db']
+        group = dict_of_oriantation['group_db']
+        sub_group = dict_of_oriantation['sub_group_db']
+
+
 
     if type != 'me_detail':
         data = change_name(data)
@@ -35,9 +46,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
-        major = "vertical"
-        group = "horizontal"
-        sub_group = "horizontal"
 
     else:
         pivot_table_ma = args[0]
@@ -91,6 +99,10 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
                y_axis_label=y_label)
     p.title.text_font_size = '12pt'
     p.add_layout(Legend(background_fill_alpha=0.3))
+
+    p.xaxis.major_label_orientation = major
+    p.xaxis.group_label_orientation = group
+    p.xaxis.subgroup_label_orientation = sub_group
 
     #p.xaxis.major_label_orientation = "vertical"
     #p.yaxis.major_label_text_font_size = "18pt"

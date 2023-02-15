@@ -113,7 +113,7 @@ def szp(dictionary_options):
                          )
 
 def column_total_sum_amount(dictionary_options):
-    sct = st.checkbox('Łączna Suma wpłat', value=True, on_change=create_df(dictionary_options, "swt_db",
+    sct = st.checkbox('Łączna Suma wpłat od nowych', value=True, on_change=create_df(dictionary_options, "swt_db",
                                                                    st.session_state.swt_db),
                      key="swt_db")
     sct_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
@@ -127,8 +127,25 @@ def column_total_sum_amount(dictionary_options):
                                                st.session_state.swt_char_db)
                            , key="swt_char_db")
 
+def column_sum(dictionary_options):
+    swn = st.checkbox('Łączna Suma wpłat od nowych', value=True, on_change=create_df(dictionary_options, "swn_db",
+                                                                   st.session_state.swn_db),
+                     key="swn_db")
+    sct_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Rodzaj wykresu dla sumy wpłat od nowych',
+                           on_change=create_df(dictionary_options, "swn_axis_db",
+                                               st.session_state.swn_axis_db),
+                           key="swn_axis_db")
+    sct_char = st.selectbox(options=['Wykres Słupkowy', 'Wykres liniowy', 'Wykres Słupkowy Skumulowany'],
+                           label='Oś dla sumy wplat od nowych',
+                           on_change=create_df(dictionary_options, "swn_char_db",
+                                               st.session_state.swn_char_db)
+                           , key="swn_char_db")
+
+
+
 def cost_total(dictionary_options):
-    kc = st.checkbox('Koszt utrzymania', value=True, on_change=create_df(dictionary_options, 'kct_db',
+    kc = st.checkbox('Koszt utrzymania nowych', value=True, on_change=create_df(dictionary_options, 'kct_db',
                                                                         st.session_state.kct_db),
                      key='kct_db')
     kc_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
@@ -156,4 +173,36 @@ def acquisition(dictionary_options):
                            key='poz_char_db',
                            on_change=create_df(dictionary_options, "poz_char_db",
                                                st.session_state.poz_char_db)
+                           )
+
+def cost_insert_only_new(dictionary_options):
+    poz = st.checkbox('Koszt insertowania dla nowych', value=True, on_change=create_df(dictionary_options, 'kcin_db',
+                                                                        st.session_state.kcin_db),
+                     key='kcin_db')
+    poz_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Rodzaj wykresu dla k. insert dla nowych',
+                           key='kcin_axis_db',
+                           on_change=create_df(dictionary_options, "kcin_axis_db",
+                                               st.session_state.kcin_axis_db)
+                           )
+    poz_char = st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy', 'Wykres Słupkowy Skumulowany'], label='Oś dla k. insert dla nowych',
+                           key='kcin_char_db',
+                           on_change=create_df(dictionary_options, "kcin_char_db",
+                                               st.session_state.kcin_char_db)
+                           )
+
+def percent_of_new(dictionary_options):
+    poz = st.checkbox('Udział nowych', value=True, on_change=create_df(dictionary_options, 'un_db',
+                                                                        st.session_state.un_db),
+                     key='un_db')
+    poz_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Rodzaj wykresu dla k. insert dla nowych',
+                           key='un_axis_db',
+                           on_change=create_df(dictionary_options, "un_axis_db",
+                                               st.session_state.un_axis_db)
+                           )
+    poz_char = st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy', 'Wykres Słupkowy Skumulowany'], label='Oś dla k. insert dla nowych',
+                           key='un_char_db',
+                           on_change=create_df(dictionary_options, "un_char_db",
+                                               st.session_state.un_char_db)
                            )

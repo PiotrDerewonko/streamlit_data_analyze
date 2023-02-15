@@ -1,6 +1,7 @@
 import itertools
 
 from bokeh.palettes import Dark2_5 as palette
+from bokeh.palettes import Paired12 as palette_for_prim
 from bokeh.transform import dodge
 
 
@@ -36,16 +37,28 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma,*args):
         temp_df = temp_df.drop(stock.index)
         stock_default = stock.loc[stock['oś'] == 'default']
         stock_second_axis = stock.loc[stock['oś'] == 'secon_axis']
-        if len(stock_default) >= 1:
-#todo poprawic maksymalna wartosc osi
-#todo dla wykresu slupkowego zrtobic osobne palety kolorow i palety zalezne od ilosci elementow
 
+        # okreslam dodatkowa palete kolorow dla wykresow slupkowych kumulacyjnych
+        colors_fin_stock = []
+        colors_stock = itertools.cycle(palette_for_prim)
+        for m2, color2 in zip(range(len(stock_default) + len(stock_second_axis)), colors_stock):
+            colors_fin_stock.append(color2)
+        if len(stock_default) >= 1:
             position = list_tmp[count_of_y_prime]
             count_of_y_prime += 1
             test = pivot_table_ma[stock_default['Nazwa parametru'].to_list()].columns
             p.vbar_stack(test, x=dodge(str_mutlindex, position,
-                           range=p.x_range),source=source, width=value,
-                         legend_label=stock_default['Nazwa parametru'].to_list(), y_range_name='default', color=colors_fin[:len(stock_default)] )
+                           range=p.x_range), source=source, width=value,
+                         legend_label=stock_default['Nazwa parametru'].to_list(), y_range_name='default', color=colors_fin_stock[:len(stock_default)] )
+            j += 1
+        if len(stock_second_axis) >= 1:
+            position = list_tmp[count_of_y_prime]
+            count_of_y_prime += 1
+            test = pivot_table_ma[stock_second_axis['Nazwa parametru'].to_list()].columns
+            p.vbar_stack(test, x=dodge(str_mutlindex, position,
+                           range=p.x_range), source=source, width=value,
+                         legend_label=stock_second_axis['Nazwa parametru'].to_list(), y_range_name='default',
+                         color=colors_fin_stock[len(stock_default):len(stock_default)+len(stock_second_axis)] )
             j += 1
 
 

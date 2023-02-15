@@ -18,7 +18,10 @@ def create_dictionary_nonadr():
                             'szp_db': False, 'szp_axis_db': 'Oś główna', 'szp_char_db': 'Wykres liniowy',
                             'swt_db': False, 'swt_axis_db': 'Oś główna', 'swt_char_db': 'Wykres Słupkowy',
             'kct_db': False, 'kct_axis_db': 'Oś główna', 'kct_char_db': 'Wykres Słupkowy',
-            'poz_db': False, 'poz_axis_db': 'Oś główna', 'poz_char_db': 'Wykres Słupkowy'
+            'poz_db': False, 'poz_axis_db': 'Oś główna', 'poz_char_db': 'Wykres Słupkowy',
+            'kcin_db': False, 'kcin_axis_db': 'Oś główna', 'kcin_char_db': 'Wykres Słupkowy',
+            'un_db': False, 'un_axis_db': 'Oś główna', 'un_char_db': 'Wykres Słupkowy',
+            'swn_db': False, 'swn_axis_db': 'Oś główna', 'swn_char_db': 'Wykres Słupkowy',
                           }
 
 def create_dictionary_increase():

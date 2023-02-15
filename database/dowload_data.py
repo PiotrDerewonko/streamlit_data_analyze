@@ -99,6 +99,21 @@ on koszt.kod_akcji = k.kod_akcji''', con)
                     group by kod_akcji'''
             new_people = pd.read_sql_query(new_people_sql, con)
             to_insert = pd.merge(to_insert, new_people, how='left', on='kod_akcji')
+            pay_new_people = f'''select ta.kod_akcji, sum(kwota) as suma_wplat_nowi, count(tr.id_transakcji)
+                 as liczba_wplat_nowi from public.t_aktywnosci_korespondentow tak
+                left outer join public.t_transakcje tr
+                on tr.id_transakcji = tak.id_transakcji
+                left outer join t_akcje ta
+                on ta.id_akcji=tak.id_akcji
+                left outer join public.t_grupy_akcji_2 t on ta.id_grupy_akcji_2 = t.id_grupy_akcji_2
+                left outer join public.t_grupy_akcji_3 a on ta.id_grupy_akcji_3 = a.id_grupy_akcji_3
+left outer join v_akcja_dodania_korespondenta2 v on tak.id_korespondenta = v.id_korespondenta
+
+                where tak.id_akcji in ( select id_akcji from t_akcje where  id_grupy_akcji_2 in {id_group_two} and t_akcje.id_grupy_akcji_3 !=7)
+and ta.kod_akcji =v.kod_akcji
+group by  ta.kod_akcji'''
+            pay_new_people = pd.read_sql_query(pay_new_people, con)
+            to_insert = pd.merge(to_insert, pay_new_people, how='left', on='kod_akcji')
             to_insert.to_sql('dash_db_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard bezadresowy')
     if type == 'address':
