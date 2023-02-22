@@ -5,25 +5,29 @@ from bokeh.palettes import Paired12 as palette_for_prim
 from bokeh.transform import dodge
 
 
-def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma,*args):
+def char_for_dash_ma_detail(temp_df, p, str_mutlindex, source, pivot_table_ma, *args):
     temp_df = temp_df.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
 
     #sprawdzam ile jest wykresow słupkowych i ślukowych skumulowanych
     len_vbar = len((temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy']))
     len_stock = len((temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy Skumulowany']))
     len_vbar = len_vbar + len_stock
-    colors_fin = []
-    colors = itertools.cycle(palette)
+
+
     list_tmp = [0]
     tmp = 0
-    value = round(0.9/len_vbar, 2)
-    count = 1
-    while tmp <= 1:
-        list_tmp.append(count*value)
-        list_tmp.append(count*value*-1)
-        tmp += value
-        count +=1
 
+    if len_vbar >=1:
+        value = round(0.9/len_vbar, 2)
+        count = 1
+        while tmp <= 1:
+            list_tmp.append(count*value)
+            list_tmp.append(count*value*-1)
+            tmp += value
+            count += 1
+
+    colors_fin = []
+    colors = itertools.cycle(palette)
     for m, color in zip(range(len(temp_df)), colors):
         colors_fin.append(color)
     j = 0
@@ -31,7 +35,7 @@ def char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma,*args):
     count_of_y_second = 0
     temp_df.sort_values(['Opcje'], inplace=True)
 
-    #wydzielam tylko te wiersze ktore maja wykres slupkowy skumolowany
+    #wydzielam tylko te wiersze ktore maja wykres slupkowy skumulowany
     if len_stock >= 1:
         stock = temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy Skumulowany']
         temp_df = temp_df.drop(stock.index)

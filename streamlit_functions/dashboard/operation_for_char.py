@@ -31,7 +31,7 @@ def check_max_value(pivot, data, axis):
             tmp_sum = pivot[f'''{row['Nazwa parametru']}'''].max()
             if tmp_sum > max:
                 max = tmp_sum
-        tmp_2 = tmp.loc[data['Opcje'] == 'Wykres Słupkowy Skumulowany']
+        tmp_2 = tmp.loc[tmp['Opcje'] == 'Wykres Słupkowy Skumulowany']
         if len(tmp_2) >= 1:
             max_for_stock = 0
             for j, row2 in tmp_2.iterrows():

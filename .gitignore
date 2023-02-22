@@ -6,3 +6,4 @@
 pages/ma_details_files/tmp_file/*
 .env
 
+/pages/db_analyze/tmp_file/*

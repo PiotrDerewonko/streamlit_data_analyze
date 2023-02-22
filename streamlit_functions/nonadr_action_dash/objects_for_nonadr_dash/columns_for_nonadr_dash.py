@@ -128,7 +128,7 @@ def column_total_sum_amount(dictionary_options):
                            , key="swt_char_db")
 
 def column_sum(dictionary_options):
-    swn = st.checkbox('Łączna Suma wpłat od nowych', value=True, on_change=create_df(dictionary_options, "swn_db",
+    swn = st.checkbox('Suma wpłat od nowych', value=True, on_change=create_df(dictionary_options, "swn_db",
                                                                    st.session_state.swn_db),
                      key="swn_db")
     sct_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],

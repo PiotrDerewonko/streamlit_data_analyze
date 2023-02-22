@@ -7,6 +7,7 @@ from bokeh.transform import dodge
 
 import streamlit_functions.adr_action_dash.objects_for_ma_dash.char as char_opt
 from functions_pandas.short_mailings_names import change_name
+from pages.ma_details_files.line_charts_for_ma import line_chart_for_m
 from streamlit_functions.dashboard.operation_for_char import create_df, modifcate_data, create_pivot_table, \
     change_short_names_ma, change_short_names_db, check_max_value, label_of_axis
 
@@ -14,7 +15,8 @@ from streamlit_functions.dashboard.operation_for_char import create_df, modifcat
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args):
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
-    data,  title_fin = modifcate_data(data, type, multindex, title)
+    if (type != 'people_db'):
+        data,  title_fin = modifcate_data(data, type, multindex, title)
 
     major = "vertical"
     group = "horizontal"
@@ -30,7 +32,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
 
 
-    if type != 'me_detail':
+    if (type != 'me_detail') and (type != 'people_db'):
         data = change_name(data)
     if type == 'address':
         temp_df = change_short_names_ma(temp_df)
@@ -40,12 +42,21 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     y_label = 'Ilość pozyskanych'
 
 
-    if type != 'me_detail':
+    if (type != 'me_detail') and (type != 'people_db'):
         pivot_table_ma = create_pivot_table(data, multindex, type)
         if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
+    elif type == 'people_db':
+
+        pivot_table_ma = args[0]
+        pivot_table_ma.fillna(0, inplace=True)
+        temp_df = args[1]
+        title_fin = args[2]
+        temp_df_fin_sec = False
+
+        #pivot_table_ma.columns = pivot_table_ma.columns.to_flat_index()
 
     else:
         pivot_table_ma = args[0]
@@ -66,16 +77,18 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
 
 
-    if ((type != 'increase') & (type != 'dist') & (type != 'dist2')) | (temp_df_fin_sec ==True):
+    if ((type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db')) | (temp_df_fin_sec ==True):
         y_label, y_sec_label = label_of_axis(temp_df)
 
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db'):
         max_value_for_y_prime = check_max_value(pivot_table_ma
                                                 , temp_df, 'Oś główna')
         try:
             max_value_for_y_second = check_max_value(pivot_table_ma, temp_df, 'Oś pomocnicza')
         except:
             max_value_for_y_second = 0
+    elif (type == 'people_db'):
+        max_value_for_y_prime = pivot_table_ma.max().max()
     pivot_table_ma.fillna(0, inplace=True)
     source = ColumnDataSource(pivot_table_ma)
     #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
@@ -125,7 +138,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):
         p.y_range = Range1d(0, max_value_for_y_prime*1.1)
 
-    if ((type != 'increase') & (type != 'dist') & (type != 'dist2')) and (max_value_for_y_second != 0):
+    if ((type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db')) and (max_value_for_y_second != 0):
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
         p.extra_y_ranges = {'secon_axis': Range1d(0, max_value_for_y_second*1.1)}
         p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
@@ -134,10 +147,11 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     #wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
     p.yaxis.formatter.use_scientific = False
 
-
     # tworze wykresy
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
-        char_opt.char_ma_db_dash(temp_df, p, str_mutlindex, source, pivot_table_ma, type, index_for_char)
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db'):
+        char_opt.char_for_dash_ma_detail(temp_df, p, str_mutlindex, source, pivot_table_ma, type, index_for_char)
+    elif (type == 'people_db'):
+        p = line_chart_for_m(pivot_table_ma, title, 'zł', None, 'Miesiąc obecności w bazie')
     else:
         pt_columns = pivot_table_ma.columns
         pt_columns = pt_columns.to_list()
@@ -150,7 +164,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
     #char_opt.char_options(p)
 
-    if (type != 'increase') and (type != 'me_detail'):
+    if (type != 'increase') and (type != 'me_detail') and  (type != 'people_db'):
         #dodanie dodatkowych pol do tabeli przestawnej
         pivot_table_ma = pivot_table_ma.style.format(na_rep='MISSING',
                     formatter={

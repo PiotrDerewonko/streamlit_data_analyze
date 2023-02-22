@@ -4,10 +4,15 @@ from bokeh.palettes import Dark2_5 as palette
 from bokeh.plotting import figure
 
 
-def line_chart_for_m(pivot, title, y_axis_label):
+def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
+    if pivot_circ is not None:
+        pivot_circ_trans = pivot_circ.transpose()
+        x_label = 'Dzien po nadaniu mailingu'
+    else:
+        x_label = args[0]
     p = figure(height=700, width=1300,
                toolbar_location='right',
-               title=title, y_axis_label=y_axis_label, x_axis_label='Dzien po nadaniu mailingu'
+               title=title, y_axis_label=y_axis_label, x_axis_label=x_label
                )
     colors_fin = []
     colors = itertools.cycle(palette)
@@ -15,12 +20,20 @@ def line_chart_for_m(pivot, title, y_axis_label):
         colors_fin.append(color)
     j = 0
     len_columns = len(pivot.columns)
+
+
     for i in pivot.columns:
-        if j == len_columns-1:
-            line_width = 7
+        if pivot_circ is not None:
+            tmp = f' naklad {int(pivot_circ_trans.iloc[j].values[0])}'
+            if j == len_columns-1:
+                line_width = 7
+            else:
+                line_width = 4
         else:
+            tmp = ''
             line_width = 4
-        p.line(pivot.index.values, pivot[i], line_width=line_width, legend=f'{i}', color=colors_fin[j]
+
+        p.line(pivot.index.values, pivot[i], line_width=line_width, legend=f'{i}{tmp}', color=colors_fin[j]
                )
         j += 1
     p.legend.location = 'top_left'
@@ -28,6 +41,8 @@ def line_chart_for_m(pivot, title, y_axis_label):
     p.background_fill_color = None
     p.border_fill_color = None
     p.title.text_font_size = '14pt'
+
+
 
     return p
 
