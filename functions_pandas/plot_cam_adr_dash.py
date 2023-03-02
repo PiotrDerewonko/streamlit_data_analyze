@@ -1,7 +1,8 @@
 import itertools
 
+import streamlit as st
 from bokeh.models import LinearAxis, Range1d, Legend
-from bokeh.palettes import Dark2_5 as palette
+from bokeh.palettes import Category20_20 as palette
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.transform import dodge
 
@@ -42,21 +43,18 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     y_label = 'Ilość pozyskanych'
 
 
-    if (type != 'me_detail') and (type != 'people_db'):
+    if (type != 'me_detail') and (type != 'people_db') and (type != 'cost_structure'):
         pivot_table_ma = create_pivot_table(data, multindex, type)
         if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
     elif type == 'people_db':
-
         pivot_table_ma = args[0]
         pivot_table_ma.fillna(0, inplace=True)
         temp_df = args[1]
         title_fin = args[2]
         temp_df_fin_sec = False
-
-        #pivot_table_ma.columns = pivot_table_ma.columns.to_flat_index()
 
     else:
         pivot_table_ma = args[0]
@@ -159,7 +157,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         colors_fin = []
         for m, color in zip(range(len(pivot_table_ma.columns)), colors):
             colors_fin.append(color)
-        p.vbar_stack(pivot_table_ma.columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
+        st.markdown(pivot_table_ma.columns)
+        p.vbar_stack(pt_columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
                      width=0.7, legend_label=pt_columns, color=colors_fin)
 
     #char_opt.char_options(p)

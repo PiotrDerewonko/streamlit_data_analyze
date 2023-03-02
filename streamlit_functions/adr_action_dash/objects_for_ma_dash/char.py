@@ -9,16 +9,28 @@ def char_for_dash_ma_detail(temp_df, p, str_mutlindex, source, pivot_table_ma, *
     temp_df = temp_df.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
 
     #sprawdzam ile jest wykresow słupkowych i ślukowych skumulowanych
-    len_vbar = len((temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy']))
+    len_vbar_ = len((temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy']))
     len_stock = len((temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy Skumulowany']))
-    len_vbar = len_vbar + len_stock
+    tmp_vbar_stock_len = 0
+    if len(temp_df.loc[(temp_df['Opcje'] == 'Wykres Słupkowy Skumulowany') &
+           (temp_df['oś'] == 'default')]):
+        tmp_vbar_stock_len += 1
+    if len(temp_df.loc[(temp_df['Opcje'] == 'Wykres Słupkowy Skumulowany') &
+           (temp_df['oś'] == 'secon_axis')]):
+        tmp_vbar_stock_len += 1
+
+    len_vbar = len_vbar_ + len_stock
+    len_vbar_count = len_vbar_ + tmp_vbar_stock_len
 
 
     list_tmp = [0]
     tmp = 0
 
     if len_vbar >=1:
-        value = round(0.9/len_vbar, 2)
+        if len_vbar == 1:
+            value = 0.8
+        else:
+            value = round(0.9/len_vbar_count, 2)
         count = 1
         while tmp <= 1:
             list_tmp.append(count*value)
@@ -37,6 +49,7 @@ def char_for_dash_ma_detail(temp_df, p, str_mutlindex, source, pivot_table_ma, *
 
     #wydzielam tylko te wiersze ktore maja wykres slupkowy skumulowany
     if len_stock >= 1:
+        temp_df.reset_index(inplace=True)
         stock = temp_df.loc[temp_df['Opcje'] == 'Wykres Słupkowy Skumulowany']
         temp_df = temp_df.drop(stock.index)
         stock_default = stock.loc[stock['oś'] == 'default']
@@ -78,7 +91,7 @@ def char_for_dash_ma_detail(temp_df, p, str_mutlindex, source, pivot_table_ma, *
 
 
         elif row['Opcje'] == 'Wykres liniowy':
-            p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=1,
+            p.line(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''], line_width=5,
                    y_range_name=row['oś'],
                    legend=row['Nazwa parametru'], color=colors_fin[j])
             p.circle(pivot_table_ma.index.values, pivot_table_ma[f'''{row['Nazwa parametru']}'''],

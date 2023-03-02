@@ -7,6 +7,7 @@ from pages.ma_details_files.char_options.char_options import char_options
 from pages.ma_details_files.chars_for_days import charts
 from pages.ma_details_files.chose_campaign import choose
 from pages.ma_details_files.column_order import column_options
+from pages.ma_details_files.cost_structure import structure
 from pages.ma_details_files.filter import filtr_options
 from pages.ma_details_files.pivot_table_for_ma import create_pivot_table
 
@@ -55,3 +56,5 @@ with st.container():
     charts(qamp, con, years, refresh_data, engine)
 
     st.header('Struktura kosztów')
+    structure(con, qamp, years, engine)
+

@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+
 
 def create_pivot_table_for_ma_details(data, columns_options):
     data_all = data.copy()
@@ -31,6 +33,13 @@ def create_pivot_table_for_ma_details(data, columns_options):
     pivot_to_return['ROI'] = pivot_to_return['suma_wplat'] / pivot_to_return['koszt']
     pivot_to_return['SZLW'] = (pivot_to_return['liczba_wplat'] / pivot_to_return['naklad']) * 100
     pivot_to_return['Koszt_na_głowę'] = pivot_to_return['koszt'] / pivot_to_return['naklad']
+    pivot_to_return['SZLW do totalu'] = 0
+    pivot_to_return['Nakład total'] = 0
+    for j in columns_options:
+        tmp_sum = pd.pivot_table(data_all, index=j, values=['naklad'], aggfunc='sum')
+        a = 0
+
+
     return pivot_to_return
 
 def style_pivot_table_for_ma(pivot_to_return):

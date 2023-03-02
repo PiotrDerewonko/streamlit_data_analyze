@@ -10,8 +10,8 @@ def char_options_part1():
         c1, c2, c3, c4 = st.columns(4)
         axis_1 = ['Oś główna', 'Oś pomocnicza']
         axis_2 = ['Oś pomocnicza', 'Oś główna']
-        char_1 = ['Wykres Słupkowy', 'Wykres liniowy']
-        char_2 = ['Wykres liniowy', 'Wykres Słupkowy']
+        char_1 = ['Wykres Słupkowy', 'Wykres liniowy', 'Wykres Słupkowy Skumulowany']
+        char_2 = ['Wykres liniowy', 'Wykres Słupkowy', 'Wykres Słupkowy Skumulowany']
         list_of_objects =[[c1, 'suma_wplat', 'Suma wpłat', 'swax', 'Oś dla sumy wpłat', axis_1,
                            'swchar', 'Rodzaj wykresu dla Sumy wpłat', char_1, True],
                           [c2, 'liczba_wplat', 'Liczba wpłat', 'lwax', 'Oś dla liczby wpłat', axis_2,
@@ -45,8 +45,8 @@ def char_options_part2():
     with st.container():
         axis_1 = ['Oś główna', 'Oś pomocnicza']
         axis_2 = ['Oś pomocnicza', 'Oś główna']
-        char_1 = ['Wykres Słupkowy', 'Wykres liniowy']
-        char_2 = ['Wykres liniowy', 'Wykres Słupkowy']
+        char_1 = ['Wykres Słupkowy', 'Wykres liniowy', 'Wykres Słupkowy Skumulowany']
+        char_2 = ['Wykres liniowy', 'Wykres Słupkowy', 'Wykres Słupkowy Skumulowany']
         c1, c2, c3, c4, c5, c6, c7, c8 = st.columns(8)
         list_of_objects =[[c1, 'ROI', 'ROI', 'roiax', 'Oś dla ROI', axis_1,
                            'roichar', 'Rodzaj wykresu dla ROI', char_1, False],

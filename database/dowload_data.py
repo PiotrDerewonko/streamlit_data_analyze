@@ -128,7 +128,8 @@ group by  ta.kod_akcji'''
 def download_increase_data(con, refresh, engine):
     if refresh == 'True':
         sql = f'''select date_part('year', adod.data) as rok_dodania, grupa_akcji_1, grupa_akcji_2, kod_akcji,
-        date_part('month', adod.data) as miesiac_dodania, count(id_korespondenta) as ilosc
+        case when date_part('month', adod.data)<10 then '0'||date_part('month', adod.data)::text
+        else date_part('month', adod.data)::text end as miesiac_dodania, count(id_korespondenta) as ilosc
         from v_akcja_dodania_korespondenta2 adod
         group by rok_dodania, grupa_akcji_1, grupa_akcji_2,kod_akcji, miesiac_dodania'''
         to_insert = pd.read_sql_query(sql, con)

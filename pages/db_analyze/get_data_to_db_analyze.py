@@ -3,7 +3,7 @@ import streamlit as st
 from dateutil.relativedelta import relativedelta
 
 
-@st.cache_data
+@st.cache_data(ttl=7200)
 def live_people_from_db(_con, refresh_data):
     if refresh_data == 'True':
         id_group_two = '(1, 2, 4,  5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 82)'
@@ -39,8 +39,8 @@ def live_people_from_db(_con, refresh_data):
             #pobieram unikalan liste uzytkownikow
             list_of_id = tmp.drop_duplicates(subset=['id_korespondenta'])
             list_of_id2 = tuple(list_of_id['id_korespondenta'])
-            if len(list_of_id2) == 1:
-                list_of_id2 = '(' + str(list_of_id2[0]) + ')'
+            if len(list_of_id2) <= 1:
+                continue
 
             #pobieram uniklan liste dat dodania (wszytskie jako 1 dzien miesiaca)
             uniq_data_of_add = tmp['data_dodania'].drop_duplicates().to_frame()
@@ -122,6 +122,61 @@ def live_people_from_db(_con, refresh_data):
     data = pd.read_csv('./pages/db_analyze/tmp_file/db.csv')
 
     return data
+
+@st.cache_resource(ttl=7200)
+def weeks_of_db(_con, refresh_data, _engine):
+    if refresh_data == 'True':
+        sql_1 = '''select grupa_akcji_3, grupa_akcji_2,kod_akcji,suma_wplat,pozyskano,
+       row_number() over (partition by  kod_akcji order by kod_akcji,rok, num_tygodnia) as numer_tygodnia from (
+
+select grupa_akcji_3, grupa_akcji_2,kod_akcji, sum(kwota) as suma_wplat, count(tr.id_transakcji) as liczba_wplat ,
+       date_part('week', tr.data_wplywu_srodkow) as num_tygodnia,
+       date_part('year', tr.data_wplywu_srodkow) as rok, sum(pozyskani) as pozyskano from
+                t_transakcje tr
+                left outer join  t_aktywnosci_korespondentow tak
+                on tak.id_transakcji = tr.id_transakcji
+                left outer join t_akcje ta
+                on ta.id_akcji=tak.id_akcji
+                left outer join t_grupy_akcji_2 t on ta.id_grupy_akcji_2 = t.id_grupy_akcji_2
+                left outer join t_grupy_akcji_3 a on ta.id_grupy_akcji_3 = a.id_grupy_akcji_3
+left outer join (select 1 as pozyskani , id_akcji, id_korespondenta from v_akcja_dodania_korespondenta2) poz
+on poz.id_akcji = tak.id_akcji and poz.id_korespondenta = tak.id_korespondenta
+
+                where tak.id_akcji in ( select id_akcji from t_akcje where id_grupy_akcji_3>=8 and id_grupy_akcji_1=22)
+                group by --rok_i_mailing,
+                grupa_akcji_3,grupa_akcji_2, kod_akcji, rok, num_tygodnia
+           order by kod_akcji, rok, num_tygodnia)a'''
+        data_part_1 = pd.read_sql_query(sql_1, _con)
+        sql_2 = '''select grupa_akcji_3, grupa_akcji_2, kod_akcji, sum(vkkwa.koszt) as koszt_wysylki_giftu , 1 as numer_tygodnia
+from t_aktywnosci_korespondentow tak
+left outer join t_transakcje tt on tak.id_transakcji = tt.id_transakcji
+    left outer join t_akcje ta
+    on ta.id_akcji=tak.id_akcji
+                    left outer join t_grupy_akcji_2 t on ta.id_grupy_akcji_2 = t.id_grupy_akcji_2
+                left outer join t_grupy_akcji_3 a on ta.id_grupy_akcji_3 = a.id_grupy_akcji_3
+left outer join v_koszt_korespondenta_w_akcjach vkkwa
+on vkkwa.id_korespondenta=tt.id_korespondenta and vkkwa.id_akcji=tt.id_akcji
+where tak.id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_3>=8  and id_grupy_akcji_1=22)
+group by grupa_akcji_3, grupa_akcji_2, kod_akcji
+'''
+        data_part_2 = pd.read_sql_query(sql_2, _con)
+        sql_3 = '''
+        select grupa_akcji_3, grupa_akcji_2, ta.kod_akcji, sum(koszt_calkowity)  as koszt_insertu
+            , 1 as numer_tygodnia from 
+            v_akcje_naklad_koszt_calkowity k 
+            left outer join t_akcje ta 
+            on ta.id_akcji = k.id_akcji
+            left outer join t_grupy_akcji_2 t on ta.id_grupy_akcji_2 = t.id_grupy_akcji_2
+            left outer join t_grupy_akcji_3 a on ta.id_grupy_akcji_3 = a.id_grupy_akcji_3
+
+            where k.id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_3>=8  and id_grupy_akcji_1=22)
+            group by grupa_akcji_3, grupa_akcji_2, ta.kod_akcji'''
+        data_part_3 = pd.read_sql_query(sql_3, _con)
+        final_data = pd.concat([data_part_1, data_part_2, data_part_3])
+        final_data.to_sql('weeks_of_db', _engine, if_exists='replace', schema='raporty', index=False)
+    to_return = pd.read_sql_query(f'''select * from raporty.weeks_of_db''', _con)
+    return to_return
+
 
 
 

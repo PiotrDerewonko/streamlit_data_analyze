@@ -6,7 +6,7 @@ from pages.db_analyze import checkboxs
 
 def char_options():
     with st.container():
-        st.header('Opcje wykresu')
+        st.header('Wykres utrzymania i wpłat')
         dict = {'suma_wplat': False, 'koszt_utrzymania': False, 'koszt_insertu': False,
                 'profit': True, 'czy_kumulacyjnie': True}
         c1, c2, c3, c4, c5 = st.columns(5)

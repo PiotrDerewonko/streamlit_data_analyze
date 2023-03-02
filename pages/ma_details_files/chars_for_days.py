@@ -72,4 +72,4 @@ def charts(mailing, con, years, refresh_data, engine):
         with tab1:
             st.bokeh_chart(char_sum_of_amount, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
-                st.dataframe(pivot_count_amount)
+                st.dataframe(pivot_sum_of_amount)

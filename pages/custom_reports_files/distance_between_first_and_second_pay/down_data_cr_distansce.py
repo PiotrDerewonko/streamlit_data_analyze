@@ -1,7 +1,8 @@
 import pandas as pd
+import streamlit as st
 
-
-def down_data_about_cor(con, engine, refresh):
+@st.cache_resource(ttl=7200)
+def down_data_about_cor(_con, _engine, refresh):
     if refresh == 'True':
         sql = '''select adod.id_korespondenta, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3, data as data_dodania,
         last_mailing, date_part('year', data),plec, okreg_pocztowy, case when plc.id_korespondenta is not null then 
@@ -43,15 +44,16 @@ left outer join (select tytul , case when id_plci=1 then 'mężczyźni'
  when id_plci=3 then 'mnogie' else 'mnogie'end as plec from t_tytuly) tyt
  on tyt.tytul=kor.tytul_1
 '''
-        data = pd.read_sql_query(sql, con)
+        data = pd.read_sql_query(sql, _con)
         data['last_mailing'].fillna(False, inplace=True)
-        data.to_sql('cr_distance_corr', engine, if_exists='replace', schema='raporty', index=False)
+        data.to_sql('cr_distance_corr', _engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_corr')
-    data = pd.read_sql_query('''select * from raporty.cr_distance_corr''', con)
+    data = pd.read_sql_query('''select * from raporty.cr_distance_corr''', _con)
     data[['plec', 'okreg_pocztowy']].fillna('', inplace=True)
     return data
 
-def down_data_about_pay(con, engine, refresh):
+@st.cache_resource(ttl=7200)
+def down_data_about_pay(_con, _engine, refresh):
     if refresh == 'True':
         #todo poporawic gdy druga wplata byla tego samego dnia to jej nie brac
         sql = '''select id_korespondenta, data_wplywu_srodkow, numer from (
@@ -59,10 +61,10 @@ def down_data_about_pay(con, engine, refresh):
         order by id_korespondenta, data_wplywu_srodkow) as numer from (select distinct id_korespondenta
         , data_wplywu_srodkow from t_transakcje)a
         )foo where numer <=2 '''
-        data = pd.read_sql_query(sql, con)
-        data.to_sql('cr_distance_pay', engine, if_exists='replace', schema='raporty', index=False)
+        data = pd.read_sql_query(sql, _con)
+        data.to_sql('cr_distance_pay', _engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_pay')
-    data = pd.read_sql_query('''select * from raporty.cr_distance_pay''', con)
+    data = pd.read_sql_query('''select * from raporty.cr_distance_pay''', _con)
     tmp = data['id_korespondenta'].drop_duplicates().to_frame()
     tmp2 = data.loc[data['numer'] == 1]
     tmp2 = tmp2.rename(columns={'data_wplywu_srodkow': 'first_pay'})

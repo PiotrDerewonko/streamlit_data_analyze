@@ -1,6 +1,6 @@
 import itertools
 
-from bokeh.palettes import Dark2_5 as palette
+from bokeh.palettes import Category20_20 as palette
 from bokeh.plotting import figure
 
 
@@ -41,6 +41,7 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
     p.background_fill_color = None
     p.border_fill_color = None
     p.title.text_font_size = '14pt'
+    p.legend.label_text_font_size = '14pt'
 
 
 
