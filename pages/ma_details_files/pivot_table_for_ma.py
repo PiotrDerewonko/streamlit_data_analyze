@@ -6,7 +6,7 @@ from dotenv import dotenv_values
 from database.source_db import deaful_set
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people, \
-    download_data_about_people_camp_pay, download_data_about_people_camp
+    download_data_about_people_camp_pay, download_data_about_people_camp, data_pay_all
 from pages.ma_details_files.pivot_table.pivot_table_for_ma_details import create_pivot_table_for_ma_details, \
     style_pivot_table_for_ma
 
@@ -20,7 +20,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
         year_int.append(int(i))
     mail, con, engine = deaful_set(sorce_main)
     data_about_people = download_data_about_people(con, refresh_data, 0, [])
-    data_about_pay = download_data_about_people_camp_pay(con, refresh_data, engine)
+    data_about_pay_orig = download_data_about_people_camp_pay(con, refresh_data, engine)
     data_about_camp = download_data_about_people_camp(con, refresh_data, engine)
     days = pd.read_excel('./pages/ma_details_files/tmp_file/days.xlsx', sheet_name='Sheet1')
 
@@ -53,8 +53,8 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     for i in filtr[3:]:
         if i[1] != ' ':
             minimum_value = days['dzien_po_mailingu'].min()
-            data_about_pay = data_about_pay.loc[data_about_pay['dzien_po_mailingu']<=minimum_value]
-    data_about_pay = pd.pivot_table(data=data_about_pay, index=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'],
+            data_about_pay_orig = data_about_pay_orig.loc[data_about_pay_orig['dzien_po_mailingu']<=minimum_value]
+    data_about_pay = pd.pivot_table(data=data_about_pay_orig, index=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'],
                                     values=['suma_wplat', 'liczba_wplat'], aggfunc='sum')
 
     #data_about_camp= data_about_camp['kod_akcji_wysylki'].replace('_', ' ', regex=True)
@@ -129,7 +129,55 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
         title_fin = f'''Dane dla mailingu {camp} za lata {year_int}\n{title_with_filtr}'''
     char, a = pivot_and_chart_for_dash(data_all_copy[columns_options], columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
                                        pivot_to_return_values, options_char, title_fin, dict_of_oriantation)
-    return pivot_to_return_style, plt,  pivot_to_return_values, char
+
+    #tworze wykres struktury wplat
+    data_about_pay_all = data_pay_all(con, refresh_data)
+    data_about_pay_all['grupa_akcji_3_wplaty'] = data_about_pay_all['grupa_akcji_3_wplaty'].astype(str)
+    if len(camp)>=1:
+        data_about_pay_all = data_about_pay_all[data_about_pay_all['grupa_akcji_2_wplaty'].isin(camp)]
+    if len(year_int)>=1:
+        data_about_pay_all = data_about_pay_all[data_about_pay_all['grupa_akcji_3_wplaty'].isin(year)]
+
+    for z in filtr[3:]:
+        if z[1] != ' ':
+            minimum_value = days['dzien_po_mailingu'].min()
+            data_about_pay_all = data_about_pay_all.loc[data_about_pay_all['dzien_po_mailingu']<=minimum_value]
+    data_all_copy.drop_duplicates(subset=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'], inplace=True)
+    data_to_structure = pd.merge(data_about_pay_all, data_all_copy,
+                                 left_on=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'],
+                                 right_on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'],how='left')
+    data_to_structure.drop(columns=['suma_wplat_y'], inplace=True)
+    data_to_structure.rename(columns={'suma_wplat_x': 'suma_wplat'}, inplace=True)
+    data_to_structure.drop_duplicates(subset=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'], inplace=True)
+    pivot_for_structure = data_to_structure.pivot_table(values=['suma_wplat'], columns=['przedzialy'],
+                                           aggfunc='count',
+                                           index=columns_options)
+    pivot_for_structure.columns = ['_'.join(col) for col in pivot_for_structure.columns.values]
+    pivot_for_structure['sum'] = 0
+    for i in pivot_for_structure.columns:
+        if i != 'sum':
+            pivot_for_structure['sum'] = pivot_for_structure['sum'] + pivot_for_structure[i]
+    tmp_df = pivot_for_structure.copy()
+    for j in pivot_for_structure.columns:
+        if j != 'sum':
+            tmp_df[j] = tmp_df['sum']
+    tmp2 = pivot_for_structure.div(tmp_df)
+    tmp2.drop(columns=['sum'], inplace=True)
+    pivot_for_structure = tmp2
+    columns_name = pivot_for_structure.columns
+    index_column_name = []
+    j = 0
+    for i in columns_name:
+        index_column_name.append(j)
+        j += 1
+    d = {'Nazwa parametru': columns_name}
+    new_option_char = pd.DataFrame(data=d, index=index_column_name)
+    new_option_char['oś'] = 'Oś główna'
+    new_option_char['Opcje'] = 'Wykres Słupkowy Skumulowany'
+    char_structure, b = pivot_and_chart_for_dash(data_to_structure[columns_options], columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
+                                       pivot_for_structure, new_option_char, title_fin, dict_of_oriantation)
+
+    return pivot_to_return_style, kor, pivot_to_return_values, char, char_structure
 
 
 

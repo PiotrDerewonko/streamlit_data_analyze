@@ -73,10 +73,10 @@ group by rok, miesiac, typ)a'''
                                           )
     tab1, tab2 = st.tabs(['Suma wpłat', 'Struktura wpłat'])
     with tab1:
-        st.bokeh_chart(char_finance)
+        st.bokeh_chart(char_finance, use_container_width=True)
         with st.expander('Kliknij i zobacz dane'):
             st.dataframe(pivot)
     with tab2:
         st.bokeh_chart(char_finance_to100)
         with st.expander('Kliknij i zobacz dane'):
-            st.dataframe(pivot_cum)
+            st.dataframe(pivot_cum, use_container_width=True)

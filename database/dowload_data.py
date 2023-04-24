@@ -40,7 +40,7 @@ def download_dash_address_data(con, refresh, engine, type):
         extra_group = ''
         extra_union = ''
     else:
-        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105)'
+        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119)'
         extra = ', substring(ta.kod_akcji, 7,2) as miesiac'
         extra_group = ',miesiac'
         extra_union = f'''union
@@ -114,6 +114,22 @@ and ta.kod_akcji =v.kod_akcji
 group by  ta.kod_akcji'''
             pay_new_people = pd.read_sql_query(pay_new_people, con)
             to_insert = pd.merge(to_insert, pay_new_people, how='left', on='kod_akcji')
+            gift = pd.read_sql_query('''select kod_akcji, fmm.name as OBIECYWANY_GIFT, typ.rodzaj AS RODZAJ_GIFTU from t_akcje
+    left outer join fsaps_campaign_subaction fcs
+on fcs.name = t_akcje.kod_akcji
+left outer join fsaps_campaign_action fca on fcs.action_id = fca.id
+left outer join fsaps_campaign_main_action fcma on fca.action_main_id = fcma.id
+left outer join fsaps_campaign_campaign fcc on fcma.campaign_id = fcc.id
+left outer join fsaps_order_order foo on fcc.id = foo.campaign_id
+left outer join fsaps_material_material fmm on foo.material_id = fmm.id
+left outer join (select material_id, value AS rodzaj from fsaps_material_parameter where utility_parameter_name_id=1) typ
+on typ.material_id=fmm.id
+where id_grupy_akcji_1=22
+and id_grupy_akcji_3 >=14
+ORDER BY ID_AKCJI DESC
+''', con)
+            to_insert = pd.merge(to_insert, gift, how='left', on='kod_akcji')
+
             to_insert.to_sql('dash_db_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard bezadresowy')
     if type == 'address':

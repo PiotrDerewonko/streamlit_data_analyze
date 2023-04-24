@@ -159,7 +159,7 @@ def label_of_axis(data):
     for i, row2 in data.iterrows():
         if row2['oś'] == 'Oś główna':
             if len(label_axis_prime) == 0:
-                label_axis_prime = row2[0]
+                label_axis_prime = str(row2[0])
             else:
                 label_axis_prime = label_axis_prime + '/' + str(row2['Nazwa parametru'])
         else:

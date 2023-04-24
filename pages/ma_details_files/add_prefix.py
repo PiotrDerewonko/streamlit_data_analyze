@@ -26,7 +26,7 @@ on fcc.action_group_one_id=ta.id_grupy_akcji_1 and fcc.action_group_two_id = ta.
    fcc.action_group_three_id = ta.id_grupy_akcji_3
 left outer join (select * from fsaps_campaign_main_action where newly_acquired=False) fcma on fcc.id = fcma.campaign_id and
                                                    ta.kod_akcji like '%'||fcma.prefix||'%'
-left outer join fsaps_campaign_action fca on fcma.id = fca.action_main_id and
+left outer join fsaps_campaign_action fca on fcma.id = fca.action_main_id and 
                                                    ta.kod_akcji like '%'||fca.prefix||'%'
 where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
 

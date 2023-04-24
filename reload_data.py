@@ -9,7 +9,7 @@ from pages.ma_details_files.add_prefix import add_prefix
 from pages.ma_details_files.addpromisegift import promise_gift
 from pages.ma_details_files.cost_structure import get_costs
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people_camp, distinct_options, \
-    download_data_about_people_camp_pay, download_data_about_people
+    download_data_about_people_camp_pay, download_data_about_people, data_pay_all
 from pages.ma_details_files.download_data_fo_char_line import down_data_sum_and_count, down_data_cost_and_circulation
 from pages.ma_details_files.max_day import check_max_day
 
@@ -28,6 +28,7 @@ down_data_sum_and_count(con, refresh_data, engine)
 download_data_about_people_camp(con, refresh_data, engine)
 download_data_about_people(con, refresh_data, 0, [])
 download_data_about_people_camp_pay(con, refresh_data, engine)
+data_pay_all(con, refresh_data)
 check_max_day(refresh_data)
 add_prefix(con, refresh_data, engine)
 promise_gift()

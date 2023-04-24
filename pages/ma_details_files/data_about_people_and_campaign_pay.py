@@ -132,7 +132,7 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
 
                 nowi = data_tmp_1['id_korespondenta'].loc[(data_tmp_1['rok_dodania']>=year-liczba_lat+1) & (data_tmp_1['rok_dodania']<=year)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
-                                                 (people_camp['id_korespondenta'].isin(nowi))] = 'znaki zapytania'
+                                                 (people_camp['id_korespondenta'].isin(nowi))] = '<3 lata w bazie'
 
             people_camp.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
         except:
@@ -197,6 +197,7 @@ and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
         data = pd.read_sql_query(sql, _con)
 
 
+
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
@@ -227,6 +228,38 @@ and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.i
         data = change_name(data)
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+    return data
+
+@st.cache_data(ttl=3600)
+def data_pay_all(_con, refresh_data):
+    if refresh_data == 'True':
+        sql = '''select tak.id_korespondenta, kwota as suma_wplat,
+             grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, dni.dzien_po_mailingu
+             from t_aktywnosci_korespondentow tak
+            left outer join t_akcje ta
+            on ta.id_akcji = tak.id_akcji
+            left outer join public.t_transakcje tr
+            on tr.id_transakcji = tak.id_transakcji
+            left outer join t_grupy_akcji_1 gr1
+            on gr1.id_grupy_akcji_1 = ta.id_grupy_akcji_1
+            left outer join t_grupy_akcji_2 gr2
+            on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2
+            left outer join t_grupy_akcji_3 gr3
+            on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
+            left outer join raporty.t_dni_po_nadaniu_mailingow dni
+on dni.id_grupy_akcji_2=ta.id_grupy_akcji_2 and dni.id_grupy_akcji_3=ta.id_grupy_akcji_3
+and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
+            where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100) and tak.id_transakcji is not null
+    '''
+        data = pd.read_sql_query(sql, _con)
+        bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 200, 10000000]
+        labels = ['[00-010)', '[010-020)', '[020-030)', '[030-040)', '[040-050)', '[050-060)', '[060-070)', '[070-080)',
+                  '[080-090)',
+                  '[090-100)', '[100-110)', '[110-120)', '[120-200)', '[200-maks)']
+        data['przedzialy'] = pd.cut(data['suma_wplat'], bins, right=False, labels=labels)
+        data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay_individual.csv')
+    else:
+        data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay_individual.csv', index_col='Unnamed: 0')
     return data
 
 def distinct_options(refresh_data):

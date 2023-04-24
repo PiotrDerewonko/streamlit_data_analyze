@@ -40,9 +40,9 @@ with st.container():
     main_action_config(data_to_show_ma, True)
     st.header('Dane z głównych wrzutek bezadresowych')
     #todo wykres z przychodu i do 100 % porzychod
-    non_action_main_conf(data_to_show_db)
+    non_action_main_conf(data_to_show_db, con)
     st.header('Dane dotyczące przyrostu korespondentów a')
-    tab7, tab8, tab9 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu'])
+    tab7, tab8, tab9, tab10 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu', 'Filtr'])
     with tab9:
         levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
                                          label='Prosze wybrac kolejnosc kolumn dla danych z przyrostu',

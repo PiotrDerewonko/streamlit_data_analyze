@@ -127,8 +127,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     p.xaxis.group_label_orientation = group
     p.xaxis.subgroup_label_orientation = sub_group
 
-    p.background_fill_color = None
-    p.border_fill_color = None
+    #p.background_fill_color = None
+    #p.border_fill_color = None
     p.title.text_font_size = '18pt'
 
 
