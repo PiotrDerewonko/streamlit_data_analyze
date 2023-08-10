@@ -7,6 +7,7 @@ def get_costs(_con, refresh_data, _engine):
         sql = f'''select akc.id_korespondenta, akc.id_akcji,gr3.grupa_akcji_3, gr2.grupa_akcji_2,miejscowosc, jest_zagranica, 
             druki.koszt as koszt_drukow, 
             gifty.koszt as koszt_giftow,
+            perso.koszt as koszt_personalizacji,
                koszt_konfekcjonowania, koszt_wysylki_na_polske_bez_warszawy, koszt_wysylki_na_warszawe,
                koszt_wysylki_zagranica
         from t_akcje_korespondenci akc
@@ -19,7 +20,7 @@ def get_costs(_con, refresh_data, _engine):
         LEFT JOIN
         t_materialy m on m.id_materialu = am.id_materialu
         WHERE
-        m.id_typu_materialu IN (4, 1, 2, 6, 9, 14, 15, 16, 20, 22, 23, 24, 25, 26, 13, 11, 10, 3,28,29,21)
+        m.id_typu_materialu IN (4, 1, 2, 6, 9, 14, 15, 16, 20, 22, 23, 24, 25, 26, 13, 11, 10, 3,28,29,21,23, 33)
          group by am.id_akcji) druki
         on druki.id_akcji = akc.id_akcji
         left outer join (SELECT
@@ -30,7 +31,18 @@ def get_costs(_con, refresh_data, _engine):
         LEFT JOIN
         t_materialy m on m.id_materialu = am.id_materialu
         WHERE
-        m.id_typu_materialu IN (5, 7, 8, 12, 19, 27 ,23)
+        m.id_typu_materialu IN (34)
+         group by am.id_akcji) perso
+        on perso.id_akcji = akc.id_akcji
+        left outer join (SELECT
+        am.id_akcji,
+        sum(am.koszt_jednostkowy*naklad) as koszt
+        FROM
+        t_akcje_materialy am
+        LEFT JOIN
+        t_materialy m on m.id_materialu = am.id_materialu
+        WHERE
+        m.id_typu_materialu IN (5, 7, 8, 12, 19, 27, 32, 30)
         GROUP BY am.id_akcji
         ) gifty on gifty.id_akcji = akc.id_akcji
         left outer join t_akcje ak
@@ -39,6 +51,7 @@ def get_costs(_con, refresh_data, _engine):
         on ak.id_grupy_akcji_3 = gr3.id_grupy_akcji_3
         left outer join public.t_grupy_akcji_2 gr2
         on ak.id_grupy_akcji_2 = gr2.id_grupy_akcji_2
+        
         where ak.id_grupy_akcji_2 in (9,10,11,12,24,67,101)
         '''
         data = pd.read_sql_query(sql, _con)

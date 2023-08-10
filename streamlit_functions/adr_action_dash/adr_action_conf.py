@@ -27,18 +27,4 @@ def main_action_config(data_to_show_ma, show_filter):
             st.dataframe(test_pivot_ma, 1200, 400)
             label_of_file = f'dane mailing_adresowy.xlsx'
 
-            #@st.cache
-            #def save_file(df):
-            #    df.to_excel(f'./generated_files/{label_of_file}', engine='xlsxwriter')
-
-            # todo do poprawienia aby plik nie generowal sie za kazdym razem
-            #with open(f"./generated_files/{label_of_file}", "rb") as file:
-            #    btn = st.download_button(
-            #        label="Download xlsx",
-            #        on_click=save_file(test_pivot_ma),
-            #        data=file,
-            #        file_name="Tabela przestawna z mailingów adresowych.xlsx",
-            #        mime="image/png"
-            #    )
-
     return prime

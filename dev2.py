@@ -1,32 +1,25 @@
-#from geopy.geocoders import Nominatim
-
-#geolocator = Nominatim(user_agent="my_app")
-#location = geolocator.geocode("Warszawa lwowska 15")
-#print((location.latitude, location.longitude))
-
-
 import pandas as pd
-import pydeck as pdk
-import streamlit as st
+import plotly.express as px
 
-df = pd.DataFrame(data={'latitude': [52.30739130000000, 52.22207805], 'longitude':[21.164590055417932, 21.01236116061687], 'etykieta': ['20','1']})
+# Przykładowe dane (zakładam, że masz takie dane w swoim DataFrame)
+data = {
+    'Value': [10, 20, 15, 25, 30, 35],
+    'Year': [2021, 2021, 2021, 2022, 2022, 2022],
+    'Month': [1, 2, 3, 4, 5, 6],
+    'Day': [1, 1, 1, 1, 1, 1]
+}
 
-etykiety = df.etykieta.unique().tolist()
-kolory = ['#00FF00', '#FF0000'] # Lista kolorów odpowiadających kolejnym etykietom
-layer = [pdk.Layer(
-    "ScatterplotLayer",
-    data=df[:1],
-    get_position=["longitude", "latitude"],
-    get_fill_color=['200'],
-    get_radius=100,
-), pdk.Layer(
-    "ScatterplotLayer",
-    data=df[1:],
-    get_position=["longitude", "latitude"],
-    get_fill_color=['1'],
-    get_radius=100,
-)]
-view_state = pdk.ViewState(latitude=df.latitude.mean(), longitude=df.longitude.mean(), zoom=8, bearing=0, pitch=0)
-tooltip = {"html": "<b>Etykieta:</b> {etykieta}<br />", "style": {"color": "red"}}
-map = pdk.Deck(map_style='mapbox://styles/mapbox/light-v9', initial_view_state=view_state, layers=[layer], tooltip=tooltip)
-st.pydeck_chart(map)
+# Tworzenie DataFrame'a z indeksem wielopoziomowym
+df = pd.DataFrame(data)
+df.set_index(['Year', 'Month', 'Day'], inplace=True)
+
+# Resetowanie indeksu MultiIndex'a do kolumny (tworzymy nowe kolumny 'Year', 'Month' i 'Day')
+df_reset = df.reset_index()
+
+# Łączenie kolumn 'Year', 'Month' i 'Day' w jedno pole 'Date' jako nowy indeks
+df_reset['Date'] = pd.to_datetime(df_reset[['Year', 'Month', 'Day']])
+df_reset.set_index('Date', inplace=True)
+
+# Tworzenie wykresu liniowego
+fig = px.line(df_reset, x=df_reset.index, y='Value', markers=True, title='Wykres z indeksem z trzech pól')
+fig.show()

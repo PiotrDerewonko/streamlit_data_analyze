@@ -24,6 +24,7 @@ def column_options(con):
     list_options.append('KOLOR KARTY')
     list_options.append('WPŁATA')
     list_options.append('TYP DARCZYŃCY')
+    list_options.append('karta_na_mailing')
     final_option_list = ['']
     if 'text_key' not in st.session_state:
         st.session_state.text_key = ''

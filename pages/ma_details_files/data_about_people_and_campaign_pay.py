@@ -79,7 +79,7 @@ def download_data_about_people(_con, refresh_data, limit, filtr_column):
            when okreg_pocztowy = 9 then 'łódzki'
            end as okreg_pocztowy       from (
 select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all) a''', 'brak'
-], ['''select id_korespondenta, grupa_akcji_1 as grupa_akcji_1_dodania, grupa_akcji_2 as grupa_akcji_2_dodania, grupa_akcji_3 as grupa_akcji_3_dodania ,
+], ['''select id_korespondenta,kod_akcji as kod_akcji_dodania, grupa_akcji_1 as grupa_akcji_1_dodania, grupa_akcji_2 as grupa_akcji_2_dodania, grupa_akcji_3 as grupa_akcji_3_dodania ,
  date_part('year', data ) as rok_dodania from v_akcja_dodania_korespondenta2''',
     '']]
 

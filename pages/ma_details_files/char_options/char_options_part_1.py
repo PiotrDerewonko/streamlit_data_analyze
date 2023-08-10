@@ -7,7 +7,7 @@ import pages.ma_details_files.char_options.basic_options as ch_1
 
 def char_options_part1():
     with st.container():
-        c1, c2, c3, c4 = st.columns(4)
+        c1, c2, c3, c4, c5 = st.columns(5)
         axis_1 = ['Oś główna', 'Oś pomocnicza']
         axis_2 = ['Oś pomocnicza', 'Oś główna']
         char_1 = ['Wykres Słupkowy', 'Wykres liniowy', 'Wykres Słupkowy Skumulowany']
@@ -19,7 +19,10 @@ def char_options_part1():
                           [c3, 'koszt', 'Koszt', 'kcax', 'Oś dla kosztu', axis_1,
                            'kcchar', 'Rodzaj wykresu dla Kosztu', char_1, True],
                           [c4, 'naklad', 'Nakład', 'ncax', 'Oś dla nakładu', axis_2,
-                           'ncchar', 'Rodzaj wykresu dla Nakładu', char_2, True]]
+                           'ncchar', 'Rodzaj wykresu dla Nakładu', char_2, True],
+                          [c5, 'profit', 'Profit', 'profitax', 'Oś dla profitu', axis_2,
+                           'profitchar', 'Rodzaj wykresu dla Profitu', char_2, True]
+                          ]
 
         for x in list_of_objects:
             if x[1] not in st.session_state:
@@ -36,9 +39,11 @@ def char_options_part1():
             n_dict, n_df = ch_1.options_col1_naklad(axis_1, char_1)
         with c4:
             k_dict, k_df = ch_1.options_col1_koszt(axis_1, char_1)
+        with c5:
+            profit_dict, profit_df = ch_1.options_col1_profit(axis_1, char_1)
 
         test_df = pd.DataFrame()
-        test_df = pd.concat([test_df, sw_df, lw_df, n_df, k_df])
+        test_df = pd.concat([test_df, sw_df, lw_df, n_df, k_df, profit_df])
         return test_df
 
 def char_options_part2():

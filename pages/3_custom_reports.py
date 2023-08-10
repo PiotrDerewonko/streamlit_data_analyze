@@ -13,9 +13,9 @@ with st.container():
     refresh_data = 'False'
 
     st.header("Odległość między pierwszą a drugą wpłatą")
-
+    #todo zmienic nazwy kolumn na nazwy dla ludzi i z powrotem
     multindex = st.multiselect(options=['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'status_first_pay',
-                                        'date_part', 'plec', 'okreg_pocztowy'],
+                                        'date_part', 'plec', 'okreg_pocztowy', 'good_address'],
                                      label='Prosze wybrac index',
                                      default=['grupa_akcji_1', 'status_first_pay', 'plec'])
 
@@ -34,7 +34,7 @@ with st.container():
 
     last_mailing = st.checkbox(label='Tylko osoby z ostatnim mailingiem Q', value=True)
     positive_adr = st.checkbox(label='Tylko osoby z poprawnym adresem', value=True)
-
+    #TODO TU znalesc dlaczego wysiwtyela sie ten indeks
     if last_mailing == True:
         data = data.loc[data['last_mailing']==True]
 

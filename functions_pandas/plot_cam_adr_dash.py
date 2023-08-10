@@ -14,6 +14,7 @@ from streamlit_functions.dashboard.operation_for_char import create_df, modifcat
 
 
 def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args):
+    # tworzy tabele temp df dla typow ktore jej nie przesylaja. Na podstaiwe tej tabeli program wie jaki paramatr gdzie ma trafic
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     if (type != 'people_db'):
@@ -42,9 +43,15 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
     y_label = 'Ilość pozyskanych'
 
+    # dla typu przyrost pobieram dodatkowa wartosc jaka sa kolumny
+    if (type == 'increase'):
+        columns_label=args[0]
+    else:
+        columns_label=[]
+
 
     if (type != 'me_detail') and (type != 'people_db') and (type != 'cost_structure'):
-        pivot_table_ma = create_pivot_table(data, multindex, type)
+        pivot_table_ma = create_pivot_table(data, multindex, type, columns_label)
         if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
             temp_df_fin_sec = True
         else:
@@ -71,6 +78,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         sub_group = dict_of_oriantation['sub_group']
 
     pivot_table_ma.fillna(0, inplace=True)
+
     index_for_char = data.groupby(multindex, dropna=True)
 
 

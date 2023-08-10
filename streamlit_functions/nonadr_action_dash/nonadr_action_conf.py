@@ -46,4 +46,4 @@ def non_action_main_conf(data_to_show_db, con):
         with tab2:
             st.dataframe(test_pivot_db, 900, 400)
         with tab1:
-            st.bokeh_chart(cam_adr_plot_db)
+            st.bokeh_chart(cam_adr_plot_db, use_container_width=True)

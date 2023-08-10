@@ -83,3 +83,23 @@ def options_col1_koszt(axis_1, char_1):
         test_dict = {}
         dataframe = pd.DataFrame(data=test_dict)
     return test_dict, dataframe
+
+def options_col1_profit(axis_1, char_1):
+    dict = {}
+    checkbox = st.checkbox('Profit', value=False, on_change=create_df(dict, "profit",
+                                                                    st.session_state.profit),
+                     key="profit")
+    select_axis = st.selectbox('Oś dla Profitu', axis_1, on_change=create_df(dict, "profitax", st.session_state.profitax),
+                        key="profitax")
+    select_char = st.selectbox('Rodzaj wykresu dla Profitu', char_1, on_change=create_df(dict, "profitchar",
+                                                                                       st.session_state.profitchar),
+                          key="profitchar")
+
+    if checkbox == True:
+        test_dict = {'Nazwa parametru': ['profit'], 'oś': [f'{select_axis}'],
+                     'Opcje': [select_char]}
+        dataframe = pd.DataFrame(data=test_dict)
+    else:
+        test_dict = {}
+        dataframe = pd.DataFrame(data=test_dict)
+    return test_dict, dataframe

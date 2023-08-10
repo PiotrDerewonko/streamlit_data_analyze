@@ -95,9 +95,18 @@ def modifcate_data(data, type, multindex, title):
         title_fin = title_fin + f" za lata {years}"
     return data,  title_fin
 
-def create_pivot_table(data, multindex, type):
+def create_pivot_table(data, multindex, type, columns_label):
     if type == 'increase':
-        pivot_table_ma = pd.pivot_table(data, index=multindex, values='ilosc', columns='grupa_akcji_1', aggfunc='sum')
+        #todo poprrawic typy danych bo miesiac nie ma 0
+        for i in range(1, 10):
+            data['miesiac_dodania'].loc[data['miesiac_dodania']==f'{i}'] = f'0{i}'
+        for j in columns_label:
+            data[j] = data[j].astype(str)
+        pivot_table_ma = pd.pivot_table(data, columns=columns_label, values='ilosc', index=multindex, aggfunc='sum')
+        if len(columns_label)>1:
+            def join_levels(levels):
+                return '_'.join(levels)
+            pivot_table_ma.columns = pivot_table_ma.columns.map(join_levels)
         pivot_table_ma.fillna(0, inplace=True)
     elif type == 'dist':
         pivot_table_ma = pd.pivot_table(data, index=multindex, values='id_korespondenta', columns='status_second_pay',

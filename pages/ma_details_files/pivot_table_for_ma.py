@@ -4,6 +4,7 @@ import seaborn as sns
 from dotenv import dotenv_values
 
 from database.source_db import deaful_set
+from functions_pandas.data_to_100_percent import data_to_100_percent
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people, \
     download_data_about_people_camp_pay, download_data_about_people_camp, data_pay_all
@@ -153,17 +154,9 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
                                            aggfunc='count',
                                            index=columns_options)
     pivot_for_structure.columns = ['_'.join(col) for col in pivot_for_structure.columns.values]
-    pivot_for_structure['sum'] = 0
-    for i in pivot_for_structure.columns:
-        if i != 'sum':
-            pivot_for_structure['sum'] = pivot_for_structure['sum'] + pivot_for_structure[i]
-    tmp_df = pivot_for_structure.copy()
-    for j in pivot_for_structure.columns:
-        if j != 'sum':
-            tmp_df[j] = tmp_df['sum']
-    tmp2 = pivot_for_structure.div(tmp_df)
-    tmp2.drop(columns=['sum'], inplace=True)
-    pivot_for_structure = tmp2
+    pivot_for_structure_values = pivot_for_structure.copy()
+    #tworze tabele przestwna z ukladem do 100 %
+    pivot_for_structure = data_to_100_percent(pivot_for_structure)
     columns_name = pivot_for_structure.columns
     index_column_name = []
     j = 0
@@ -177,7 +170,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     char_structure, b = pivot_and_chart_for_dash(data_to_structure[columns_options], columns_options, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
                                        pivot_for_structure, new_option_char, title_fin, dict_of_oriantation)
 
-    return pivot_to_return_style, kor, pivot_to_return_values, char, char_structure
+    return pivot_to_return_style, kor, pivot_to_return_values, char, char_structure, pivot_for_structure_values
 
 
 

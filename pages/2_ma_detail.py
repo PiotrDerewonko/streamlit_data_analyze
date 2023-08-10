@@ -7,6 +7,7 @@ from pages.ma_details_files.char_options.char_options import char_options
 from pages.ma_details_files.chars_for_days import charts
 from pages.ma_details_files.chose_campaign import choose
 from pages.ma_details_files.column_order import column_options
+from pages.ma_details_files.cost_structure import structure
 from pages.ma_details_files.filter import filtr_options
 from pages.ma_details_files.pivot_table_for_ma import create_pivot_table
 
@@ -17,7 +18,7 @@ refresh_data = 'False'
 
 st.header('Analiza głównych mailingów adresowych a')
 with st.container():
-    qamp, years = choose()
+    qamp, years = choose(con)
 
 
     with st.container():
@@ -32,7 +33,7 @@ with st.container():
 
             def create_pivot():
                 options_data_frame = pd.DataFrame(data=options_char)
-                data, char_corr, data_values, char_default, structure = create_pivot_table(con, refresh_data, engine, qamp, years,
+                data, char_corr, data_values, char_default, structure, pivot_for_structure_values = create_pivot_table(con, refresh_data, engine, qamp, years,
                                                                                 columns_options, corr_method, options_data_frame
                                                                                 , filtr_options, tit, sub_tit, dict_of_oriantation)
                 st.dataframe(data)
@@ -45,6 +46,9 @@ with st.container():
                     st.bokeh_chart(char_default, use_container_width=True)
                 with tab4:
                     st.bokeh_chart(structure, use_container_width=True)
+                    with st.expander('Zobacz tabele z danymi'):
+                        st.dataframe(pivot_for_structure_values)
+
             test = st.button('Przelicz dane')
 
 
@@ -56,6 +60,7 @@ with st.container():
     st.header('Wykresy w dniach od nadania')
     charts(qamp, con, years, refresh_data, engine)
 
-    #st.header('Struktura kosztów')
-    #structure(con, qamp, years, engine)
+    st.header('Struktura kosztów')
+    structure(con, qamp, years, engine)
+
 

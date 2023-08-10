@@ -20,7 +20,8 @@ def create_pivot_table_for_ma_details(data, columns_options):
         return g.quantile(0.75)
 
     pivot_to_return_2 = data_all.pivot_table(values=['suma_wplat_stand'], aggfunc=[my25, np.median, my75, np.std],
-                                             index=columns_options, margins=True)
+                                             index=columns_options)
+    pivot_to_return_2.columns = ['_'.join(col) for col in pivot_to_return_2.columns.values]
 
     pivot_to_return = pivot_to_return.merge(pivot_to_return_2, how='left', left_index=True, right_index=True)
     a = pivot_to_return.columns
@@ -33,6 +34,7 @@ def create_pivot_table_for_ma_details(data, columns_options):
     pivot_to_return['ROI'] = pivot_to_return['suma_wplat'] / pivot_to_return['koszt']
     pivot_to_return['SZLW'] = (pivot_to_return['liczba_wplat'] / pivot_to_return['naklad']) * 100
     pivot_to_return['Koszt_na_głowę'] = pivot_to_return['koszt'] / pivot_to_return['naklad']
+    pivot_to_return['profit'] = pivot_to_return['suma_wplat'] - pivot_to_return['koszt']
     pivot_to_return['SZLW do totalu'] = 0
     pivot_to_return['Nakład total'] = 0
     for j in columns_options:

@@ -94,7 +94,7 @@ with st.container():
 
     char_options_df['oś'] = 'Oś główna'
     char_options_df['Opcje'] = 'Wykres liniowy'
-
+    #todo sprawdzic czemu to nie dziala
     char, tmp_pivot = pivot_and_chart_for_dash(data, ['data_tmp'], 'people_db', title,
                                                'Miesiąc obecnosci w bazie', {}, pivot, char_options_df, title)
 

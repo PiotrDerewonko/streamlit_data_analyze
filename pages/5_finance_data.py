@@ -28,12 +28,16 @@ group by rok, miesiac, typ)a'''
     with st.sidebar:
         year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
                                       value=[date.now().year - 4, date.now().year])
+        month_range_slider = st.slider('Proszę wybrać miesiące', min_value=1, max_value=12, value=[1,12])
 
     year_from = year_range_slider[0]
     year_to = year_range_slider[1]
+    month_from = month_range_slider[0]
+    month_to = month_range_slider[1]
+    data['miesiac'] = data['miesiac'].astype(int)
 
-
-    data = data.loc[(data['rok'] >= year_from) & (data['rok'] <= year_to)]
+    data = data.loc[(data['rok'] >= year_from) & (data['rok'] <= year_to) &
+                    (data['miesiac'] >= month_from) & (data['miesiac'] <= month_to)]
 
     data['rok'] = data['rok'].astype(str)
     data['miesiac'] = data['miesiac'].astype(str)

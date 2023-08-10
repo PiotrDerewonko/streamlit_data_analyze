@@ -33,25 +33,37 @@ data_to_show_db = data_db.loc[(data_db['grupa_akcji_3'] >= year_from) & (data_db
 data_increase = download_increase_data(con, refresh_data, engine)
 data_to_show_increase = data_increase.loc[(data_increase['rok_dodania'] >= year_from) & (data_increase['rok_dodania'] <= year_to)]
 # tworze pierwsza 3 zakladki dal mailnigu adresowego
-st.header('Dane z głównych mailingów adresowych a')
+
 
 with st.container():
+    st.header('Dane z głównych mailingów adresowych ')
+
     # odwoluje sie do funkcji ktore generuje caly modul odpowiedzialny za mailingi adresowe
     main_action_config(data_to_show_ma, True)
     st.header('Dane z głównych wrzutek bezadresowych')
     #todo wykres z przychodu i do 100 % porzychod
     non_action_main_conf(data_to_show_db, con)
-    st.header('Dane dotyczące przyrostu korespondentów a')
-    tab7, tab8, tab9, tab10 = st.tabs(['Wykres', 'Tabela przestwna', 'Kolumny do wykresu', 'Filtr'])
+    st.header('Dane dotyczące przyrostu korespondentów')
+    tab7, tab8, tab9, tab10 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu', 'Filtr'])
+    with tab10:
+        month = st.slider(min_value=1, max_value=12, value=[1, 12], label='Proszę wybrać miesiące')
     with tab9:
-        levels_increase = st.multiselect(options=['rok_dodania', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
-                                         label='Prosze wybrac kolejnosc kolumn dla danych z przyrostu',
-                                         default=['rok_dodania'])
-        cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, levels_increase, 'increase',
+        data_to_show_increase['miesiac_int'] = data_to_show_increase['miesiac_dodania'].astype(int)
+        data_to_show_increase['rok_dodania'] = data_to_show_increase['rok_dodania'].astype(int)
+        data_to_show_increase = data_to_show_increase.loc[(data_to_show_increase['miesiac_int']>=month[0]) & (
+                data_to_show_increase['miesiac_int'] <= month[1]
+        )]
+        index = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
+                                         label='Prosze wybrac dane do indeksu',
+                                         default=['grupa_akcji_1'])
+        columns_label = st.multiselect(options=['rok_dodania', 'grupa_akcji_1','grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
+                                         label='Prosze wybrac dane do kolumn',
+                                         default=['rok_dodania', 'miesiac_dodania'])
+        cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, index, 'increase',
                                                                 'Wyniki pozyskania korespondentów za lata ',
-                                                                 '', {})
+                                                                 '',{}, columns_label)
 
     with tab7:
-        st.bokeh_chart(cam_inc_plot)
+        st.bokeh_chart(cam_inc_plot, use_container_width=True)
     with tab8:
         st.dataframe(test_pivot_inc)
