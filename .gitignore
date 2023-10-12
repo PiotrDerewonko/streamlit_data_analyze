@@ -7,3 +7,4 @@ pages/ma_details_files/tmp_file/*
 .env
 
 /pages/db_analyze/tmp_file/*
+/pages/about_db/tmp_file/*

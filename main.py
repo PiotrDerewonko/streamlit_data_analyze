@@ -55,10 +55,10 @@ with st.container():
         )]
         index = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
                                          label='Prosze wybrac dane do indeksu',
-                                         default=['grupa_akcji_1'])
+                                         default=[ 'miesiac_dodania'])
         columns_label = st.multiselect(options=['rok_dodania', 'grupa_akcji_1','grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
                                          label='Prosze wybrac dane do kolumn',
-                                         default=['rok_dodania', 'miesiac_dodania'])
+                                         default=['rok_dodania'])
         cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, index, 'increase',
                                                                 'Wyniki pozyskania korespondentów za lata ',
                                                                  '',{}, columns_label)
@@ -66,4 +66,11 @@ with st.container():
     with tab7:
         st.bokeh_chart(cam_inc_plot, use_container_width=True)
     with tab8:
+        test_pivot_inc.reset_index(inplace=True)
+        test_pivot_inc.loc[len(test_pivot_inc.index)] = 'Suma'
+        test_pivot_inc.set_index(index, inplace=True)
+        test_pivot_inc.iloc[len(test_pivot_inc)-1] = 0
+        for i in test_pivot_inc.columns:
+            tmp = sum(test_pivot_inc[f'{i}'])
+            test_pivot_inc[f'{i}'].iloc[len(test_pivot_inc)-1] = sum(test_pivot_inc[f'{i}'])
         st.dataframe(test_pivot_inc)

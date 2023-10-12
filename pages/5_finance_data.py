@@ -14,6 +14,7 @@ select sum(kwota) as suma_wplat, date_part('year', data_wplywu_srodkow) as rok,
  date_part('month', data_wplywu_srodkow) as miesiac,
        case when ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100) then a.grupa_akcji_2
 when ta.id_grupy_akcji_1 in (22, 24) then 'Druki i prawdopodobne druki'
+           when tk.id_typu_korespondenta in (7,8) then 'Zbiórka przykościelna'
 else 'Pozostałe' end as typ
 from t_transakcje tr
 left outer join t_aktywnosci_korespondentow tak on tr.id_transakcji = tak.id_transakcji
@@ -21,14 +22,16 @@ left outer join t_akcje ta on tak.id_akcji = ta.id_akcji
 left outer join t_grupy_akcji_1 t on ta.id_grupy_akcji_1 = t.id_grupy_akcji_1
 left outer join t_grupy_akcji_2 a on a.id_grupy_akcji_2 = ta.id_grupy_akcji_2
 left outer join t_grupy_akcji_3 gr3 on ta.id_grupy_akcji_3 = gr3.id_grupy_akcji_3
+left outer join t_korespondenci tk on tr.id_korespondenta = tk.id_korespondenta
 group by rok, miesiac, typ)a'''
     data = pd.read_sql_query(sql, con)
-
+    list_options = list(data['typ'].drop_duplicates())
 
     with st.sidebar:
         year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
                                       value=[date.now().year - 4, date.now().year])
         month_range_slider = st.slider('Proszę wybrać miesiące', min_value=1, max_value=12, value=[1,12])
+        choose_type = st.multiselect('Wybierz typ wpłaty', options=list_options, default=list_options)
 
     year_from = year_range_slider[0]
     year_to = year_range_slider[1]
@@ -43,7 +46,7 @@ group by rok, miesiac, typ)a'''
     data['miesiac'] = data['miesiac'].astype(str)
     columns_options = st.multiselect(options=['rok', 'miesiac'], default=['rok'],
                                      label='Prosze wybrać dane do układu')
-    pivot = pd.pivot_table(data, index=columns_options, values='suma_wplat', columns='typ', aggfunc='sum')
+    pivot = pd.pivot_table(data.loc[data['typ'].isin(choose_type)], index=columns_options, values='suma_wplat', columns='typ', aggfunc='sum')
     list_of_columns = pivot.columns
     pivot_cum = pivot.copy()
     pivot_cum.fillna(0, inplace=True)
@@ -56,15 +59,10 @@ group by rok, miesiac, typ)a'''
         pivot_cum.rename(columns={f'{k}_udzial': k}, inplace=True)
     pivot_cum.drop(columns=['sum'], inplace=True)
 
-
-    char_options_df_weeks = pd.DataFrame(data={'Nazwa parametru': pivot.columns,
-                                          'oś': ['Oś główna', 'Oś główna' , 'Oś główna', 'Oś główna', 'Oś główna' ,
-                                                 'Oś główna', 'Oś główna', 'Oś główna' , 'Oś główna'],
-                                          'Opcje': ['Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
-                                                    'Wykres Słupkowy Skumulowany','Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
-                                                    'Wykres Słupkowy Skumulowany','Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
-                                                    'Wykres Słupkowy Skumulowany']},
-                                         index=[0,1,2,3,4,5,6,7,8])
+    char_options_df_weeks = pd.DataFrame(columns=['Nazwa parametru', 'oś', 'Opcje'])
+    for i in range(0, len(pivot.columns)):
+        tmp = pd.DataFrame(data={'Nazwa parametru': pivot.columns[i], 'oś': 'Oś główna', 'Opcje': 'Wykres Słupkowy Skumulowany'}, index=[i])
+        char_options_df_weeks = pd.concat([char_options_df_weeks, tmp])
     dict_of_oriantation = {'major': 'vertical', 'group': 'vertical', 'sub_group': 'vertical'}
 
     char_finance, aa = pivot_and_chart_for_dash(data, columns_options, 'me_detail', 'test tytulu',

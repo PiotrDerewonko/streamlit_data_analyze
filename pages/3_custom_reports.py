@@ -13,7 +13,7 @@ with st.container():
     refresh_data = 'False'
 
     st.header("Odległość między pierwszą a drugą wpłatą")
-    #todo zmienic nazwy kolumn na nazwy dla ludzi i z powrotem
+
     multindex = st.multiselect(options=['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'status_first_pay',
                                         'date_part', 'plec', 'okreg_pocztowy', 'good_address'],
                                      label='Prosze wybrac index',
@@ -24,7 +24,7 @@ with st.container():
     gr1 = st.multiselect(options=default_gr1,
                                      label='Prosze wybrac zawezenie danych',
                                      default=default_gr1)
-    min_int_sl = int(data['date_part'].min())
+    min_int_sl = 2008
     max_int_sl = int(data['date_part'].max())
     if len(gr1) >= 1:
         data = data[data['grupa_akcji_1'].isin(gr1)]

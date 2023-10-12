@@ -40,7 +40,7 @@ def download_dash_address_data(con, refresh, engine, type):
         extra_group = ''
         extra_union = ''
     else:
-        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119)'
+        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119, 120, 121, 122, 123, 124, 125)'
         extra = ', substring(ta.kod_akcji, 7,2) as miesiac'
         extra_group = ',miesiac'
         extra_union = f'''union
@@ -50,7 +50,6 @@ def download_dash_address_data(con, refresh, engine, type):
         where id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two})
                 group by grupa_akcji_3, grupa_akcji_2,kod_akcji, miesiac'''
     if refresh == 'True':
-        # todo w przypadku danych bezadresowych dodac material
         sql = f'''select grupa_akcji_3, grupa_akcji_2,kod_akcji, sum(kwota) as suma_wplat, count(tr.id_transakcji)
                  as liczba_wplat {extra} from public.t_aktywnosci_korespondentow tak
                 left outer join public.t_transakcje tr

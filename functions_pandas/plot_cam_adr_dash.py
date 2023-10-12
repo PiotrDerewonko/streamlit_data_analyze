@@ -115,7 +115,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
                #title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
-               y_axis_label=y_label)
+               y_axis_label=y_label,
+               sizing_mode='fixed')
     p.title.text_font_size = '12pt'
     p.add_layout(Legend(background_fill_alpha=0.3))
 

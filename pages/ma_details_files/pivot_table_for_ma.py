@@ -134,6 +134,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     #tworze wykres struktury wplat
     data_about_pay_all = data_pay_all(con, refresh_data)
     data_about_pay_all['grupa_akcji_3_wplaty'] = data_about_pay_all['grupa_akcji_3_wplaty'].astype(str)
+
     if len(camp)>=1:
         data_about_pay_all = data_about_pay_all[data_about_pay_all['grupa_akcji_2_wplaty'].isin(camp)]
     if len(year_int)>=1:
@@ -150,6 +151,7 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_to_structure.drop(columns=['suma_wplat_y'], inplace=True)
     data_to_structure.rename(columns={'suma_wplat_x': 'suma_wplat'}, inplace=True)
     data_to_structure.drop_duplicates(subset=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'], inplace=True)
+    data_to_structure['rok_dodania'] = data_to_structure['rok_dodania'].astype(str)
     pivot_for_structure = data_to_structure.pivot_table(values=['suma_wplat'], columns=['przedzialy'],
                                            aggfunc='count',
                                            index=columns_options)

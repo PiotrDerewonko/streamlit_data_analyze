@@ -27,14 +27,17 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
             tmp = f' naklad {int(pivot_circ_trans.iloc[j].values[0])}'
             if j == len_columns-1:
                 line_width = 7
+                line_dash_value = []
             else:
                 line_width = 4
+                line_dash_value = "dashed"
         else:
             tmp = ''
             line_width = 4
+            line_dash_value = "dashed"
 
         p.line(pivot.index.values, pivot[i], line_width=line_width, legend=f'{i}{tmp}', color=colors_fin[j]
-               )
+               , line_dash=line_dash_value)
         j += 1
     p.legend.location = 'top_left'
     p.yaxis.formatter.use_scientific = False

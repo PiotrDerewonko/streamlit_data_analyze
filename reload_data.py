@@ -2,6 +2,7 @@ from dotenv import dotenv_values
 
 from database.dowload_data import download_dash_address_data, download_increase_data
 from database.source_db import deaful_set
+from pages.about_db.data import download_data
 from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
     distance_between_first_and_second_pay
 from pages.db_analyze.get_data_to_db_analyze import live_people_from_db, weeks_of_db
@@ -36,7 +37,7 @@ distinct_options(refresh_data)
 live_people_from_db(con, refresh_data)
 weeks_of_db(con, refresh_data, engine)
 get_costs(con, refresh_data, engine)
-
+download_data(con, refresh_data)
 
 
 

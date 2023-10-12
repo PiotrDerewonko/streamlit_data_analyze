@@ -97,7 +97,6 @@ def modifcate_data(data, type, multindex, title):
 
 def create_pivot_table(data, multindex, type, columns_label):
     if type == 'increase':
-        #todo poprrawic typy danych bo miesiac nie ma 0
         for i in range(1, 10):
             data['miesiac_dodania'].loc[data['miesiac_dodania']==f'{i}'] = f'0{i}'
         for j in columns_label:
