@@ -25,7 +25,7 @@ def char_options():
             columns_for_nonadr_dash.szlw(dictionary_options)
         with c7:
             columns_for_nonadr_dash.szp(dictionary_options)
-        c8, c9, c10, c11, c12, c13 = st.columns(6)
+        c8, c9, c10, c11, c12, c13, c14 = st.columns(7)
         with c8:
             columns_for_nonadr_dash.column_total_sum_amount(dictionary_options)
         with c9:
@@ -38,6 +38,9 @@ def char_options():
             columns_for_nonadr_dash.acquisition(dictionary_options)
         with c13:
             columns_for_nonadr_dash.percent_of_new(dictionary_options)
+        with c14:
+            columns_for_nonadr_dash.percent_of_new_active(dictionary_options)
+
         title = st.text_input('Miejsce na tytuł')
         sub_title = st.text_input('Miejsce na pod tytuł')
     return dictionary_options, title, sub_title

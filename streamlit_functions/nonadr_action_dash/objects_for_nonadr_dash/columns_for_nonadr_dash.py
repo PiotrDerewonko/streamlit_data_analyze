@@ -206,3 +206,19 @@ def percent_of_new(dictionary_options):
                            on_change=create_df(dictionary_options, "un_char_db",
                                                st.session_state.un_char_db)
                            )
+
+def percent_of_new_active(dictionary_options):
+    poz = st.checkbox('Udział pozyskanych aktywnych', value=True, on_change=create_df(dictionary_options, 'udzial_aktywnych_nowych_db',
+                                                                        st.session_state.udzial_aktywnych_nowych_db),
+                     key='udzial_aktywnych_nowych_db')
+    poz_axis = st.selectbox(options=['Oś główna', 'Oś pomocnicza'],
+                           label='Oś dla % nowych aktywnych',
+                           key='udzial_aktywnych_nowych_db_axic',
+                           on_change=create_df(dictionary_options, "udzial_aktywnych_nowych_db_axic",
+                                               st.session_state.udzial_aktywnych_nowych_db_axic)
+                           )
+    poz_char = st.selectbox(options=['Wykres liniowy', 'Wykres Słupkowy', 'Wykres Słupkowy Skumulowany'], label='Rodzaj wykresu dla % nowych aktywnych',
+                           key='udzial_aktywnych_nowych_db_char',
+                           on_change=create_df(dictionary_options, "udzial_aktywnych_nowych_db_char",
+                                               st.session_state.udzial_aktywnych_nowych_db_char)
+                           )

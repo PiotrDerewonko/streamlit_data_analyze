@@ -124,11 +124,34 @@ left outer join fsaps_material_material fmm on foo.material_id = fmm.id
 left outer join (select material_id, value AS rodzaj from fsaps_material_parameter where utility_parameter_name_id=1) typ
 on typ.material_id=fmm.id
 where id_grupy_akcji_1=22
-and id_grupy_akcji_3 >=14
 ORDER BY ID_AKCJI DESC
 ''', con)
             to_insert = pd.merge(to_insert, gift, how='left', on='kod_akcji')
 
+            #dodaje ile osob jest dalej aktywnych pozsyaknych dalej z tych subakcji
+            sql = '''select fdagt.text as grupa_akcji_2, f.text as grupa_akcji_3 from fsaps_campaign_campaign
+            left outer join fsaps_dictionary_action_group_two fdagt on fsaps_campaign_campaign.action_group_two_id = fdagt.id
+            left outer join fsaps_dictionary_action_group_three f on fsaps_campaign_campaign.action_group_three_id = f.id
+            where date_from is not null
+            and fsaps_campaign_campaign.action_group_two_id is not null and fsaps_campaign_campaign.action_group_three_id is not null
+            and fsaps_campaign_campaign.action_group_one_id = 23 and fsaps_campaign_campaign.action_group_two_id in (9,10,11,12)
+            order by date_from desc limit 1'''
+            data = pd.read_sql_query(sql, con)
+            default_camp = data['grupa_akcji_2'].iloc[0]
+            default_year = str(data['grupa_akcji_3'].iloc[0])
+            sql = f'''select kod_akcji, count(id_korespondenta) as obecnie_aktywnych from v_akcja_dodania_korespondenta2
+where id_korespondenta in (select id_korespondenta
+                           from t_akcje_korespondenci where id_akcji in (
+                               select id_akcji from t_akcje where id_grupy_akcji_2 in (
+                                   select id_grupy_akcji_2 from t_grupy_akcji_2 where grupa_akcji_2 = '{default_camp}'
+                                   ) AND  id_grupy_akcji_3 in (
+                                   select id_grupy_akcji_3 from t_grupy_akcji_3 where grupa_akcji_3 = '{default_year}'
+                                   )
+    )
+)
+group by kod_akcji'''
+            data = pd.read_sql_query(sql, con)
+            to_insert = pd.merge(to_insert, data, how='left', on='kod_akcji')
             to_insert.to_sql('dash_db_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard bezadresowy')
     if type == 'address':

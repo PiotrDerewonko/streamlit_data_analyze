@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import streamlit as st
 from dotenv import dotenv_values
@@ -73,7 +74,7 @@ group by rok, miesiac, typ)a'''
                                           'Rok/miesiąc', {}, pivot_cum, char_options_df_weeks, 'Suma wpłat w podziale na źrodło darowizny',
                                                dict_of_oriantation
                                           )
-    tab1, tab2 = st.tabs(['Suma wpłat', 'Struktura wpłat'])
+    tab1, tab2, tab3 = st.tabs(['Suma wpłat', 'Struktura wpłat', 'ROI'])
     with tab1:
         st.bokeh_chart(char_finance, use_container_width=True)
         with st.expander('Kliknij i zobacz dane'):
@@ -82,3 +83,51 @@ group by rok, miesiac, typ)a'''
         st.bokeh_chart(char_finance_to100)
         with st.expander('Kliknij i zobacz dane'):
             st.dataframe(pivot_cum, use_container_width=True)
+    with tab3:
+        switch = st.checkbox(label='Zamieś kolejność', value=True)
+        if switch:
+            switch_value = ['rok', 'typ']
+        else:
+            switch_value = ['typ', 'rok']
+        sql ='''select koszt as suma_wplat, rok::int, typ from (
+select sum(koszt_calkowity) as koszt, grupa_akcji_3 as rok,
+       case when ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100) then a.grupa_akcji_2
+when ta.id_grupy_akcji_1 in (22, 24) then 'Druki i prawdopodobne druki'
+           when ta.id_grupy_akcji_2 in (15) then 'Zbiórka przykościelna'
+else 'Pozostałe' end as typ
+from v_akcje_naklad_koszt_calkowity_szczegolowa tak
+left outer join t_akcje ta on tak.id_akcji = ta.id_akcji
+left outer join t_grupy_akcji_1 t on ta.id_grupy_akcji_1 = t.id_grupy_akcji_1
+left outer join t_grupy_akcji_2 a on a.id_grupy_akcji_2 = ta.id_grupy_akcji_2
+left outer join t_grupy_akcji_3 gr3 on ta.id_grupy_akcji_3 = gr3.id_grupy_akcji_3
+group by rok,  typ)a'''
+        cost_data = pd.read_sql_query(sql, con)
+        cost_data.dropna(inplace=True)
+        cost_data = cost_data.loc[(cost_data['rok'] >= year_from) & (cost_data['rok'] <= year_to)]
+        cost_data['rok'] = cost_data['rok'].astype(str)
+        pivot_pay_year = pd.pivot_table(data.loc[data['typ'].isin(choose_type)], index=switch_value, values='suma_wplat',
+                                aggfunc='sum')
+        pivot_cost_year = pd.pivot_table(cost_data.loc[cost_data['typ'].isin(choose_type)], index=switch_value, values='suma_wplat',
+                                aggfunc='sum')
+        pivot_cost_year.fillna(0, inplace=True)
+        pivot_pay_year.fillna(0, inplace=True)
+        pivot_dev = pivot_pay_year.div(pivot_cost_year)
+        char_options_df_weeks = pd.DataFrame(columns=['Nazwa parametru', 'oś', 'Opcje'])
+        pivot_dev.rename({'suma_wplat': 'ROI'}, axis=1, inplace=True)
+        for i in range(0, len(pivot_dev.columns)):
+            tmp = pd.DataFrame(
+                data={'Nazwa parametru': pivot_dev.columns[i], 'oś': 'Oś główna', 'Opcje': 'Wykres Słupkowy'},
+                index=[i])
+            char_options_df_weeks = pd.concat([char_options_df_weeks, tmp])
+        pivot_dev.replace([np.inf, -np.inf], 0, inplace=True)
+        pivot_dev.reset_index(inplace=True)
+        pivot_dev['rok'] = pivot_dev['rok'].astype(str)
+        pivot_dev.set_index(switch_value, inplace=True)
+        roi, aa = pivot_and_chart_for_dash(cost_data, switch_value, 'me_detail', 'test tytulu',
+                                                    'Rok/miesiąc', {}, pivot_dev, char_options_df_weeks,
+                                                    'Suma wpłat w podziale na źrodło darowizny',
+                                                    dict_of_oriantation
+                                                    )
+        st.bokeh_chart(roi, use_container_width=True)
+        with st.expander('Kiknij i zobacz dane'):
+            st.dataframe(pivot_dev)

@@ -50,12 +50,15 @@ with st.container():
     with tab9:
         data_to_show_increase['miesiac_int'] = data_to_show_increase['miesiac_dodania'].astype(int)
         data_to_show_increase['rok_dodania'] = data_to_show_increase['rok_dodania'].astype(int)
+        data_to_show_increase['miesiac_dodania'] = data_to_show_increase['miesiac_dodania'].astype(str)
         data_to_show_increase = data_to_show_increase.loc[(data_to_show_increase['miesiac_int']>=month[0]) & (
                 data_to_show_increase['miesiac_int'] <= month[1]
         )]
+        data_to_show_increase['miesiac_dodania'].loc[data_to_show_increase['miesiac_int'] < 10] = \
+            '0' + data_to_show_increase['miesiac_dodania']
         index = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
                                          label='Prosze wybrac dane do indeksu',
-                                         default=[ 'miesiac_dodania'])
+                                         default=['miesiac_dodania'])
         columns_label = st.multiselect(options=['rok_dodania', 'grupa_akcji_1','grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
                                          label='Prosze wybrac dane do kolumn',
                                          default=['rok_dodania'])

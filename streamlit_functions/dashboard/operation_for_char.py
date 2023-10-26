@@ -55,8 +55,8 @@ def change_short_names_db(data):
     data = data.replace({'sw_db': 'suma_wplat', 'lw_db': 'liczba_wplat', 'nc_db': 'naklad_calkowity',
                          'kc_db': 'koszt_insertowania', 'roi_db': 'ROI', 'szlw_db': 'Stopa zwrotu l.w.',
                          'szp_db': 'Stopa pozyskania',  'swt_db': 'laczna_suma_wplat_nowych',
-                         'kct_db': 'laczny_koszt_utrzymania', 'poz_db': 'pozyskano' , 'kcin_db': 'koszt_insertu_dla_nowych',
-                         'un_db': 'udzial_nowych', 'swn_db': 'suma_wplat_nowi'})
+                         'kct_db': 'laczny_koszt_utrzymania', 'poz_db': 'pozyskano', 'kcin_db': 'koszt_insertu_dla_nowych',
+                         'un_db': 'udzial_nowych', 'swn_db': 'suma_wplat_nowi', 'udzial_aktywnych_nowych_db': '%pozyskanych_w_ost_mailingu'})
     data = data.drop(columns =['index_x', 'Wartosc parametru', 'index_y', 'Parametr oś', 'index', 'Wspolczynnik'])
     return data
 
@@ -139,9 +139,12 @@ def create_pivot_table(data, multindex, type, columns_label):
             pivot_table_ma['Stopa pozyskania'] = (pivot_table_ma['pozyskano']/pivot_table_ma['naklad_calkowity'])*100
             pivot_table_ma_extra = pd.pivot_table(data, index=multindex,
                                             values=['laczna_suma_wplat', 'laczny_koszt_utrzymania', 'suma_wplat_nowi',
-                                                    'liczba_wplat_nowi'], aggfunc='sum')
+                                                    'liczba_wplat_nowi', 'obecnie_aktywnych'], aggfunc='sum')
             pivot_table_ma = pd.merge(pivot_table_ma, pivot_table_ma_extra, how='left', left_index=True, right_index=True)
             pivot_table_ma['udzial_nowych'] = pivot_table_ma['suma_wplat_nowi'] / pivot_table_ma['suma_wplat']
+            pivot_table_ma['pozyskano'] = pivot_table_ma['pozyskano'] + 1
+            pivot_table_ma['%pozyskanych_w_ost_mailingu'] = pivot_table_ma['obecnie_aktywnych'] / pivot_table_ma['pozyskano']
+            pivot_table_ma['pozyskano'] = pivot_table_ma['pozyskano'] - 1
             pivot_table_ma['koszt_insertu_dla_nowych'] = pivot_table_ma['udzial_nowych'] * pivot_table_ma['koszt_calkowity']
             pivot_table_ma['koszt_insertu_dla_starych'] = pivot_table_ma['koszt_calkowity'] - pivot_table_ma['koszt_insertu_dla_nowych']
             pivot_table_ma.rename(columns={'koszt_calkowity': 'koszt_insertowania', 'laczna_suma_wplat':

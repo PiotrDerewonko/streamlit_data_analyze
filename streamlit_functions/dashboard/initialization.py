@@ -24,6 +24,7 @@ def create_dictionary_nonadr():
             'kcin_db': False, 'kcin_axis_db': 'Oś główna', 'kcin_char_db': 'Wykres Słupkowy',
             'un_db': False, 'un_axis_db': 'Oś główna', 'un_char_db': 'Wykres Słupkowy',
             'swn_db': False, 'swn_axis_db': 'Oś główna', 'swn_char_db': 'Wykres Słupkowy',
+            'udzial_aktywnych_nowych_db': False, 'udzial_aktywnych_nowych_db_axic': 'Oś główna', 'udzial_aktywnych_nowych_db_char': 'Wykres Słupkowy',
                           }
 
 def create_dictionary_increase():
