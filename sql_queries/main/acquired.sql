@@ -1,7 +1,4 @@
-select subaction as kod_akcji, sum(laczna_suma_wplat) as laczna_suma_wplat,
-       sum(laczny_koszt_utrzymania) as laczny_koszt_utrzymania from (select foo2.id as id_korespondenta, sourse_id, fcs.name as subaction, date::date, fdago.text as grupa_akcji_1_new,
-       case when fdagt.text is not null then fdagt.text else fdagt2.text end as grupa_akcji_2_new,
-t.text as grupa_akcji_3_new
+select fcs.name as kod_akcji ,count(foo2.id) as pozyskano
 from (select id, sourse_id, case when order_sub_id is not null then order_sub_id
     when int_sub_id is not null then int_sub_id
     when  apli_sub_id is not null then apli_sub_id
@@ -26,16 +23,5 @@ left outer join fsaps_dictionary_action_group_one fdago on f.action_group_one_id
 left outer join fsaps_dictionary_action_group_two fdagt on f.action_group_two_id = fdagt.id
 left outer join fsaps_dictionary_action_group_two fdagt2 on fcma.action_group_two_id = fdagt2.id
 left outer join fsaps_dictionary_action_group_three t on f.action_group_three_id = t.id
-           ) foo3
-left outer join (select correspondent_id, sum(amount) as laczna_suma_wplat from fsaps_payment_payment
-    group by correspondent_id) pay
-on foo3.id_korespondenta = pay.correspondent_id
-left outer join (select fcp.correspondent_id, round(sum((fcc.real_cost::float8/1000) * fcc.number)::numeric,
-     3)  as laczny_koszt_utrzymania
-from (select subaction_id, correspondent_id
-     from fsaps_campaign_person ) fcp
-left outer join fsaps_campaign_cost fcc on fcp.subaction_id = fcc.subaction_id
-left outer join fsaps_campaign_subaction fcs on fcp.subaction_id = fcs.id
-    group by fcp.correspondent_id) cost
-on foo3.id_korespondenta = cost.correspondent_id
-group by kod_akcji
+           group by fcs.name
+order by kod_akcji
