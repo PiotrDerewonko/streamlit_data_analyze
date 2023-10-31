@@ -20,7 +20,7 @@ def list_files_in_directory(directory):
 files = list_files_in_directory(directory_path)
 
 
-class MyTestCase(unittest.TestCase):
+class TestMainSQL(unittest.TestCase):
     sorce_main = None  # Inicjalizacja zmiennych na poziomie klasy
 
     @classmethod
@@ -53,9 +53,9 @@ for i, file in enumerate(files):
         return test
 
 
-    test_name = f"test_query_{i}"
+    test_name = f"test_query_{file}"
     test_func = test_generator(file)
-    setattr(MyTestCase, test_name, test_func)
+    setattr(TestMainSQL, test_name, test_func)
 
 if __name__ == '__main__':
     unittest.main()
