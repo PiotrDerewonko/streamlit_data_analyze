@@ -165,12 +165,31 @@ group by kod_akcji'''
 
 def download_increase_data(con, refresh, engine):
     if refresh == 'True':
+        sql = '''select id_grupy_akcji_2, ta.id_grupy_akcji_3, data, gr3.grupa_akcji_3 from t_akcje_korespondenci tak
+         left outer join t_akcje ta 
+         on ta.id_akcji = tak.id_akcji
+         left outer join t_grupy_akcji_3 gr3
+         on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
+         where id_grupy_akcji_2 in (9,10,11,12)
+         order by data desc limit 1'''
+        data = pd.read_sql_query(sql, con)
+        id_gr2 = data['id_grupy_akcji_2'].iloc[0]
+        id_gr3 = data['id_grupy_akcji_3'].iloc[0]
+        rok = data['grupa_akcji_3'].iloc[0]
         sql = f'''select date_part('year', adod.data) as rok_dodania, grupa_akcji_1, grupa_akcji_2, kod_akcji,
         case when date_part('month', adod.data)<10 then '0'||date_part('month', adod.data)::text
-        else date_part('month', adod.data)::text end as miesiac_dodania, count(id_korespondenta) as ilosc
+        else date_part('month', adod.data)::text end as miesiac_dodania, mailingi, wpłata, count(adod.id_korespondenta) as ilosc
         from v_akcja_dodania_korespondenta2 adod
-        group by rok_dodania, grupa_akcji_1, grupa_akcji_2,kod_akcji, miesiac_dodania'''
+        left outer join (select id_korespondenta, 'dalej w mailingach'::text as mailingi from t_akcje_korespondenci where id_akcji in (
+        select id_akcji from t_akcje where id_grupy_akcji_2 = {id_gr2} and id_grupy_akcji_3 = {id_gr3})) mailing
+        on mailing.id_korespondenta = adod.id_korespondenta
+        left outer join (select distinct id_korespondenta, 'wpłata' as wpłata from t_transakcje where data_wplywu_srodkow
+        between ({rok}::text||'-01-01')::date and ({rok}::text||'-12-31')::date) wp
+        on wp.id_korespondenta = adod.id_korespondenta
+        group by rok_dodania, grupa_akcji_1, grupa_akcji_2,kod_akcji, miesiac_dodania, mailingi, wpłata'''
         to_insert = pd.read_sql_query(sql, con)
+        to_insert['mailingi'].fillna('nie bierze udziału', inplace=True)
+        to_insert['wpłata'].fillna('nie wpłacił', inplace=True)
         to_insert.to_sql('dash_increase_data', engine, if_exists='replace', schema='raporty', index=False)
         print('dodano do bazy danych dane dla dashboard przyrost')
     to_return = pd.read_sql_query('select * from raporty.dash_increase_data', con)
