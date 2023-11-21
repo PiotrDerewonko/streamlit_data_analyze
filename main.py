@@ -56,10 +56,12 @@ with st.container():
         )]
         data_to_show_increase['miesiac_dodania'].loc[data_to_show_increase['miesiac_int'] < 10] = \
             '0' + data_to_show_increase['miesiac_dodania']
-        index = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
+        index = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania', 'kod_akcji',
+                                        'mailingi', 'wpłata'],
                                          label='Prosze wybrac dane do indeksu',
                                          default=['miesiac_dodania'])
-        columns_label = st.multiselect(options=['rok_dodania', 'grupa_akcji_1','grupa_akcji_2', 'miesiac_dodania', 'kod_akcji'],
+        columns_label = st.multiselect(options=['rok_dodania', 'grupa_akcji_1', 'grupa_akcji_2', 'miesiac_dodania',
+                                                'kod_akcji', 'mailingi', 'wpłata'],
                                          label='Prosze wybrac dane do kolumn',
                                          default=['rok_dodania'])
         cam_inc_plot, test_pivot_inc = pivot_and_chart_for_dash(data_to_show_increase, index, 'increase',
