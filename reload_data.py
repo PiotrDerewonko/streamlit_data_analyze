@@ -22,8 +22,8 @@ print('rozpoczynam przeladowanie danych')
 
 download_dash_address_data(con, refresh_data, engine, 'address') #zrobione
 download_dash_address_data(con, refresh_data, engine, 'non address') #zrobione
-down_data_cost_and_circulation(con, refresh_data, engine)
-download_increase_data(con, refresh_data, engine)
+down_data_cost_and_circulation(con, refresh_data, engine) #zrobione
+download_increase_data(con, refresh_data, engine) #zrobione
 distance_between_first_and_second_pay(con, engine, refresh_data)
 down_data_sum_and_count(con, refresh_data, engine)
 download_data_about_people_camp(con, refresh_data, engine) #zrobione
