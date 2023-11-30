@@ -22,7 +22,11 @@ def download_correspondent_data(con, aktualny_rok, data_all) -> pd.DataFrame:
             data_tmp['aktualny_rok'] += 1
             data_tmp['aktualny_numer_roku'] += 1
             data_all = pd.concat([data_all, data_tmp])
-
+        data_tmp['aktualny_numer_roku_int'] = data_tmp['aktualny_numer_roku']
+        data_tmp['aktualny_numer_roku'] = data_tmp['aktualny_numer_roku'].astype(str)
+        data_tmp['aktualny_numer_roku'].loc[data_tmp['aktualny_numer_roku_int'] < 10] = (
+                '0' + data_tmp['aktualny_numer_roku'])
+        data_tmp.drop(['aktualny_numer_roku_int'], inplace=True)
     return data_all
 
 
@@ -67,6 +71,7 @@ def download_good_adress(con, data_all) -> pd.DataFrame:
     data_tmp = pd.read_sql_query(sql_file, con)
     data_all = pd.merge(left=data_all, right=data_tmp, on=['id_korespondenta'], how='left')
     data_all['adres'].fillna('adres_niepoprawny', inplace=True)
+    return data_all
 
 
 def modificate_data(data_all) -> pd.DataFrame:
@@ -75,10 +80,10 @@ def modificate_data(data_all) -> pd.DataFrame:
     index_change_adress = data_all.loc[(data_all['adres'] == 'adres_niepoprawny') &
                                        (data_all['udzial'] == 'brał_udział')].index
     data_all['adres'].loc[index_change_adress] = 'poprawny_adres'
-    data_all['poprawki'].loc[index_change_adress] = data_all['poprawki'] + 'poprawwiony adres'
+    data_all['poprawki'].loc[index_change_adress] = data_all['poprawki'] + 'poprawwiony adres '
     index_change_mailings = data_all.loc[(data_all['udzial'] == 'nie_brał_udziału') &
                                          (data_all['adres'] == 'poprawny_adres') &
                                          (data_all['rok_dodania'] == data_all['aktualny_rok'])].index
     data_all['udzial'].loc[index_change_mailings] = 'brał_udział'
-    data_all['poprawki'].loc[index_change_mailings] = data_all['poprawki'] + 'poprawwiony mailing'
+    data_all['poprawki'].loc[index_change_mailings] = data_all['poprawki'] + 'poprawiony mailing '
     return data_all
