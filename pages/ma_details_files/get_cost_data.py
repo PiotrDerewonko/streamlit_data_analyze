@@ -42,7 +42,7 @@ def get_costs(_con, refresh_data, _engine):
         LEFT JOIN
         t_materialy m on m.id_materialu = am.id_materialu
         WHERE
-        m.id_typu_materialu IN (5, 7, 8, 12, 19, 27, 32, 30)
+        m.id_typu_materialu IN (5, 7, 8, 12, 19, 27, 32, 30,31)
         GROUP BY am.id_akcji
         ) gifty on gifty.id_akcji = akc.id_akcji
         left outer join t_akcje ak

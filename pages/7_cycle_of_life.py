@@ -26,23 +26,29 @@ with st.container():
     years = st.multiselect(options=list_of_years, label='Wybierz rok pozyskania korespondenta',
                            default=[i for i in range(aktualny_rok-4, aktualny_rok+1)])
 
-    source_db = st.multiselect(options=data['grupa_akcji_1'].drop_duplicates(), label='Wybierz grupę wejścia', default=data['grupa_akcji_1'].drop_duplicates())
+    source_db = st.multiselect(options=data['grupa_akcji_1'].drop_duplicates(), label='Wybierz grupę wejścia',
+                               default=data['grupa_akcji_1'].drop_duplicates())
+    source_db_gr2 = st.multiselect(
+        options=data['grupa_akcji_2'].loc[data['grupa_akcji_1'].isin(source_db)].drop_duplicates(),
+                                   label='Wybierz grupę wejścia')
     type_of_year = st.selectbox(options=['aktualny_numer_roku', 'aktualny_rok'], label='Wybierz typ roku')
     title_of_char = st.text_input('Podaj tytul wykresu')
     index_for_pivot = [type_of_year, 'rok_dodania']
     data = filtr_data_by_year_of_add(data, years)
-    data = filtr_data_by_source(data, source_db)
+    data = filtr_data_by_source(data, source_db, 'grupa_akcji_1')
+    data = filtr_data_by_source(data, source_db_gr2, 'grupa_akcji_2')
     pivot = pd.pivot_table(data, index=index_for_pivot, columns=['udzial', 'adres', 'wplata'],
                                 values='id_korespondenta', aggfunc='count')
     flattened_columns = pivot.columns.map('_'.join)
     pivot.columns = flattened_columns
+
     value_tab, percent_tab = st.tabs(['Wykres wartościowy', 'Wykres procentowy'])
     with value_tab:
         genarate_char(pivot, index_for_pivot, data, title_of_char)
     pivot_cum = generate_data_to_100(pivot)
     with percent_tab:
         genarate_char(pivot_cum, index_for_pivot, data, title_of_char)
-
+    # ta sekcja pokazuje jak w poszczegolnych latach zachowywali sie ludzie pozyskani z danych lat
     st.header('Udział pozyskanych w latach')
     year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=aktualny_rok,
                                   value=[aktualny_rok - 4, aktualny_rok])
