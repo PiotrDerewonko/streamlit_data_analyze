@@ -7,7 +7,7 @@ ile lat jest juz w bazie danych'''
 
 
 def download_correspondent_data(con, aktualny_rok, data_all) -> pd.DataFrame:
-    for i in range(2008, aktualny_rok):
+    for i in range(2008, aktualny_rok + 1):
         numbers_of_years = aktualny_rok - i
         sql_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/people_from_year.sql'))
@@ -26,13 +26,12 @@ def download_correspondent_data(con, aktualny_rok, data_all) -> pd.DataFrame:
         data_tmp['aktualny_numer_roku'] = data_tmp['aktualny_numer_roku'].astype(str)
         data_tmp['aktualny_numer_roku'].loc[data_tmp['aktualny_numer_roku_int'] < 10] = (
                 '0' + data_tmp['aktualny_numer_roku'])
-        data_tmp.drop(['aktualny_numer_roku_int'], inplace=True)
     return data_all
 
 
 def download_pay_data(con, data_all, aktualny_rok) -> pd.DataFrame:
     all_data_pay = pd.DataFrame()
-    for i in range(2008, aktualny_rok):
+    for i in range(2008, aktualny_rok + 1):
         sql_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/pay_on_year.sql'))
         with open(sql_file_path, 'r') as sql_file_2:
@@ -49,6 +48,7 @@ def download_pay_data(con, data_all, aktualny_rok) -> pd.DataFrame:
 
 def download_mailings(con, data_all, aktualny_rok) -> pd.DataFrame:
     all_data_pay = pd.DataFrame()
+    ''' petla dla wszystkich lat bez biezacego'''
     for i in range(2008, aktualny_rok):
         sql_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/mailing.sql'))
@@ -58,6 +58,31 @@ def download_mailings(con, data_all, aktualny_rok) -> pd.DataFrame:
         data_tmp = pd.read_sql_query(sql_file, con)
         data_tmp['aktualny_rok'] = i
         all_data_pay = pd.concat([all_data_pay, data_tmp])
+
+    '''znalezienie najpozniejszego mailingu dla danego roku'''
+
+    sql_file_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/current_mailing.sql'))
+    with open(sql_file_path, 'r') as sql_file_2:
+        sql_file = sql_file_2.read()
+    sql_file = sql_file.replace('{rok}', str(aktualny_rok))
+    data_tmp = pd.read_sql_query(sql_file, con)
+    max_id_gr2 = data_tmp[max].iloc[0]
+
+    '''dodanie do tabeli danych za biezacy rok i biezacy mailing'''
+    try:
+        sql_file_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/mailing.sql'))
+        with open(sql_file_path, 'r') as sql_file_2:
+            sql_file = sql_file_2.read()
+        sql_file = sql_file.replace('{rok}', str(aktualny_rok))
+        sql_file = sql_file.replace('id_grupy_akcji_2=12', f'''id_grupy_akcji_2={max_id_gr2}''')
+        data_tmp = pd.read_sql_query(sql_file, con)
+        data_tmp['aktualny_rok'] = aktualny_rok
+        all_data_pay = pd.concat([all_data_pay, data_tmp])
+    except pd.errors.DatabaseError as e:
+        print(f'Wystapil blad, prawdopodobnie nie ma jeszcze mailingow w danym roku {e}')
+
     data_all = pd.merge(left=data_all, right=all_data_pay, on=['id_korespondenta', 'aktualny_rok'], how='left')
     data_all['udzial'].fillna('nie_brał_udziału', inplace=True)
     return data_all
