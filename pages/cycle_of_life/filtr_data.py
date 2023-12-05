@@ -21,3 +21,11 @@ def filtr_data_by_source(data, values) -> pd.DataFrame:
         data_fin = data
 
     return data_fin
+
+def filtr_data_by_year(data, values) -> pd.DataFrame:
+    if len(values) >= 1:
+        data_fin = data.loc[(data['aktualny_rok'] >= values[0]) & (data['aktualny_rok'] <= values[1])]
+    else:
+        data_fin = data
+
+    return data_fin
