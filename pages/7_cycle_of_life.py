@@ -8,7 +8,8 @@ from database.source_db import deaful_set
 from pages.cycle_of_life.download_data import download_data_cycle_of_life
 from pages.cycle_of_life.filtr_data import filtr_data_by_year_of_add, filtr_data_by_source, filtr_data_by_year
 from pages.cycle_of_life.genarate_data_to_100 import generate_data_to_100
-from pages.cycle_of_life.generate_char_of_value import genarate_char
+from pages.cycle_of_life.generate_char_of_value import genarate_char, generate_char_non_stack
+from pages.cycle_of_life.pivot_table import make_pivot_percent_of_people
 
 sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
@@ -54,6 +55,7 @@ with st.container():
                                   value=[aktualny_rok - 4, aktualny_rok])
     title_of_char_years = st.text_input('Podaj tytul wykresu ')
     data_copy = filtr_data_by_year(data_copy, year_range_slider)
+    data_copy = data_copy.loc[data_copy['udzial'] == 'brał_udział']
     data_copy['aktualny_rok'] = data_copy['aktualny_rok'].astype(str)
     data_copy['rok_dodania'] = data_copy['rok_dodania'].astype(str)
     pivot_years = pd.pivot_table(data_copy, index='aktualny_rok', columns='rok_dodania',
@@ -64,5 +66,14 @@ with st.container():
         genarate_char(pivot_years, ['aktualny_rok'], data_copy, title_of_char_years)
     with percent_tab_year:
         genarate_char(pivot_years_cum, ['aktualny_rok'], data_copy, title_of_char_years)
+
+    # ta sekcja pokaze ile osob z danego roku jest aktualnie w mailingu
+    st.header('Procent pozyskanych którzy pozostali')
+    pivot_table_precent = make_pivot_percent_of_people(data)
+    generate_char_non_stack(pivot_table_precent, ['rok_dodania'], data,
+                            'Procent pozyskanych darczyńców którzy wzieli udział w osoatnim mailingu Q')
+
+
+
 
 

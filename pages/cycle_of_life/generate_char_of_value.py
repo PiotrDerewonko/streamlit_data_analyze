@@ -44,3 +44,22 @@ def genarate_char(pivot, index, data, title_of_char) -> None:
     st.bokeh_chart(char_value, use_container_width=True)
     with st.expander('Kiknij i zobacz dane'):
         st.dataframe(pivot, use_container_width=True)
+
+def generate_char_non_stack(pivot, index, data, title_of_char) -> None:
+    char_options = pd.DataFrame(columns=['Nazwa parametru', 'oś', 'Opcje'])
+
+    for i in range(0, len(pivot.columns)):
+        tmp = pd.DataFrame(
+            data={'Nazwa parametru': pivot.columns[i], 'oś': 'Oś główna', 'Opcje': 'Wykres Słupkowy'},
+            index=[i])
+        char_options = pd.concat([char_options, tmp])
+    pivot.replace([np.inf, -np.inf], 0, inplace=True)
+    dict_of_oriantation = {'major': 'vertical', 'group': 'horizontal', 'sub_group': 'vertical'}
+    char_value, aa = pivot_and_chart_for_dash(data, index, 'me_detail', 'test tytulu',
+                                       'rok_dodania', {}, pivot, char_options,
+                                       title_of_char,
+                                       dict_of_oriantation
+                                       )
+    st.bokeh_chart(char_value, use_container_width=True)
+    with st.expander('Kiknij i zobacz dane'):
+        st.dataframe(pivot, use_container_width=True)

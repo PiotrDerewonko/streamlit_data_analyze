@@ -1,7 +1,7 @@
 import itertools
 
+from bokeh.palettes import Category20_20 as palette_for_prim
 from bokeh.palettes import Dark2_5 as palette
-from bokeh.palettes import Paired12 as palette_for_prim
 from bokeh.transform import dodge
 
 
