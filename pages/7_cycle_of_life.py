@@ -71,7 +71,7 @@ with st.container():
     st.header('Procent pozyskanych którzy pozostali')
     pivot_table_precent = make_pivot_percent_of_people(data)
     generate_char_non_stack(pivot_table_precent, ['rok_dodania'], data,
-                            'Procent pozyskanych darczyńców którzy wzieli udział w osoatnim mailingu Q')
+                            'Procent pozyskanych darczyńców którzy wzieli udział w ostatnim mailingu Q')
 
 
 

@@ -104,7 +104,7 @@ def structure(con, mailing, years, engine):
             checkbox = st.checkbox('Dane szczegółowe')
             sql = '''select distinct grupa_akcji_2, grupa_akcji_3, typ_materialu, kod_materialu, 
             sum(koszt_jednostkowy*akcje.naklad)/sum(akcje.naklad) as koszt_jednostkowy, case  
-            WHEN tm.id_typu_materialu in (5, 7, 8, 12, 19, 27, 32, 30) then 'GIFT'
+            WHEN tm.id_typu_materialu in (5, 7, 8, 12, 19, 27, 32, 30,31) then 'GIFT'
             WHEN tm.id_typu_materialu in (34) then 'PERSONALIZACJE'
             WHEN tm.id_typu_materialu in (4, 1, 2, 6, 9, 14, 15, 16, 20, 22, 23, 24, 25, 26, 13, 11, 10, 3,28,29,21,23, 33) then 'DRUKI'
             ELSE ''
