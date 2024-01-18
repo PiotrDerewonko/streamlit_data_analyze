@@ -23,7 +23,7 @@ left outer join (select id_korespondenta ,
  case 
  when substring(kod_pocztowy, 1, 1)::int=0 then 'warszawski'
  when substring(kod_pocztowy, 1, 1)::int=1 then 'olsztyński'
- when substring(kod_pocztowy, 1, 1)::int=2 then 'lubelski'
+ when substring(kod_pocztowy, 1, 1)::int=2_ma_detail then 'lubelski'
  when substring(kod_pocztowy, 1, 1)::int=3 then 'krakowski'
  when substring(kod_pocztowy, 1, 1)::int=4 then 'katowicki'
  when substring(kod_pocztowy, 1, 1)::int=5 then 'wrocłąwski'
@@ -40,7 +40,7 @@ on plc.id_korespondenta=adod.id_korespondenta
 left outer join v_darczyncy_wszyscy kor
 on kor.id_korespondenta=adod.id_korespondenta
 left outer join (select tytul , case when id_plci=1 then 'mężczyźni'
- when id_plci=2 then 'kobiety'
+ when id_plci=2_ma_detail then 'kobiety'
  when id_plci=3 then 'mnogie' else 'mnogie'end as plec from t_tytuly) tyt
  on tyt.tytul=kor.tytul_1
 '''
@@ -60,7 +60,7 @@ def down_data_about_pay(_con, _engine, refresh):
         select id_korespondenta, data_wplywu_srodkow, row_number() over (PARTITION BY id_korespondenta
         order by id_korespondenta, data_wplywu_srodkow) as numer from (select distinct id_korespondenta
         , data_wplywu_srodkow from t_transakcje)a
-        )foo where numer <=2 '''
+        )foo where numer <=2_ma_detail '''
         data = pd.read_sql_query(sql, _con)
         data.to_sql('cr_distance_pay', _engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_pay')

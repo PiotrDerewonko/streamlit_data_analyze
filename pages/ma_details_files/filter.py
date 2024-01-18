@@ -63,7 +63,7 @@ def filtr_options(con):
                        on_change=filtr_falue_1(st.session_state.f1, st.session_state.f1_value), key='f1_value')
     with c2:
         st.selectbox(label="Drugi filtr", options=list, on_change=change_options_2(st.session_state.f2), key='f2')
-        st.multiselect(label='Wartosc filtru 2', options=list_values_2,
+        st.multiselect(label='Wartosc filtru 2_ma_detail', options=list_values_2,
                        on_change=filtr_falue_2(st.session_state.f2, st.session_state.f2_value), key='f2_value')
     with c3:
         st.selectbox(label="Trzeci filtr", options=list, on_change=change_options_3(st.session_state.f3), key='f3')

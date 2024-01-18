@@ -1,4 +1,8 @@
+import os
+
 import pandas as pd
+
+
 def down_data_sum_and_count(con, refresh_data, engine):
     if refresh_data == 'True':
         sql = '''select grupa_akcji_3, grupa_akcji_2, sum(kwota) as suma_wplat,count(kwota) as liczba_wplat, 
@@ -22,6 +26,10 @@ def down_data_sum_and_count(con, refresh_data, engine):
 def down_data_cost_and_circulation(con, refresh_data, engine, list_of_id_gr2, list_of_years):
     if refresh_data == 'True':
         data = pd.DataFrame()
+        sql_file_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), f'../.././sql_queries/2_ma_detail/cost_and_cirtulation_for_char_days.sql'))
+        with open(sql_file_path, 'r') as sql_file:
+            zapytanie = sql_file.read()
         for i in list_of_id_gr2:
             for j in list_of_years:
 

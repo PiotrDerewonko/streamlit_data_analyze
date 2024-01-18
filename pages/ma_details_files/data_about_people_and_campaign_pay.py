@@ -69,7 +69,7 @@ def download_data_about_people(_con, refresh_data, limit, filtr_column):
        case
            when okreg_pocztowy = 0 then 'warszawski'
            when okreg_pocztowy = 1 then 'olsztyński'
-           when okreg_pocztowy = 2 then 'lubelski'
+           when okreg_pocztowy = 2_ma_detail then 'lubelski'
            when okreg_pocztowy = 3 then 'krakowski'
            when okreg_pocztowy = 4 then 'katowicki'
            when okreg_pocztowy = 5 then 'wrocławski'
