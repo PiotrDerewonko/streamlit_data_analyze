@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, data, cumulative):
     if type =='sum' or type =='count':
         if days_from > 1:

@@ -19,8 +19,12 @@ def down_data_sum_and_count(con, refresh_data, engine):
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data''', con)
     return data
 
-def down_data_cost_and_circulation(con, refresh_data, engine):
+def down_data_cost_and_circulation(con, refresh_data, engine, list_of_id_gr2, list_of_years):
     if refresh_data == 'True':
+        data = pd.DataFrame()
+        for i in list_of_id_gr2:
+            for j in list_of_years:
+
         sql = '''select grupa_akcji_3, grupa_akcji_2, sum(koszt_calkowity) as koszt, sum(naklad_calkowity) as naklad,
         1 as dzien_po_mailingu
          from v_akcje_naklad_koszt_calkowity vankcs 

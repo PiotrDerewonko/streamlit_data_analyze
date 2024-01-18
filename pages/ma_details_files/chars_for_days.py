@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 
 from database.download_data_for_ma_details import data_for_sum_of_amount_in_days
@@ -18,8 +19,12 @@ def charts(mailing, con, years, refresh_data, engine):
             years_string = change_list_to_string(years, 'za lata')
             trends = st.selectbox(label='Wybierz mailing do linii trendu', options=[['test', 'test2'], ['test3', 'test4']])
 
+            list_of_id_gr2 = pd.read_sql_query('''select id from fsaps_dictionary_action_group_two 
+            where is_for_billing = True order by text''', con).values.tolist()
+            list_of_years = pd.read_sql_query('select id from fsaps_dictionary_action_group_three order by text', con).values.tolist()
+
             #Tabela z nakladem przerzucona wyzej aby moc wyswietlic naklad w innych miejscach
-            data_cost_and_circulation = down_data_cost_and_circulation(con, refresh_data, engine)
+            data_cost_and_circulation = down_data_cost_and_circulation(con, refresh_data, engine, list_of_id_gr2, list_of_years)
             pivot_circ = data_for_sum_of_amount_in_days(mailing, years, 0, 0, 'circ', data_cost_and_circulation,
                                                         cumulative)
 
