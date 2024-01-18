@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, data, cumulative):
+def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, data, cumulative, new_old, choose):
     if type =='sum' or type =='count':
         if days_from > 1:
             data_to_show_not_show = data.loc[(data['dzien_po_mailingu'] <= days_from)]
@@ -21,6 +21,13 @@ def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, dat
         if days_from > 1:
             data_to_show_not_show = data_to_show_not_show[data_to_show_not_show['grupa_akcji_3'].isin(years)]
         columns_for_pivot_table.append('grupa_akcji_3')
+    if new_old:
+        data_to_show = data_to_show[data_to_show['nowy_stary'].isin(choose)]
+        if days_from > 1:
+            data_to_show_not_show = data_to_show_not_show[data_to_show_not_show['nowy_stary'].isin(choose)]
+        for element in choose:
+            columns_for_pivot_table.append(element)
+
     if type =='sum':
         values = 'suma_wplat'
     elif type == 'count':

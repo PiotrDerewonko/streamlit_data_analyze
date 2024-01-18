@@ -47,12 +47,6 @@ def column_options(con):
 
     columns_options = st.multiselect(options=list_options, default=['grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'],
                                      label='Prosze wybrac gift')
-    columns_options2 = st.multiselect(options=['grupa_akcji_22_wysylki', 'grupa_akcji_33_wysylki', ''],
-                                      label='Modlitwy', on_change=test(), key='text_key')
-    columns_options2_1 = st.multiselect(options=['grupa_akcji_22_1_wysylki', 'grupa_akcji_33_1_wysylki', ''],
-                                        label='Prosze wybrac kolumny2_1', on_change=test_1(), key='text_key_1')
-    columns_options3 = st.multiselect(options=final_option_list,
-                                      label='Prosze wybrac kolumny3')
     corr_method = st.selectbox(options=['spearman', 'pearson'], label='Metoda korelacji')
 
     return columns_options, corr_method
