@@ -40,11 +40,11 @@ def download_dash_address_data(con, refresh, engine, type):
         extra_group = ''
         extra_union = ''
     else:
-        id_group_two = '(1, 2_ma_detail, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119, 120, 121, 122, 123, 124, 125)'
-        extra = ', substring(ta.kod_akcji, 7,2_ma_detail) as miesiac'
+        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119, 120, 121, 122, 123, 124, 125)'
+        extra = ', substring(ta.kod_akcji, 7,2) as miesiac'
         extra_group = ',miesiac'
         extra_union = f'''union
-        select grupa_akcji_3,grupa_akcji_2,kod_akcji, 0, 0, 0, 0, substring(kod_akcji, 7,2_ma_detail) as miesiac,
+        select grupa_akcji_3,grupa_akcji_2,kod_akcji, 0, 0, 0, 0, substring(kod_akcji, 7,2) as miesiac,
         count(id_korespondenta) as pozyskano 
         from v_akcja_dodania_korespondenta2
         where id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two})

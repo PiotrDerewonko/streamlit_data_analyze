@@ -39,7 +39,7 @@ def char_options():
 def list_options(con):
     with st.container():
         st.header('Wybór akcji do przeanalizowania')
-        sql = '''select kod_akcji,substring(kod_akcji, 7,2_ma_detail) as miesiac, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3 from t_akcje ta        
+        sql = '''select kod_akcji,substring(kod_akcji, 7,2) as miesiac, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3 from t_akcje ta        
         left outer join public.t_grupy_akcji_1 gr1
         on gr1.id_grupy_akcji_1 = ta.id_grupy_akcji_1
         left outer join public.t_grupy_akcji_2 gr2

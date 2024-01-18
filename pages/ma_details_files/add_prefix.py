@@ -110,7 +110,7 @@ where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
         , case when
 jaka_karta_wtedy = 0  then 'NIEBIESKA'
 when jaka_karta_wtedy = 1 then 'SREBRNA'
-when jaka_karta_wtedy = 2_ma_detail then 'ZŁOTA'
+when jaka_karta_wtedy = 2 then 'ZŁOTA'
 else 'BRAK DANYCH'
 end as KARTA_NA_MAILING
 from
@@ -174,7 +174,7 @@ from
                                                                                      id_rodzaju_karty        as zlota,
                                                                                      min(data_wydania_karty) as wydanie_zlotej
                                                                               from t_karty_darczyncow
-                                                                              where id_rodzaju_karty = 2_ma_detail
+                                                                              where id_rodzaju_karty = 2
                                                                               group by id_korespondenta, id_rodzaju_karty) zlota
                                                                              on zlota.id_korespondenta = k.id_korespondenta
                                                                     ) karta
