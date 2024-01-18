@@ -18,7 +18,7 @@ order by date_from desc limit 1'''
                           label='Proszę wybrać mailing',
                           default=[default_camp])
     years_options = []
-    for i in range (2008, current_year+1):
+    for i in range(2008, current_year+1):
         years_options.append(str(i))
     years = st.multiselect(options=years_options, label='Proszę wybrać rok mailingu',
                            default=years_options[-5:])

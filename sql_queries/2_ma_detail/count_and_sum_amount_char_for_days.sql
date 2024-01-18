@@ -1,6 +1,6 @@
 select fdagt2.text as grupa_akcji_3, fdagt.text as grupa_akcji_2, sum(fpp.amount) as suma_wplat,
        count(fpp.correspondent_id) as liczba_wplat,
-       case when typ is null then 'nowy' else typ::text end as nowy_stary, days.dzien_po_mailingu
+       case when typ is null then 'nowy' else typ::text end as nowy_stary, days.dzien_po_mailingu::int
 from fsaps_payment_payment fpp
 left outer join fsaps_order_order_answer fooa
 on fooa.payment_id = fpp.id

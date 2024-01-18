@@ -25,8 +25,7 @@ def data_for_sum_of_amount_in_days(mailing, years, days_from, days_to, type, dat
         data_to_show = data_to_show[data_to_show['nowy_stary'].isin(choose)]
         if days_from > 1:
             data_to_show_not_show = data_to_show_not_show[data_to_show_not_show['nowy_stary'].isin(choose)]
-        for element in choose:
-            columns_for_pivot_table.append(element)
+        columns_for_pivot_table.append('nowy_stary')
 
     if type =='sum':
         values = 'suma_wplat'
