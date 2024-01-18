@@ -1,6 +1,6 @@
 from dotenv import dotenv_values
 
-from database.dowload_data import download_dash_address_data, download_increase_data
+from database.dowload_data import download_increase_data
 from database.source_db import deaful_set
 from pages.about_db.data import download_data
 from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
@@ -21,8 +21,8 @@ refresh_data = 'True'
 mail, con, engine = deaful_set(sorce_main)
 print('rozpoczynam przeladowanie danych')
 
-download_dash_address_data(con, refresh_data, engine, 'address')
-download_dash_address_data(con, refresh_data, engine, 'non address')
+#download_dash_address_data(con, refresh_data, engine, 'address')
+#download_dash_address_data(con, refresh_data, engine, 'non address')
 down_data_cost_and_circulation(con, refresh_data, engine)
 download_increase_data(con, refresh_data, engine)
 distance_between_first_and_second_pay(con, engine, refresh_data)

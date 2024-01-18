@@ -1,3 +1,4 @@
+import copy
 import os
 
 import pandas as pd
@@ -23,26 +24,36 @@ def down_data_sum_and_count(con, refresh_data, engine):
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data''', con)
     return data
 
-def down_data_cost_and_circulation(con, refresh_data, engine, list_of_id_gr2, list_of_years):
+def down_data_cost_and_circulation(con, refresh_data, engine):
     if refresh_data == 'True':
+        list_of_id_gr2 = pd.read_sql_query('''select id from fsaps_dictionary_action_group_two 
+        where is_for_billing = True order by text''', con)
+        list_of_id_gr2 = list_of_id_gr2['id'].tolist()
+        list_of_years = pd.read_sql_query('''select id::int from fsaps_dictionary_action_group_three 
+        where id <>7 order by text''', con)
+        list_of_years = list_of_years['id'].tolist()
         data = pd.DataFrame()
         sql_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), f'../.././sql_queries/2_ma_detail/cost_and_cirtulation_for_char_days.sql'))
         with open(sql_file_path, 'r') as sql_file:
             zapytanie = sql_file.read()
-        for i in list_of_id_gr2:
-            for j in list_of_years:
 
-        sql = '''select grupa_akcji_3, grupa_akcji_2, sum(koszt_calkowity) as koszt, sum(naklad_calkowity) as naklad,
-        1 as dzien_po_mailingu
-         from v_akcje_naklad_koszt_calkowity vankcs 
-        left outer join t_akcje ta 
-        on ta.id_akcji = vankcs.id_akcji 
-        left outer join t_grupy_akcji_2 gr2 on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2
-        left outer join t_grupy_akcji_3 gr3 on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
-        where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
-        group by grupa_akcji_3, grupa_akcji_2'''
-        data = pd.read_sql_query(sql, con)
+        #zmienna pomocnicza konieczna do okreslenia roku poprzedniego, poniewaz w bazie danych jest jedna wartosc
+        #nie liczbowa
+        tmp = 0
+        for j in list_of_years:
+            for i in list_of_id_gr2:
+                zapytanie_copy = copy.copy(zapytanie)
+                zapytanie_copy = zapytanie_copy.replace("#A#", str(i))
+                zapytanie_copy = zapytanie_copy.replace("#B#", str(j))
+                if tmp > 0:
+                    zapytanie_copy = zapytanie_copy.replace("#C#", str(list_of_years[tmp-1]))
+                else:
+                    zapytanie_copy = zapytanie_copy.replace("#C#", str(list_of_years[tmp]))
+                data_tmp = pd.read_sql_query(zapytanie_copy, con)
+                data = pd.concat([data, data_tmp])
+            tmp += 1
+
         data.to_sql('dash_char_ma_data_cost_cir', engine, if_exists='replace', schema='raporty', index=False)
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data_cost_cir''', con)
     return data

@@ -6,8 +6,8 @@ select distinct fdagt2.text as grupa_akcji_3, fdagt.text as grupa_akcji_2, sum(n
                                          from fsaps_campaign_person where subaction_id in (select id from fsaps_campaign_subaction where action_id in (
     select id from fsaps_campaign_action where action_main_id in (
         select id from fsaps_campaign_main_action where campaign_id in (
-            select id from fsaps_campaign_campaign where action_group_two_id = 12
-                                                   and action_group_three_id = 9
+            select id from fsaps_campaign_campaign where action_group_two_id = #A#
+                                                   and action_group_three_id = #C#
             )
         )
     ))) old
@@ -22,17 +22,8 @@ select distinct fdagt2.text as grupa_akcji_3, fdagt.text as grupa_akcji_2, sum(n
                                                round(sum((fcc.real_cost::float8/1000) * fcc.number)::numeric,3) as new_cost
                                        from fsaps_campaign_cost fcc group by subaction_id) fcc2 on fsaps_campaign_person.subaction_id = fcc2.subaction_id
 
-    where fcc.action_group_two_id = 10 and fcc.action_group_three_id=16
+    where fcc.action_group_two_id = #A# and fcc.action_group_three_id=#B#
 group by grupa_akcji_3, grupa_akcji_2, nowy_stary
 order by nowy_stary desc
 
 
-
-select count( correspondent_id) from fsaps_campaign_person where subaction_id in (select id from fsaps_campaign_subaction where action_id in (
-    select id from fsaps_campaign_action where action_main_id in (
-        select id from fsaps_campaign_main_action where campaign_id in (
-            select id from fsaps_campaign_campaign where action_group_two_id = 10
-                                                   and action_group_three_id = 16
-            )
-        )
-    ))
