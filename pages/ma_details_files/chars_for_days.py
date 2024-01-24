@@ -9,50 +9,53 @@ from pages.ma_details_files.roi_szlw_for_ma import roi, profit
 def charts(mailing, con, years, refresh_data, engine):
     with st.container():
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Suma Wpłat', 'Liczba Wpłat', 'Stopa zwrotu liczby wplat', 'ROI',
-                                                      'Profit', 'Wybór dni'])
+                                                      'Profit', 'Ustawienia'])
         with tab6:
             days_range = st.slider('Proszę wybrać dnia od nadania mailingu', min_value=1, max_value=60,
                                   value=[1, 60])
             cumulative = st.checkbox(label='Wykresy kumulacyjnie', value=True)
             mailings_string = change_list_to_string(mailing, 'dla mailingów')
             years_string = change_list_to_string(years, 'za lata')
-            trends = st.selectbox(label='Wybierz mailing do linii trendu', options=[['test', 'test2'], ['test3', 'test4']])
+            new_old = st.checkbox(label='Podział nowi/starzy', value=False)
+
+            chose_new_old = st.multiselect(label='Kogo wyświetlać', options=['nowy', 'stary'], default=['nowy', 'stary'])
 
             #Tabela z nakladem przerzucona wyzej aby moc wyswietlic naklad w innych miejscach
             data_cost_and_circulation = down_data_cost_and_circulation(con, refresh_data, engine)
             pivot_circ = data_for_sum_of_amount_in_days(mailing, years, 0, 0, 'circ', data_cost_and_circulation,
-                                                        cumulative)
+                                                        cumulative, new_old, chose_new_old)
 
             #dane, tabel i wkyres dla liczby wplat
             data_sum_count = down_data_sum_and_count(con, refresh_data, engine)
             pivot_sum_of_amount = data_for_sum_of_amount_in_days(mailing, years, days_range[0], days_range[-1],
-                                                                 'sum', data_sum_count, cumulative)
+                                                                 'sum', data_sum_count, cumulative, new_old, chose_new_old)
             char_sum_of_amount = line_chart_for_m(pivot_sum_of_amount, f'''Wykres sumy wpłat {mailings_string} {years_string}''',
-                                                  'Suma wpłat zł', pivot_circ)
+                                                  'Suma wpłat zł', pivot_circ, new_old, chose_new_old)
 
             # dane, tabel i wkyres dla sumy wplat
             pivot_count_amount = data_for_sum_of_amount_in_days(mailing, years, days_range[0], days_range[-1],
-                                                                'count', data_sum_count, cumulative)
+                                                                'count', data_sum_count, cumulative, new_old, chose_new_old)
             char_count_of_amount = line_chart_for_m(pivot_count_amount, f'''Wykres liczby wpłat {mailings_string} {years_string}'''
-                                                    , 'Liczba wpłąt', pivot_circ)
+                                                    , 'Liczba wpłąt', pivot_circ, new_old, chose_new_old)
 
             # dane, tabel i wkyres dla roi
 
             pivot_cost = data_for_sum_of_amount_in_days(mailing, years, 0, 0, 'cost', data_cost_and_circulation,
-                                                        cumulative)
+                                                        cumulative, new_old, chose_new_old)
             pivot_roi = roi(pivot_sum_of_amount, pivot_cost)
-            char_roi = line_chart_for_m(pivot_roi, f'''Wykres ROI {mailings_string} {years_string}''', 'ROI zł', pivot_circ)
+            char_roi = line_chart_for_m(pivot_roi, f'''Wykres ROI {mailings_string} {years_string}''',
+                                        'ROI zł', pivot_circ, new_old, chose_new_old)
 
             # dane, tabel i wkyres dla szlw
 
             pivot_szlw = roi(pivot_count_amount, pivot_circ)
             char_szlw = line_chart_for_m(pivot_szlw, f'''Wykres Stopy zwrotu liczby wpłat {mailings_string} {years_string}''',
-                                         'Stopa zwrotu liczby wpłat %', pivot_circ)
+                                         'Stopa zwrotu liczby wpłat %', pivot_circ, new_old, chose_new_old)
 
             #tabela i wykres dla profitu
             pivot_profit = profit(pivot_sum_of_amount, pivot_cost)
             char_profit = line_chart_for_m(pivot_profit, f'''Wykres profitu {mailings_string} {years_string}''',
-                                         'Profit zł', pivot_circ)
+                                         'Profit zł', pivot_circ, new_old, chose_new_old)
         with tab5:
             st.bokeh_chart(char_profit, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
