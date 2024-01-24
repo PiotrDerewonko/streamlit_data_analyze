@@ -40,7 +40,7 @@ def download_dash_address_data(con, refresh, engine, type):
         extra_group = ''
         extra_union = ''
     else:
-        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119, 120, 121, 122, 123, 124, 125)'
+        id_group_two = '(1, 2, 5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 117, 118, 119, 120, 121, 122, 123, 124, 125,86)'
         extra = ', substring(ta.kod_akcji, 7,2) as miesiac'
         extra_group = ',miesiac'
         extra_union = f'''union
