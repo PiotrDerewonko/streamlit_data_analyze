@@ -1,15 +1,20 @@
 import itertools
 
+from bokeh.core.enums import MarkerType
+from bokeh.models import ColumnDataSource
 from bokeh.palettes import Category20_20 as palette
 from bokeh.plotting import figure
 
 
-def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
+def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args) -> figure:
     if pivot_circ is not None:
         pivot_circ_trans = pivot_circ.transpose()
         x_label = 'Dzien po nadaniu mailingu'
+        is_division_new_old = args[0]
+        list_new_old = args[1]
     else:
         x_label = args[0]
+
     p = figure(height=700, width=1300,
                toolbar_location='right',
                title=title, y_axis_label=y_axis_label, x_axis_label=x_label
@@ -20,12 +25,14 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
         colors_fin.append(color)
     j = 0
     len_columns = len(pivot.columns)
+    markers = list(MarkerType)
+    source = ColumnDataSource(pivot)
 
 
     for i in pivot.columns:
         if pivot_circ is not None:
             tmp = f' naklad {int(pivot_circ_trans.iloc[j].values[0])}'
-            if j == len_columns-1:
+            if j == len_columns - 1:
                 line_width = 7
                 line_dash_value = []
             else:
@@ -38,6 +45,7 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
 
         p.line(pivot.index.values, pivot[i], line_width=line_width, legend=f'{i}{tmp}', color=colors_fin[j]
                , line_dash=line_dash_value)
+        p.circle(pivot.index.values, pivot[i], size=20, color=colors_fin[j], alpha=0.5)
         j += 1
     p.legend.location = 'top_left'
     p.yaxis.formatter.use_scientific = False
@@ -46,9 +54,8 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args):
     p.title.text_font_size = '14pt'
     p.legend.label_text_font_size = '14pt'
 
-
-
     return p
+
 
 def change_list_to_string(list, para):
     if len(list) >= 1:
