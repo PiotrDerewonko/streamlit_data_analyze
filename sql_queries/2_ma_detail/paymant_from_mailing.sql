@@ -1,4 +1,5 @@
-select fpp.correspondent_id, fpp.amount, fdagt.text as grupa_akcji_2_wplaty, fdagt2.text as grupa_akcji_3_wplaty
+select fpp.correspondent_id as id_korespondenta, fpp.amount as suma_wplat, fdagt.text as grupa_akcji_2_wplaty,
+       fdagt2.text as grupa_akcji_3_wplaty
 , poczta
 from fsaps_payment_payment fpp
 left outer join fsaps_order_order_answer fooa
@@ -18,4 +19,4 @@ left outer join (select payment_id, case when source_line like '%od Bank Pocztow
                  then 'poczta' else 'pozostali' end as poczta from fsaps_payment_imported_payment) poczta
 on fpp.id = poczta.payment_id
 where fcc.action_group_two_id in (9,10,11,12,24,67,100)
-order by correspondent_id desc
+order by id_korespondenta desc

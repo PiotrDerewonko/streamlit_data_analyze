@@ -12,7 +12,7 @@ from pages.ma_details_files.pivot_table.pivot_table_for_ma_details import create
     style_pivot_table_for_ma
 
 
-def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char, filtr, tit, sub_tit, dict_of_oriantation):
+def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char, filtr, tit, sub_tit, dict_of_oriantation, is_post):
     sorce_main = dotenv_values('.env')
     sorce_main = list(sorce_main.values())[0]
     refresh_data = 'False'
@@ -152,6 +152,8 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
     data_to_structure.rename(columns={'suma_wplat_x': 'suma_wplat'}, inplace=True)
     data_to_structure.drop_duplicates(subset=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'], inplace=True)
     data_to_structure['rok_dodania'] = data_to_structure['rok_dodania'].astype(str)
+    if is_post:
+        columns_options.append('poczta')
     pivot_for_structure = data_to_structure.pivot_table(values=['suma_wplat'], columns=['przedzialy'],
                                            aggfunc='count',
                                            index=columns_options)

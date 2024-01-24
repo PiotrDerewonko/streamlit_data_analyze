@@ -21,4 +21,6 @@ def char_options():
         sub_title = st.text_input('Miejsce na pod tytuł')
         st.subheader("Ustawienia orientacji osi")
         dict_of_oriantation = label_orientations()
-    return all, title, sub_title, dict_of_oriantation
+        st.subheader("Ustawienia wykresu Struktury Wpłat")
+        is_post = st.checkbox(label="Podział na wplaty za pośrednictwem poczty")
+    return all, title, sub_title, dict_of_oriantation, is_post
