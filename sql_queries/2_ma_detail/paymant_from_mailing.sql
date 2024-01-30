@@ -20,3 +20,4 @@ left outer join (select payment_id, case when source_line like '%od Bank Pocztow
 on fpp.id = poczta.payment_id
 where fcc.action_group_two_id in (9,10,11,12,24,67,100)
 order by id_korespondenta desc
+limit 100
