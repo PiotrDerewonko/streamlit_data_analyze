@@ -1,6 +1,6 @@
 select fpp.correspondent_id as id_korespondenta, fpp.amount as suma_wplat, fdagt.text as grupa_akcji_2_wplaty,
        fdagt2.text as grupa_akcji_3_wplaty
-, poczta
+, poczta, dzien_po_mailingu
 from fsaps_payment_payment fpp
 left outer join fsaps_order_order_answer fooa
 on fooa.payment_id = fpp.id
