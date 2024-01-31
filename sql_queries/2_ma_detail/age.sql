@@ -7,6 +7,7 @@ select id_korespondenta, case
     when wiek between 70 and 79 then '70 - 79'
     when wiek between 80 and 89 then '80 - 89'
     when wiek between 90 and 99 then '90 - 99'
-else '' end as przedzial_wieku
-from (select distinct id_korespondenta,date_part('year', now())::int -  date_part('year', data_urodzenia)::int as wiek
+    when wiek > 99 then ' 100 i więcej'
+else '' end as przedzial_wieku, #A#::text as rok
+from (select distinct id_korespondenta,#A#::int -  date_part('year', data_urodzenia)::int as wiek
                                         from t_dane_osobowe)foo

@@ -5,6 +5,7 @@ import pandas as pd
 import streamlit as st
 
 from functions_pandas.short_mailings_names import change_name
+from pages.ma_details_files.data_about_peopla_year_and_vip import add_age_and_vip
 
 
 @st.cache_data(ttl=7200)
@@ -182,8 +183,6 @@ order by łączna_ilość_zamowień desc)a'''
         data_tmp_1['rodzaj_materialu_pozyskania'].loc[~(data_tmp_1['grupa_akcji_1_dodania']=='DRUKI BEZADRESOWE')] = 'brak'
         data_tmp_1['material_pozyskania'].loc[~(data_tmp_1['grupa_akcji_1_dodania']=='DRUKI BEZADRESOWE')] = 'brak'
 
-        #dodaje informacje na temat wieku
-
 
 
 
@@ -256,7 +255,14 @@ and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.i
         data['powod_otrzymania_giftu'].fillna('brak', inplace=True)
         data.fillna(0, inplace=True)
         data = change_name(data)
+
+        # dodaje informacje na temat wieku
+        data = add_age_and_vip(data, _con)
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+
+
+
+
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
 
