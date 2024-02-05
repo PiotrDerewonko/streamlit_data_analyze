@@ -34,14 +34,15 @@ def check_max_value(pivot, data, axis):
         tmp_2 = tmp.loc[tmp['Opcje'] == 'Wykres Słupkowy Skumulowany']
         if len(tmp_2) >= 1:
             max_for_stock = 0
-            for j, row2 in tmp_2.iterrows():
-                tmp_sum_2 = pivot[row2['Nazwa parametru']].max()
-                max_for_stock += tmp_sum_2
+            pivot_tmp = pivot[tmp_2['Nazwa parametru']]
+            i_int = 0
+            for j, row2 in pivot_tmp.iterrows():
+                tmp_sum_2 = pivot_tmp.iloc[i_int].sum()
+                i_int += 1
+                if tmp_sum_2 > max_for_stock:
+                    max_for_stock = tmp_sum_2
             if max_for_stock > max:
                 max = max_for_stock
-
-
-
     return max
 
 def change_short_names_ma(data):
