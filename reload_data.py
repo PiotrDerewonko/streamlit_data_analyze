@@ -3,6 +3,7 @@ from dotenv import dotenv_values
 from database.dowload_data import download_dash_address_data, download_increase_data
 from database.source_db import deaful_set
 from pages.about_db.data import download_data
+from pages.charakterystyka_bazy.download_data import download_data_about_age
 from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
     distance_between_first_and_second_pay
 from pages.cycle_of_life.download_data import download_data_cycle_of_life
@@ -40,6 +41,7 @@ weeks_of_db(con, refresh_data, engine)
 get_costs(con, refresh_data, engine)
 download_data(con, refresh_data)
 download_data_cycle_of_life(con, refresh_data)
+download_data_about_age(con, refresh_data, engine)
 
 
 

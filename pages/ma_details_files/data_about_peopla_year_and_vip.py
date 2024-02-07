@@ -19,8 +19,8 @@ def add_age_and_vip(data, _con) -> pd.DataFrame:
         vip_sql = sql_file.read()
 
 
-    data['przedzial_wieku'] = ''
-    data['vip'] = ''
+    data['przedzial_wieku'] = 'brak danych'
+    data['vip'] = 'pozostali'
     data.set_index(['id_korespondenta', 'grupa_akcji_3_wysylki'], inplace=True)
 
     for k in range(2009, year_now + 1):

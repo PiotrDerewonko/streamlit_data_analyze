@@ -18,37 +18,34 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     if (type != 'increase') & (type != 'dist') & (type != 'dist2'):
         temp_df = create_df(dict)
     if (type != 'people_db'):
-        data,  title_fin = modifcate_data(data, type, multindex, title)
+        data, title_fin = modifcate_data(data, type, multindex, title)
 
     major = "vertical"
     group = "horizontal"
     sub_group = "horizontal"
 
     if type == 'nonaddress':
-        if args[0] !='':
+        if args[0] != '':
             title_fin = args[0]
         dict_of_oriantation = args[1]
         major = dict_of_oriantation['major_db']
         group = dict_of_oriantation['group_db']
         sub_group = dict_of_oriantation['sub_group_db']
 
-
-
     if (type != 'me_detail') and (type != 'people_db'):
         data = change_name(data)
     if type == 'address':
         temp_df = change_short_names_ma(temp_df)
-    elif type =='nonaddress':
+    elif type == 'nonaddress':
         temp_df = change_short_names_db(temp_df)
 
     y_label = 'Ilość pozyskanych'
 
     # dla typu przyrost pobieram dodatkowa wartosc jaka sa kolumny
     if (type == 'increase'):
-        columns_label=args[0]
+        columns_label = args[0]
     else:
-        columns_label=[]
-
+        columns_label = []
 
     if (type != 'me_detail') and (type != 'people_db') and (type != 'cost_structure'):
         pivot_table_ma = create_pivot_table(data, multindex, type, columns_label)
@@ -68,7 +65,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         pivot_table_ma.fillna(0, inplace=True)
         temp_df = args[1]
         title_fin = args[2]
-        if len(temp_df.loc[temp_df['oś'] == 'Oś pomocnicza'])>0:
+        if len(temp_df.loc[temp_df['oś'] == 'Oś pomocnicza']) > 0:
             temp_df_fin_sec = True
         else:
             temp_df_fin_sec = False
@@ -81,9 +78,8 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
 
     index_for_char = data.groupby(multindex, dropna=True)
 
-
-
-    if ((type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db')) | (temp_df_fin_sec ==True):
+    if ((type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db')) | (
+            temp_df_fin_sec == True):
         y_label, y_sec_label = label_of_axis(temp_df)
 
     if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db'):
@@ -97,10 +93,10 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         max_value_for_y_prime = pivot_table_ma.max().max()
     pivot_table_ma.fillna(0, inplace=True)
     source = ColumnDataSource(pivot_table_ma)
-    #todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
+    # todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
 
     'petla w celu uwtorzenia polaczonych nazws kolumn multindexu potrzebnych do wykresu'
-    str_mutlindex=''
+    str_mutlindex = ''
     j = 0
     for i in multindex:
         if j == 0:
@@ -108,11 +104,11 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             j += 1
         else:
             str_mutlindex = str_mutlindex + "_" + i
-    #tworze figure do ktorej bede dolaczac wykresy
+    # tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
                height=700, width=1300,
                title=f"{title_fin}",
-               #title=f"{title}{from_} - {to_}",
+               # title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label,
@@ -124,9 +120,9 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     p.xaxis.group_label_orientation = group
     p.xaxis.subgroup_label_orientation = sub_group
 
-    #p.xaxis.major_label_orientation = "vertical"
-    #p.yaxis.major_label_text_font_size = "18pt"
-    #p.xaxis.major_label_text_font_size = "18pt"
+    # p.xaxis.major_label_orientation = "vertical"
+    # p.yaxis.major_label_text_font_size = "18pt"
+    # p.xaxis.major_label_text_font_size = "18pt"
     p.xaxis.major_label_text_font_size = "13pt"
     p.xaxis.axis_label_text_font_size = "13pt"
     p.yaxis.major_label_text_font_size = "13pt"
@@ -136,22 +132,21 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     p.xaxis.group_label_orientation = group
     p.xaxis.subgroup_label_orientation = sub_group
 
-    #p.background_fill_color = None
-    #p.border_fill_color = None
+    # p.background_fill_color = None
+    # p.border_fill_color = None
     p.title.text_font_size = '18pt'
 
+    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec == True):
+        p.y_range = Range1d(0, max_value_for_y_prime * 1.1)
 
-
-    if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (temp_df_fin_sec ==True):
-        p.y_range = Range1d(0, max_value_for_y_prime*1.1)
-
-    if ((type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db')) and (max_value_for_y_second != 0):
+    if ((type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db')) and (
+            max_value_for_y_second != 0):
         "dodaje druga os najpierw nazwe i zasieg potem layout i wykorzystuje nazwe i wkazuje strone"
-        p.extra_y_ranges = {'secon_axis': Range1d(0, max_value_for_y_second*1.1)}
+        p.extra_y_ranges = {'secon_axis': Range1d(0, max_value_for_y_second * 1.1)}
         p.add_layout(LinearAxis(y_range_name="secon_axis", axis_label=y_sec_label), 'right')
         p.yaxis.axis_label_text_font_size = "15pt"
 
-    #wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
+    # wylaczam tryb naukowy, dzieki czemu pokazuja sie pelni liczby a nie ich potegi
     p.yaxis.formatter.use_scientific = False
 
     # tworze wykresy
@@ -167,29 +162,24 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         for m, color in zip(range(len(pivot_table_ma.columns)), colors):
             colors_fin.append(color)
         st.markdown(pivot_table_ma.columns)
-        p.vbar_stack(pt_columns, x=dodge(str_mutlindex, 0, range=p.x_range),  source=source,
+        p.vbar_stack(pt_columns, x=dodge(str_mutlindex, 0, range=p.x_range), source=source,
                      width=0.7, legend_label=pt_columns, color=colors_fin)
 
-    #char_opt.char_options(p)
+    # char_opt.char_options(p)
 
-    if (type != 'increase') and (type != 'me_detail') and  (type != 'people_db'):
-        #dodanie dodatkowych pol do tabeli przestawnej
+    if (type != 'increase') and (type != 'me_detail') and (type != 'people_db'):
+        # dodanie dodatkowych pol do tabeli przestawnej
         pivot_table_ma = pivot_table_ma.style.format(na_rep='MISSING',
-                    formatter={
-                               ('suma_wplat'): lambda x: "{: .0f} zł".format(x),
-                               ('naklad_calkowity'): lambda x: "{: .0f}".format(x),
-                               ('ROI'): lambda x: "{:,.2f} zł".format(x),
-                               ('Stopa zwrotu l.w.'): lambda x: "{: .2f} %".format(x),
-                                ('Stopa pozyskania'): lambda x: "{: .2f} %".format(x),
-                               ('Koszt na głowę'): lambda x: "{: .2f} zł".format(x),
-                               ('koszt_calkowity'): lambda x: "{: .0f} zł".format(x),
-                        ('index_liczba_wplat'): lambda x: "{: .2f} %".format(x),
-                        ('index_suma_wplat'): lambda x: "{: .2f} %".format(x),
-                               })
+                                                     formatter={
+                                                         ('suma_wplat'): lambda x: "{: .0f} zł".format(x),
+                                                         ('naklad_calkowity'): lambda x: "{: .0f}".format(x),
+                                                         ('ROI'): lambda x: "{:,.2f} zł".format(x),
+                                                         ('Stopa zwrotu l.w.'): lambda x: "{: .2f} %".format(x),
+                                                         ('Stopa pozyskania'): lambda x: "{: .2f} %".format(x),
+                                                         ('Koszt na głowę'): lambda x: "{: .2f} zł".format(x),
+                                                         ('koszt_calkowity'): lambda x: "{: .0f} zł".format(x),
+                                                         ('index_liczba_wplat'): lambda x: "{: .2f} %".format(x),
+                                                         ('index_suma_wplat'): lambda x: "{: .2f} %".format(x),
+                                                     })
 
     return p, pivot_table_ma
-
-
-
-
-

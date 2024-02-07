@@ -41,12 +41,3 @@ def wplata():
     test_dict = {'Nazwa parametru': ['wplata'], 'Opcje': [suma_wplat]}
     dataframe = pd.DataFrame(data=test_dict)
     return test_dict, dataframe
-
-def typ():
-    dict = {}
-    suma_wplat = st.checkbox(label='Czy do 100 %', on_change=create_df(dict, "czy_do_100",
-                                                                    st.session_state.czy_do_100),
-                     key="czy_do_100")
-    test_dict = {'Nazwa parametru': ['czy_do_100'], 'Opcje': [suma_wplat]}
-    dataframe = pd.DataFrame(data=test_dict)
-    return test_dict, dataframe
