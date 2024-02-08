@@ -78,13 +78,13 @@ with st.container():
     with tab1:
         pivot_table_age = pd.pivot_table(data_age, values='liczba', aggfunc='sum', index='rok',
                                          columns='przedzial_wieku')
-        char_value = download_char(pivot_table_age, data_age, ['rok'], 'Przedzial wieku darczyńców w latach')
+        char_value = download_char(pivot_table_age, data_age, ['rok'], f'Przedzial wieku darczyńców w latach {years[0]} - {years[1]}')
         st.bokeh_chart(char_value)
         with st.expander(label='Dane tabelaryczne'):
             st.dataframe(pivot_table_age)
     with tab2:
         pivot_table_ag_to_100 = to_100_percent(pivot_table_age, False)
-        char_value_100 = download_char(pivot_table_ag_to_100, data_age, ['rok'], 'Struktura wieku w latach')
+        char_value_100 = download_char(pivot_table_ag_to_100, data_age, ['rok'], f'Struktura wieku w latach {years[0]} - {years[1]}')
         st.bokeh_chart(char_value_100)
         with st.expander(label='Dane tabelaryczne'):
             st.dataframe(pivot_table_ag_to_100)
