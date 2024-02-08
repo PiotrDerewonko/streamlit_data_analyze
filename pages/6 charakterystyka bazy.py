@@ -14,10 +14,11 @@ sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
 mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
-with st.container():
-    years = st.slider(min_value=2008, max_value=datetime.now().year,
+
+years = st.slider(min_value=2008, max_value=datetime.now().year,
                       value=[datetime.now().year - 5, datetime.now().year],
                       label='Wybierz lata do analizy')
+with st.container(height=1200):
     char_options_df = add_check_box()
     # Miejsce na tutul wykresu zycia darczynocw
     title = st.text_input('Miejsce na tytuł wykresu', key='about_db_label')
@@ -64,6 +65,7 @@ with st.container():
         with st.expander(label='Dane tabelaryczne'):
             st.dataframe(pivot)
 
+with st.container(height=1200):
     # czesc poswiecona wiekowi-------------------------
     data_age = download_data_about_age(con, False, engine)
     data_age = data_age.loc[(data_age['rok'] >= years[0]) & (data_age['rok'] <= years[1])]

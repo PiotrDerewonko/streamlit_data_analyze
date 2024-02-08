@@ -1,11 +1,17 @@
+import pandas as pd
 
-from pages.custom_reports_files.distance_between_first_and_second_pay.down_data_cr_distansce import down_data_about_cor, down_data_about_pay
+from pages.custom_reports_files.distance_between_first_and_second_pay.down_data_cr_distansce import down_data_about_cor, \
+    down_data_about_pay
 
 
 def distance_between_first_and_second_pay(con, engine, refresh_data):
     data_corr = down_data_about_cor(con, engine, refresh_data)
     data_pay = down_data_about_pay(con, engine, refresh_data)
     data_corr_pay = data_corr.merge(data_pay, on='id_korespondenta', how='left')
+    data_corr_pay['second_pay'] = pd.to_datetime(data_corr_pay['second_pay'])
+    data_corr_pay['first_pay'] = pd.to_datetime(data_corr_pay['first_pay'])
+    data_corr_pay['data_dodania'] = pd.to_datetime(data_corr_pay['data_dodania'])
+
 
     #sprawdzenie kiedy dokonal pierwszej wplaty i czy byla ona w momencie pozyskania
     data_corr_pay['distance_add_to_fp'] = (data_corr_pay['first_pay'] - data_corr_pay['data_dodania']).dt.days

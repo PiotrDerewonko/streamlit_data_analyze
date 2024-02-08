@@ -106,13 +106,13 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
             str_mutlindex = str_mutlindex + "_" + i
     # tworze figure do ktorej bede dolaczac wykresy
     p = figure(x_range=index_for_char,
-               height=700, width=1300,
+               height=800,
                title=f"{title_fin}",
                # title=f"{title}{from_} - {to_}",
                toolbar_location='right',
                x_axis_label=x_label,
                y_axis_label=y_label,
-               sizing_mode='fixed')
+               sizing_mode='stretch_both')
     p.title.text_font_size = '12pt'
     p.add_layout(Legend(background_fill_alpha=0.3))
 
@@ -153,7 +153,7 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     if (type != 'increase') & (type != 'dist') & (type != 'dist2') & (type != 'people_db'):
         char_opt.char_for_dash_ma_detail(temp_df, p, str_mutlindex, source, pivot_table_ma, type, index_for_char)
     elif (type == 'people_db'):
-        p = line_chart_for_m(pivot_table_ma, title, 'zł', None, 'Miesiąc obecności w bazie')
+        p = line_chart_for_m(pivot_table_ma, title, 'zł', None, 'Miesiąc obecności w bazie', False, ['pusto'])
     else:
         pt_columns = pivot_table_ma.columns
         pt_columns = pt_columns.to_list()

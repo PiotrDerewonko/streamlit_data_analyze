@@ -12,6 +12,8 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args) -> figure:
         list_new_old = args[1]
     else:
         x_label = args[0]
+        is_division_new_old = False
+        list_new_old = ['pusto']
 
     p = figure(height=700, width=1300,
                toolbar_location='right',

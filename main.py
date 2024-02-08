@@ -40,6 +40,7 @@ with st.container():
 
     # odwoluje sie do funkcji ktore generuje caly modul odpowiedzialny za mailingi adresowe
     main_action_config(data_to_show_ma, True)
+
     st.header('Dane z głównych wrzutek bezadresowych')
     #todo wykres z przychodu i do 100 % porzychod
     non_action_main_conf(data_to_show_db, con)
