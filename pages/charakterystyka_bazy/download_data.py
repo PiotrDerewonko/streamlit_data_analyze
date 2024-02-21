@@ -31,8 +31,12 @@ def download_data_about_age(con, refresh, engine) -> pd.DataFrame:
                     print(f'Brak mailingow w roku {rok_biezacy}')
             data_tmp_2 = pd.read_sql_query(zapytanie_copy, con)
             data_tmp = pd.concat([data_tmp, data_tmp_2])
-        data_tmp.to_sql(schema='raporty', con=engine, if_exists='replace', name='age_in_years', index=False)
+        data_about_peaople = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+                                     low_memory=False, nrows=0)
+        data_about_peaople = data_about_peaople[['id_korespondenta', 'rok_dodania']]
+        data_tmp = pd.merge(data_tmp, data_about_peaople, on='id_korespondenta', how='left')
+        data_tmp.to_csv('./pages/charakterystyka_bazy/tmp_files/data.csv')
 
-    data = pd.read_sql_query('''select * from raporty.age_in_years''', con)
+    data = pd.read_csv('./pages/charakterystyka_bazy/tmp_files/data.csv')
 
     return data

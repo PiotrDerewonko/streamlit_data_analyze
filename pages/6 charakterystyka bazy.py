@@ -16,8 +16,8 @@ mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
 
 years = st.slider(min_value=2008, max_value=datetime.now().year,
-                      value=[datetime.now().year - 5, datetime.now().year],
-                      label='Wybierz lata do analizy')
+                  value=[datetime.now().year - 5, datetime.now().year],
+                  label='Wybierz lata do analizy')
 with st.container(height=1200):
     char_options_df = add_check_box()
     # Miejsce na tutul wykresu zycia darczynocw
@@ -26,7 +26,9 @@ with st.container(height=1200):
     # pobieram dane
     data = download_data(con, refresh_data)
     data = data.loc[(data['rok'] >= years[0]) & (data['rok'] <= years[1])]
+    data['rok'] = data['rok'].astype(int)
     data['rok'] = data['rok'].astype(str)
+
 
     # zmienne pomocnicze
     list_of_column = ['rodzaj']
@@ -70,23 +72,33 @@ with st.container(height=1200):
     data_age = download_data_about_age(con, False, engine)
     data_age = data_age.loc[(data_age['rok'] >= years[0]) & (data_age['rok'] <= years[1])]
     data_age['rok'] = data_age['rok'].astype(str)
+    data_age['rok_dodania'].fillna(0, inplace=True)
+    data_age['rok_dodania'] = data_age['rok_dodania'].astype(int)
+    data_age['rok_dodania'] = data_age['rok_dodania'].astype(str)
+
 
     st.header('Podział darczyńców ze względu na wiek')
     is_empty = st.checkbox(value=False, label='Czy pokazywać brak danych')
+    add_year_of_add = st.checkbox(value=False, label='Dodaj rok wejścia')
+    index_data = ['rok']
     if is_empty == False:
         data_age.drop(data_age.loc[data_age['przedzial_wieku'] == 'brak danych'].index, inplace=True)
-
+    if add_year_of_add:
+        index_data.append('rok_dodania')
     tab1, tab2 = st.tabs(['Wykres wartośc', 'Wykres do 100 procent'])
     with tab1:
-        pivot_table_age = pd.pivot_table(data_age, values='liczba', aggfunc='sum', index='rok',
+        pivot_table_age = pd.pivot_table(data_age, values='id_korespondenta', aggfunc='count', index=index_data,
                                          columns='przedzial_wieku')
-        char_value = download_char(pivot_table_age, data_age, ['rok'], f'Przedzial wieku darczyńców w latach {years[0]} - {years[1]}')
+        char_value = download_char(pivot_table_age, data_age, index_data,
+                                   f'Przedzial wieku darczyńców w latach {years[0]} - {years[1]}')
         st.bokeh_chart(char_value)
         with st.expander(label='Dane tabelaryczne'):
             st.dataframe(pivot_table_age)
     with tab2:
         pivot_table_ag_to_100 = to_100_percent(pivot_table_age, False)
-        char_value_100 = download_char(pivot_table_ag_to_100, data_age, ['rok'], f'Struktura wieku w latach {years[0]} - {years[1]}')
+        char_value_100 = download_char(pivot_table_ag_to_100, data_age, index_data,
+                                       f'Struktura wieku w latach {years[0]} - {years[1]}')
         st.bokeh_chart(char_value_100)
         with st.expander(label='Dane tabelaryczne'):
             st.dataframe(pivot_table_ag_to_100)
+

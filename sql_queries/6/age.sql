@@ -1,4 +1,4 @@
-select count(correspondent_id) as liczba, case
+select distinct correspondent_id as id_korespondenta, case
     when wiek between 20 and 29 then '20 - 29'
     when wiek between 30 and 39 then '30 - 39'
     when wiek between 40 and 49 then '40 - 49'
@@ -30,4 +30,4 @@ where numer = 1
                                                                                                             (select id
                                                                                                              from fsaps_dictionary_action_group_three
                                                                                                              where text = '#A#'))))))
-group by wiek
+
