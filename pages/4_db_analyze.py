@@ -4,6 +4,7 @@ from dotenv import dotenv_values
 
 from database.source_db import deaful_set
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
+from pages.db_analyze.generete_pivot_tables import generete_pivot_tables
 from pages.db_analyze.get_data_to_db_analyze import live_people_from_db, weeks_of_db
 from pages.db_analyze.options_for_char import char_options, list_options
 
@@ -16,6 +17,9 @@ with st.container():
     # Wybor akcji do pokazania
     subaction_list = list_options(con)
 
+    # dodanie check box do grupowania danych w grupy akcji
+    is_grouped = st.checkbox(label='Zgrupuj kody')
+
     st.header('Wykres tygodniach')
 
     # Miejsce na tutul wykresu zycia darczynocw
@@ -27,29 +31,13 @@ with st.container():
     to_ = ilosc_tygodni[1]
 
     # pobieranie i odfiltoprwanie danych
-    data = live_people_from_db(con, refresh_data)
     data_second = weeks_of_db(con, refresh_data, engine)
-    data = data.loc[data['kod_akcji'].isin(subaction_list)]
     data_second = data_second.loc[data_second['kod_akcji'].isin(subaction_list)]
     data_second = data_second.loc[(data_second['numer_tygodnia'] >= from_) & (data_second['numer_tygodnia'] <= to_)]
     data_second['numer_tygodnia'] = data_second['numer_tygodnia'].astype(str)
 
-    uniq_subaction = list(data['kod_akcji'].drop_duplicates())
-
-    # tworzenie tabel przestawnych
-    pivot = pd.pivot_table(data, index='miesiac_obecnosci_w_bazie', columns='kod_akcji',
-                           values=['wplaty', 'koszt_utrzymania', 'koszt_insertu'], aggfunc='sum')
-    pivot_to_weeks_final = pd.DataFrame()
-    for akcja in subaction_list:
-        data_tmp = data_second.loc[data_second['kod_akcji'] == akcja]
-        pivot_to_weeks = pd.pivot_table(data_tmp, index=['kod_akcji', 'numer_tygodnia'], values=
-        ['suma_wplat', 'pozyskano', 'koszt_wysylki_giftu', 'koszt_insertu'], aggfunc='sum')
-        pivot_to_weeks = pivot_to_weeks.cumsum()
-        pivot_to_weeks_final = pd.concat([pivot_to_weeks_final, pivot_to_weeks])
-
-    for row in uniq_subaction:
-        pivot[('profit', row)] = pivot[('wplaty', row)] - pivot[('koszt_utrzymania', row)] - pivot[
-            ('koszt_insertu', row)]
+    # tworzenie tabel przestawnych oraz indesku do nich
+    pivot_to_weeks_final, index_values = generete_pivot_tables(subaction_list, data_second, is_grouped)
 
     # tworzenie wykresów dla tygodni
     char_options_df_weeks = pd.DataFrame(
@@ -60,7 +48,7 @@ with st.container():
                         'Wykres Słupkowy Skumulowany']}, index=[0, 1, 2, 3])
     dict_of_oriantation = {'major': 'vertical', 'group': 'vertical', 'sub_group': 'vertical'}
 
-    char_weeks, aa = pivot_and_chart_for_dash(data_second, ['kod_akcji', 'numer_tygodnia'], 'me_detail', 'test tytulu',
+    char_weeks, aa = pivot_and_chart_for_dash(data_second, index_values, 'me_detail', 'test tytulu',
                                               'Tydzień', {}, pivot_to_weeks_final, char_options_df_weeks, title_weeks,
                                               dict_of_oriantation
                                               )
@@ -68,6 +56,18 @@ with st.container():
     with st.expander('Zobacz tabele z danymi'):
         st.dataframe(pivot_to_weeks_final, use_container_width=True)
 
+    ################################################################################
+    # pobieram i filtruje dane dane
+    data = live_people_from_db(con, refresh_data)
+    data = data.loc[data['kod_akcji'].isin(subaction_list)]
+    uniq_subaction = list(data['kod_akcji'].drop_duplicates())
+
+    # tworze tabele przestawna
+    pivot = pd.pivot_table(data, index='miesiac_obecnosci_w_bazie', columns='kod_akcji',
+                           values=['wplaty', 'koszt_utrzymania', 'koszt_insertu'], aggfunc='sum')
+    for row in uniq_subaction:
+        pivot[('profit', row)] = pivot[('wplaty', row)] - pivot[('koszt_utrzymania', row)] - pivot[
+            ('koszt_insertu', row)]
     # Wybór danych na wykres zycia darczyncow
     char_options_df = char_options()
 

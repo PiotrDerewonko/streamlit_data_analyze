@@ -50,12 +50,8 @@ def list_options(con):
         where ta.id_grupy_akcji_1=22 and ta.id_grupy_akcji_3>=8'''
         data = pd.read_sql_query(sql, con)
         data_copy = data.copy()
-        list_of_newspaper = list(data['grupa_akcji_2'].dropna().drop_duplicates().sort_values())
         list_of_year = list(data['grupa_akcji_3'].drop_duplicates().sort_values())
-        list_of_month = list(data['miesiac'].drop_duplicates().sort_values())
-        list_of_subactions = list(data['kod_akcji'].drop_duplicates().sort_values())
         rok = st.multiselect(options=list_of_year, label='Proszę wybrać rok', default=[list_of_year[-1]])
-        # todo zmienic na osoatni miesiac i osoatni rok wartosic sdomyslne tych pol
         if len(rok) >= 1:
             data_copy = data_copy.loc[data_copy['grupa_akcji_3'].isin(rok)]
         miesiac = st.multiselect(options=list(data_copy['miesiac'].drop_duplicates().sort_values()),
