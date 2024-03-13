@@ -29,7 +29,6 @@ with st.container(height=1200):
     data['rok'] = data['rok'].astype(int)
     data['rok'] = data['rok'].astype(str)
 
-
     # zmienne pomocnicze
     list_of_column = ['rodzaj']
     is_amount = char_options_df['Opcje'].loc[char_options_df['Nazwa parametru'] == 'wplata'].iloc[0]
@@ -71,11 +70,12 @@ with st.container(height=1200):
     # czesc poswiecona wiekowi-------------------------
     data_age = download_data_about_age(con, False, engine)
     data_age = data_age.loc[(data_age['rok'] >= years[0]) & (data_age['rok'] <= years[1])]
-    data_age['rok'] = data_age['rok'].astype(str)
     data_age['rok_dodania'].fillna(0, inplace=True)
+    drop_index = data_age.loc[(data_age['rok_dodania'] == 0) | (data_age['rok_dodania'] > data_age['rok'])].index
+    data_age.drop(drop_index, inplace=True)
+    data_age['rok'] = data_age['rok'].astype(str)
     data_age['rok_dodania'] = data_age['rok_dodania'].astype(int)
     data_age['rok_dodania'] = data_age['rok_dodania'].astype(str)
-
 
     st.header('Podział darczyńców ze względu na wiek')
     is_empty = st.checkbox(value=False, label='Czy pokazywać brak danych')
@@ -101,4 +101,3 @@ with st.container(height=1200):
         st.bokeh_chart(char_value_100)
         with st.expander(label='Dane tabelaryczne'):
             st.dataframe(pivot_table_ag_to_100)
-
