@@ -1,25 +1,28 @@
+from datetime import datetime
+
 import pandas as pd
-import plotly.express as px
+from pymongo import MongoClient
 
-# Przykładowe dane (zakładam, że masz takie dane w swoim DataFrame)
-data = {
-    'Value': [10, 20, 15, 25, 30, 35],
-    'Year': [2021, 2021, 2021, 2022, 2022, 2022],
-    'Month': [1, 2, 3, 4, 5, 6],
-    'Day': [1, 1, 1, 1, 1, 1]
-}
+add = False
 
-# Tworzenie DataFrame'a z indeksem wielopoziomowym
-df = pd.DataFrame(data)
-df.set_index(['Year', 'Month', 'Day'], inplace=True)
+# Przykładowy DataFrame
+t1 = datetime.now()
+df = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+t2 = datetime.now()
+# Utwórz połączenie z bazą danych MongoDB
+client = MongoClient(host='localhost', port=27017)
+print(f'odczyt csv {t2 - t1} ')
+db = client.moja_baza_danych
+collection = db.moja_kolekcja
 
-# Resetowanie indeksu MultiIndex'a do kolumny (tworzymy nowe kolumny 'Year', 'Month' i 'Day')
-df_reset = df.reset_index()
+if add:
+    # Konwertuj DataFrame do listy słowników (dokumentów MongoDB)
+    documents = df.to_dict(orient='records')
 
-# Łączenie kolumn 'Year', 'Month' i 'Day' w jedno pole 'Date' jako nowy indeks
-df_reset['Date'] = pd.to_datetime(df_reset[['Year', 'Month', 'Day']])
-df_reset.set_index('Date', inplace=True)
+    # Zapisz dokumenty do kolekcji MongoDB
+    collection.insert_many(documents)
 
-# Tworzenie wykresu liniowego
-fig = px.line(df_reset, x=df_reset.index, y='Value', markers=True, title='Wykres z indeksem z trzech pól')
-fig.show()
+t3 = datetime.now()
+df = pd.DataFrame(list(collection.find()))
+t4 = datetime.now()
+print(f'odczyt csv {t2 - t1} odczyt mongo {t4 - t3}')

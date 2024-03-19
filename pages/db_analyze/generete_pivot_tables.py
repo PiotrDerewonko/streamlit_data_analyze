@@ -14,6 +14,7 @@ def generete_pivot_tables(subaction_list, data_second, is_grouped) -> Tuple[pd.D
             pivot_to_weeks = pivot_to_weeks.cumsum()
             pivot_to_weeks_final = pd.concat([pivot_to_weeks_final, pivot_to_weeks])
     elif is_grouped:
+        #todo do zastanowienia czy nie dodac tu kampani aby rozrzucniac te akcje
         index_values = ['grupa_akcji_2', 'numer_tygodnia']
         # zmienne tymczasowe, jedna do finalej tabeli przestanwej druga do odfiltorwania grup akcji 2
         data_gr2 = pd.DataFrame()

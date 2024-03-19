@@ -19,8 +19,8 @@ def add_age_and_vip(data, _con) -> pd.DataFrame:
         vip_sql = sql_file.read()
 
 
-    data['przedzial_wieku'] = 'brak danych'
-    data['vip'] = 'pozostali'
+    data['przedzial_wieku'] = ' '
+    data['vip'] = ' '
     data.set_index(['id_korespondenta', 'grupa_akcji_3_wysylki'], inplace=True)
 
     for k in range(2009, year_now + 1):
@@ -34,6 +34,11 @@ def add_age_and_vip(data, _con) -> pd.DataFrame:
         data.update(age_data)
         data.update(vip_data)
 
+    #uzupelniam puste wiersze o fraze brak danych
     data.reset_index(inplace=True)
+    data['przedzial_wieku'].loc[data['przedzial_wieku'] == ' '] = 'brak danych'
+    data['przedzial_wieku'].fillna('brak danych', inplace=True)
+    data['vip'].loc[data['vip'] == ' '] = 'pozostali'
+    data['vip'].fillna('pozostali', inplace=True)
 
     return data

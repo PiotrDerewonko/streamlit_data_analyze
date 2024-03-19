@@ -25,8 +25,7 @@ def add_check_box():
         dict_zwr, zwroty_df = creating_checkbox.zwroty()
     with c4:
         dict_wpl, wplaty_df = creating_checkbox.wplata()
-
-
     test_df = pd.DataFrame()
     test_df = pd.concat([test_df, baza_df, ogra_df, zwroty_df, wplaty_df])
     return test_df
+

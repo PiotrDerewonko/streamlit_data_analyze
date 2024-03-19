@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import streamlit as st
 
@@ -40,14 +42,11 @@ def char_options():
 def list_options(con):
     with st.container():
         st.header('Wybór akcji do przeanalizowania')
-        sql = '''select kod_akcji,substring(kod_akcji, 7,2) as miesiac, grupa_akcji_1, grupa_akcji_2, grupa_akcji_3 from t_akcje ta        
-        left outer join public.t_grupy_akcji_1 gr1
-        on gr1.id_grupy_akcji_1 = ta.id_grupy_akcji_1
-        left outer join public.t_grupy_akcji_2 gr2
-        on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2
-        left outer join public.t_grupy_akcji_3 gr3
-        on gr3.id_grupy_akcji_3 = ta.id_grupy_akcji_3
-        where ta.id_grupy_akcji_1=22 and ta.id_grupy_akcji_3>=8'''
+        sql_file_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__),
+                         '../.././sql_queries/4/subackion_list.sql'))
+        with open(sql_file_path, 'r') as sql_file:
+            sql = sql_file.read()
         data = pd.read_sql_query(sql, con)
         data_copy = data.copy()
         list_of_year = list(data['grupa_akcji_3'].drop_duplicates().sort_values())
