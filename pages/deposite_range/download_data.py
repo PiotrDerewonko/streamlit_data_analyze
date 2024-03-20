@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 
 import pandas as pd
@@ -7,10 +8,11 @@ from pages.ma_details_files.create_df_for_char_options import create_df_for_char
 from pages.ma_details_files.data_about_people_and_campaign_pay import data_pay_all
 
 
-def download_data(deposite_range, year_range, year_range_to_analize, con, refresh_data) -> pd.DataFrame:
-    '''Funkcja ma za zadanie pobrac i odfiltrowac dane. W pierwszym kroku znajduje id osob ktore w podanym czasie
+def download_data_for_deposite_range(deposite_range, year_range, year_range_to_analize, con,
+                                     refresh_data) -> pd.DataFrame:
+    """Funkcja ma za zadanie pobrac i odfiltrowac dane. W pierwszym kroku znajduje id osob ktore w podanym czasie
     dokonaly choc jednej wplaty w wybranym przedziale. W drugim, filtruje df tylko z osobami znalezionymi
-    w kroku 1 i we wskaznym przez uzytkownika czasie'''
+    w kroku 1 i we wskaznym przez uzytkownika czasie"""
     data_about_pay_all = data_pay_all(con, refresh_data)
     data_filtered_id_kor = data_about_pay_all['id_korespondenta'].loc[
         (data_about_pay_all['grupa_akcji_3_wplaty'] >= year_range[0]) &
@@ -26,14 +28,31 @@ def download_data(deposite_range, year_range, year_range_to_analize, con, refres
 
 
 def create_pivot_table(data, index_for_pivot) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    '''Funkcja ma za zadanie zwrocic tabele przestawna oraz slownik niezbedny do stworzenia wykresow '''
+    """Funkcja ma za zadanie zwrocic tabele przestawna oraz slownik niezbedny do stworzenia wykresow """
     if 'grupa_akcji_3_wplaty' in index_for_pivot:
         data['grupa_akcji_3_wplaty'] = data['grupa_akcji_3_wplaty'].astype(str)
     pivot_table_with_margins = pd.pivot_table(data, index=index_for_pivot, columns='przedzialy',
                                               values='id_korespondenta',
-                                              aggfunc='count', fill_value=0, dropna=False, margins=True)
+                                              aggfunc='count', fill_value=0, dropna=False, margins=True,
+                                              margins_name='Suma wpłat')
     pivot_table_without_margins = pivot_table_with_margins.drop(index=pivot_table_with_margins.index[-1],
                                                                 columns=pivot_table_with_margins.columns[-1])
     pivot_table_to_100 = data_to_100_percent(pivot_table_without_margins)
     char_options = create_df_for_char_options_structure(pivot_table_without_margins)
     return pivot_table_without_margins, pivot_table_to_100, char_options, pivot_table_with_margins
+
+
+def download_data_for_avg_number_per_year(con, year_range_to_analize) -> pd.DataFrame:
+    """funckja pobiera wszystkie wplaty korespondentow w wybranych przez uzytkownika latach. Zapytanie nie pobiera
+    wplat od kurii i parafii"""
+    sql_file_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__),
+                     f'../.././sql_queries/8/avg_count_per_year.sql'))
+    with open(sql_file_path, 'r') as sql_file:
+        zapytanie = sql_file.read()
+    zapytanie = zapytanie.replace("#A#", str(year_range_to_analize[0]))
+    zapytanie = zapytanie.replace("#B#", str(year_range_to_analize[1]))
+    data_to_return = pd.read_sql(zapytanie, con)
+    data_to_return['rok_wplaty'] = data_to_return['rok_wplaty'].astype(str)
+    data_to_return.sort_values(by=['rok_wplaty'], inplace=True)
+    return data_to_return
