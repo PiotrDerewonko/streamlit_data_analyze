@@ -1,4 +1,5 @@
-def data_to_100_percent(data):
+def data_to_100_percent(data_all):
+    data = data_all.copy()
     data.fillna(0, inplace=True)
     data['sum'] = 0
 

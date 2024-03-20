@@ -20,10 +20,11 @@ st.header('Analiza głównych mailingów adresowych a')
 with st.container():
     qamp, years = choose(con)
 
-
     with st.container():
         st.header('Wersje z wybranych mailingów')
-        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(['Wykres', 'Tabela przestawna', 'Korelacje', 'Struktura wpłat','Kolejność kolumn', 'Opcje wykresu', 'Filtry'])
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
+            ['Wykres', 'Tabela przestawna', 'Korelacje', 'Struktura wpłat', 'Kolejność kolumn', 'Opcje wykresu',
+             'Filtry'])
         with tab7:
             filtr_options = filtr_options(con)
         with tab6:
@@ -31,17 +32,19 @@ with st.container():
         with tab5:
             columns_options, corr_method = column_options(con)
 
+
             def create_pivot():
                 options_data_frame = pd.DataFrame(data=options_char)
-                data, char_corr, data_values, char_default, structure, pivot_for_structure_values = create_pivot_table(con, refresh_data, engine, qamp, years,
-                                                                                columns_options, corr_method, options_data_frame
-                                                                                , filtr_options, tit, sub_tit, dict_of_oriantation, is_post)
+                data, char_corr, data_values, char_default, structure, pivot_for_structure_values = create_pivot_table(
+                    con, refresh_data, engine, qamp, years,
+                    columns_options, corr_method, options_data_frame
+                    , filtr_options, tit, sub_tit, dict_of_oriantation, is_post)
                 st.dataframe(data)
-                st.download_button('Pobierz dane w formacie .csv', data.to_csv().encode('utf-8'), file_name='ma_szegol.csv', mime='text/csv')
+                st.download_button('Pobierz dane w formacie .csv', data.to_csv().encode('utf-8'),
+                                   file_name='ma_szegol.csv', mime='text/csv')
 
-
-                #with tab3:
-                    #st.plotly_chart(char_corr)
+                # with tab3:
+                # st.plotly_chart(char_corr)
                 with tab1:
                     st.bokeh_chart(char_default, use_container_width=True)
                 with tab4:
@@ -49,18 +52,15 @@ with st.container():
                     with st.expander('Zobacz tabele z danymi'):
                         st.dataframe(pivot_for_structure_values)
 
-            test = st.button('Przelicz dane')
 
+            test = st.button('Przelicz dane')
 
         with tab2:
             if test:
                 create_pivot()
-
 
     st.header('Wykresy w dniach od nadania')
     charts(qamp, con, years, refresh_data, engine)
 
     st.header('Struktura kosztów')
     structure(con, qamp, years, engine)
-
-

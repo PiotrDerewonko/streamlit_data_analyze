@@ -1,5 +1,9 @@
+from typing import Tuple
+
 import pandas as pd
 
+from functions_pandas.data_to_100_percent import data_to_100_percent
+from pages.ma_details_files.create_df_for_char_options import create_df_for_char_options_structure
 from pages.ma_details_files.data_about_people_and_campaign_pay import data_pay_all
 
 
@@ -21,8 +25,15 @@ def download_data(deposite_range, year_range, year_range_to_analize, con, refres
     return data_to_return
 
 
-def create_pivot_table(data, index_for_pivot) -> pd.DataFrame:
+def create_pivot_table(data, index_for_pivot) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     '''Funkcja ma za zadanie zwrocic tabele przestawna oraz slownik niezbedny do stworzenia wykresow '''
-    pivot_table = pd.pivot_table(data, index=index_for_pivot, columns='przedzialy', values='id_korespondenta',
-                                 aggfunc='count')
-    return pivot_table
+    if 'grupa_akcji_3_wplaty' in index_for_pivot:
+        data['grupa_akcji_3_wplaty'] = data['grupa_akcji_3_wplaty'].astype(str)
+    pivot_table_with_margins = pd.pivot_table(data, index=index_for_pivot, columns='przedzialy',
+                                              values='id_korespondenta',
+                                              aggfunc='count', fill_value=0, dropna=False, margins=True)
+    pivot_table_without_margins = pivot_table_with_margins.drop(index=pivot_table_with_margins.index[-1],
+                                                                columns=pivot_table_with_margins.columns[-1])
+    pivot_table_to_100 = data_to_100_percent(pivot_table_without_margins)
+    char_options = create_df_for_char_options_structure(pivot_table_without_margins)
+    return pivot_table_without_margins, pivot_table_to_100, char_options, pivot_table_with_margins
