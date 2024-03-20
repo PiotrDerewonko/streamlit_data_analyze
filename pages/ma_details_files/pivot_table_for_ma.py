@@ -135,6 +135,8 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
                                        'Wybrane kolumny', {},
                                        pivot_to_return_values, options_char, title_fin, dict_of_oriantation)
 
+    #######################################################################################################
+
     # tworze wykres struktury wplat
     data_about_pay_all = data_pay_all(con, refresh_data)
     data_about_pay_all['grupa_akcji_3_wplaty'] = data_about_pay_all['grupa_akcji_3_wplaty'].astype(str)
