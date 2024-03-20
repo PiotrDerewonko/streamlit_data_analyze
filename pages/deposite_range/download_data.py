@@ -6,6 +6,7 @@ import pandas as pd
 from functions_pandas.data_to_100_percent import data_to_100_percent
 from pages.ma_details_files.create_df_for_char_options import create_df_for_char_options_structure
 from pages.ma_details_files.data_about_people_and_campaign_pay import data_pay_all
+from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people_camp
 
 
 def download_data_for_deposite_range(deposite_range, year_range, year_range_to_analize, con,
@@ -55,4 +56,14 @@ def download_data_for_avg_number_per_year(con, year_range_to_analize) -> pd.Data
     data_to_return = pd.read_sql(zapytanie, con)
     data_to_return['rok_wplaty'] = data_to_return['rok_wplaty'].astype(str)
     data_to_return.sort_values(by=['rok_wplaty'], inplace=True)
+    return data_to_return
+
+
+def add_extra_data_to_df_for_deposite_range(data, con, refresh_data) -> pd.DataFrame:
+    """Zadaniem tej funkcji jest dodanie dodatkowych danych do pocztakowego zbioru. Nie beda zaciagane wszystkie dane
+    jedynie wybrane ze wzgledu na optymalizacje zapytan"""
+    data_about_peopla_in_camp = download_data_about_people_camp(con, refresh_data, None)
+    data_about_peopla_in_camp = data_about_peopla_in_camp[['id_korespondenta', 'przedzial_wieku']]
+    data_about_peopla_in_camp['przedzial_wieku'].fillna('brak danych', inplace=True)
+    data_to_return = pd.merge(data, data_about_peopla_in_camp, how='left', on='id_korespondenta')
     return data_to_return

@@ -2,17 +2,20 @@ import streamlit as st
 
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from pages.deposite_range.download_data import download_data_for_deposite_range, create_pivot_table, \
-    download_data_for_avg_number_per_year
+    download_data_for_avg_number_per_year, add_extra_data_to_df_for_deposite_range
+from pages.deposite_range.modificate_data import add_extra_filter
 from pages.ma_details_files.create_df_for_char_options import create_df_for_char_options_structure
 
 
 def create_chart_and_df_for_deposite_range(title_fin_, deposite_range, year_range, year_range_to_analize, con,
-                                           refresh_data, index_to_pivot_table) -> None:
+                                           refresh_data, index_to_pivot_table, list_to_loc) -> None:
     """Funkcja ktorej zadaniem jest swtorzenie wykresu struktury wplat dla ludzi ktorzy dokonali przynajmniej jednej wplaty
     w wybranym zakresie czasu. """
     with st.container(border=True):
         st.header('Wykres struktury wpłat')
         data = download_data_for_deposite_range(deposite_range, year_range, year_range_to_analize, con, refresh_data)
+        data = add_extra_data_to_df_for_deposite_range(data, con, refresh_data)
+        data = add_extra_filter(data, list_to_loc)
         pivot, pivot_to_100, char_options, pivot_with_margins = create_pivot_table(data, index_to_pivot_table)
         dict_of_oriantation = {'major': 'vertical', 'group': 'vertical', 'sub_group': 'vertical'}
         if len(title_fin_) < 1:

@@ -6,6 +6,7 @@ from dotenv import dotenv_values
 from database.source_db import deaful_set
 from pages.deposite_range.create_charts_and_dfs import create_chart_and_df_for_deposite_range, \
     create_chart_and_df_for_avg_pay_per_year
+from pages.deposite_range.popover import add_popover
 
 sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
@@ -29,12 +30,14 @@ with st.container(border=True):
                                       label='Wybierz zakres lat która mają zostać podjęte analizie',
                                       value=[current_year - 5, current_year])
     index_to_pivot_table = st.multiselect(label='Wybierz pola do wykresu',
-                                          options=['grupa_akcji_3_wplaty', 'grupa_akcji_2_wplaty'],
+                                          options=['grupa_akcji_3_wplaty', 'grupa_akcji_2_wplaty', 'przedzial_wieku'],
                                           default=['grupa_akcji_3_wplaty'])
+    list_to_loc = add_popover()
+
     title_fin = st.text_input('Miejsce na tytuł')
 
     realod_data = st.button('Przelicz dane')
     if realod_data:
         create_chart_and_df_for_deposite_range(title_fin, deposite_range, year_range, year_range_to_analize, con,
-                                               refresh_data, index_to_pivot_table)
+                                               refresh_data, index_to_pivot_table, list_to_loc)
         create_chart_and_df_for_avg_pay_per_year(year_range_to_analize, con, refresh_data)
