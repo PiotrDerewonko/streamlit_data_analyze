@@ -44,7 +44,7 @@ def create_chart_and_df_for_avg_pay_per_year(year_range_to_analize, con, refresh
         data_copy = data.copy()
         data.set_index('rok_wplaty', inplace=True)
         dict_of_oriantation = {'major': 'vertical', 'group': 'vertical', 'sub_group': 'vertical'}
-        title_fin = f'Średnia liczba wpłat od darczyńcow indywidaulnych w latach {year_range_to_analize[0]} - {year_range_to_analize[1]}'
+        title_fin = f'Średnia liczba wpłat od darczyńcow indywidualnych w latach {year_range_to_analize[0]} - {year_range_to_analize[1]}'
         char_options = create_df_for_char_options_structure(data)
         char_options['oś'].iloc[-1] = 'Oś pomocnicza'
         char_options['Opcje'].iloc[-1] = 'Wykres liniowy'

@@ -63,7 +63,10 @@ def add_extra_data_to_df_for_deposite_range(data, con, refresh_data) -> pd.DataF
     """Zadaniem tej funkcji jest dodanie dodatkowych danych do pocztakowego zbioru. Nie beda zaciagane wszystkie dane
     jedynie wybrane ze wzgledu na optymalizacje zapytan"""
     data_about_peopla_in_camp = download_data_about_people_camp(con, refresh_data, None)
-    data_about_peopla_in_camp = data_about_peopla_in_camp[['id_korespondenta', 'przedzial_wieku']]
+    data_about_peopla_in_camp = data_about_peopla_in_camp[
+        ['id_korespondenta', 'przedzial_wieku', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki']]
     data_about_peopla_in_camp['przedzial_wieku'].fillna('brak danych', inplace=True)
-    data_to_return = pd.merge(data, data_about_peopla_in_camp, how='left', on='id_korespondenta')
+    data_to_return = pd.merge(data, data_about_peopla_in_camp, how='left',
+                              left_on=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'],
+                              right_on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'])
     return data_to_return
