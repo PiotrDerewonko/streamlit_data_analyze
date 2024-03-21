@@ -4,9 +4,11 @@ from typing import Tuple
 import pandas as pd
 
 from functions_pandas.data_to_100_percent import data_to_100_percent
+from pages.deposite_range.modificate_data import change_type_of_columns
 from pages.ma_details_files.create_df_for_char_options import create_df_for_char_options_structure
 from pages.ma_details_files.data_about_people_and_campaign_pay import data_pay_all
-from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people_camp
+from pages.ma_details_files.data_about_people_and_campaign_pay import download_data_about_people_camp, \
+    download_data_about_people
 
 
 def download_data_for_deposite_range(deposite_range, year_range, year_range_to_analize, con,
@@ -30,8 +32,7 @@ def download_data_for_deposite_range(deposite_range, year_range, year_range_to_a
 
 def create_pivot_table(data, index_for_pivot) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Funkcja ma za zadanie zwrocic tabele przestawna oraz slownik niezbedny do stworzenia wykresow """
-    if 'grupa_akcji_3_wplaty' in index_for_pivot:
-        data['grupa_akcji_3_wplaty'] = data['grupa_akcji_3_wplaty'].astype(str)
+    data = change_type_of_columns(data, index_for_pivot)
     pivot_table_with_margins = pd.pivot_table(data, index=index_for_pivot, columns='przedzialy',
                                               values='id_korespondenta',
                                               aggfunc='count', fill_value=0, dropna=False, margins=True,
@@ -63,10 +64,13 @@ def add_extra_data_to_df_for_deposite_range(data, con, refresh_data) -> pd.DataF
     """Zadaniem tej funkcji jest dodanie dodatkowych danych do pocztakowego zbioru. Nie beda zaciagane wszystkie dane
     jedynie wybrane ze wzgledu na optymalizacje zapytan"""
     data_about_peopla_in_camp = download_data_about_people_camp(con, refresh_data, None)
+    data_about_people = download_data_about_people(con, refresh_data, 0, [])
+    data_about_people = data_about_people[['id_korespondenta', 'rok_dodania', 'grupa_akcji_1_dodania',
+                                           'grupa_akcji_2_dodania', 'grupa_akcji_3_dodania']]
     data_about_peopla_in_camp = data_about_peopla_in_camp[
         ['id_korespondenta', 'przedzial_wieku', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki']]
-    data_about_peopla_in_camp['przedzial_wieku'].fillna('brak danych', inplace=True)
     data_to_return = pd.merge(data, data_about_peopla_in_camp, how='left',
                               left_on=['id_korespondenta', 'grupa_akcji_2_wplaty', 'grupa_akcji_3_wplaty'],
                               right_on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'])
+    data_to_return = pd.merge(data_to_return, data_about_people, on=['id_korespondenta'])
     return data_to_return

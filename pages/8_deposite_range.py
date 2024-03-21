@@ -30,7 +30,9 @@ with st.container(border=True):
                                       label='Wybierz zakres lat która mają zostać podjęte analizie',
                                       value=[current_year - 5, current_year])
     index_to_pivot_table = st.multiselect(label='Wybierz pola do wykresu',
-                                          options=['grupa_akcji_3_wplaty', 'grupa_akcji_2_wplaty', 'przedzial_wieku'],
+                                          options=['grupa_akcji_3_wplaty', 'grupa_akcji_2_wplaty', 'przedzial_wieku',
+                                                   'rok_dodania', 'grupa_akcji_1_dodania', 'grupa_akcji_2_dodania',
+                                                   'grupa_akcji_3_dodania'],
                                           default=['grupa_akcji_3_wplaty'])
     list_to_loc = add_popover()
 
