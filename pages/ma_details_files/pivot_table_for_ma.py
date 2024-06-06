@@ -12,7 +12,7 @@ from pages.ma_details_files.pivot_table.pivot_table_for_ma_details import create
     style_pivot_table_for_ma
 
 
-def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, corr_method, options_char, filtr, tit,
+def create_pivot_table(camp, year, type_of_campaign, columns_options, corr_method, options_char, filtr, tit,
                        sub_tit, dict_of_oriantation, is_post):
     sorce_main = dotenv_values('.env')
     sorce_main = list(sorce_main.values())[0]
@@ -50,6 +50,10 @@ def create_pivot_table(con, refresh_data, engine, camp, year, columns_options, c
         data_about_camp = data_about_camp[data_about_camp['grupa_akcji_3_wysylki'].isin(year_int)]
         days = days[days['grupa_akcji_3_wplaty'].isin(year_int)]
         year_int.sort()
+
+    if len(type_of_campaign) >= 1:
+        data_about_camp = data_about_camp[data_about_camp['grupa_akcji_1_wysylki'].isin(type_of_campaign)]
+        days = days[days['grupa_akcji_3_wplaty'].isin(year_int)]
 
     for i in filtr[3:]:
         if i[1] != ' ':

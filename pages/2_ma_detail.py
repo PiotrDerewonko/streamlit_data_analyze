@@ -5,7 +5,7 @@ from dotenv import dotenv_values
 from database.source_db import deaful_set
 from pages.ma_details_files.char_options.char_options import char_options
 from pages.ma_details_files.chars_for_days import charts
-from pages.ma_details_files.chose_campaign import choose
+from pages.ma_details_files.choose_options import ChooseOptions
 from pages.ma_details_files.column_order import column_options
 from pages.ma_details_files.cost_structure import structure
 from pages.ma_details_files.filter import filtr_options
@@ -18,7 +18,8 @@ refresh_data = 'False'
 
 st.header('Analiza głównych mailingów adresowych a')
 with st.container():
-    qamp, years = choose(con)
+    klasaasa = ChooseOptions(con)
+    qamp, years, type_of_campaign = klasaasa.choose_options()
 
     with st.container():
         st.header('Wersje z wybranych mailingów')
@@ -36,8 +37,7 @@ with st.container():
             def create_pivot():
                 options_data_frame = pd.DataFrame(data=options_char)
                 data, char_corr, data_values, char_default, structure, pivot_for_structure_values = create_pivot_table(
-                    con, refresh_data, engine, qamp, years,
-                    columns_options, corr_method, options_data_frame
+                    qamp, years,type_of_campaign,  columns_options, corr_method, options_data_frame
                     , filtr_options, tit, sub_tit, dict_of_oriantation, is_post)
                 st.dataframe(data)
                 st.download_button('Pobierz dane w formacie .csv', data.to_csv().encode('utf-8'),
