@@ -1,5 +1,5 @@
 import os
-from typing import Tuple
+from typing import Tuple, List
 
 import pandas as pd
 import streamlit as st
@@ -13,6 +13,9 @@ class ChooseOptions:
 
     def __init__(self, con):
         self.con = con
+        self.options_gr1 = ChooseOptions.options_gr1
+        self.options_gr2 = ChooseOptions.options_gr2
+
 
     def find_last_mailing(self) -> Tuple[str, int]:
         """Metoda zwraca biezacy rok oraz mialing aresowy na podsatwie kwerendy."""
@@ -26,13 +29,14 @@ class ChooseOptions:
         current_year = int(data['grupa_akcji_3'].iloc[0])
         return default_camp, current_year
 
-    def choose_options(self):
+    def choose_options(self) -> Tuple[List[str], List[str], List[str]]:
         """Metoda zwraca listy do odfiltrowania danych. W przypadku roku brany jest 5 osoatnich lat liczac
         od roku biezacego. """
-        type_of_campaign = st.multiselect(options=ChooseOptions.options_gr1, default=self.default_gr1,
+        cls = self.__class__
+        type_of_campaign = st.multiselect(options=cls.options_gr1, default=cls.default_gr1,
                                           label='Typ kampanii')
         default_camp, current_year = self.find_last_mailing()
-        qamp = st.multiselect(options=ChooseOptions.options_gr2,
+        qamp = st.multiselect(options=cls.options_gr2,
                               label='Proszę wybrać mailing',
                               default=default_camp)
         years_options = []
