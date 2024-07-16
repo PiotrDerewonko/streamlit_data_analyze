@@ -17,7 +17,7 @@ def download_data_intention_count(con, refresh_data) -> pd.DataFrame:
         data = pd.read_sql_query(zapytanie, con)
         data.to_csv('./pages/intentions/tmp_files/count_intentions.csv', index=False)
     else:
-        data_to_return = pd.read_csv('./pages/intentions/tmp_files/count_intentions.csv')
+        data_to_return = pd.read_csv('./pages/intentions/tmp_files/count_intentions.csv', sep=';')
         return data_to_return
 
 

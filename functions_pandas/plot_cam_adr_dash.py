@@ -119,10 +119,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
     p.xaxis.major_label_orientation = major
     p.xaxis.group_label_orientation = group
     p.xaxis.subgroup_label_orientation = sub_group
-
-    # p.xaxis.major_label_orientation = "vertical"
-    # p.yaxis.major_label_text_font_size = "18pt"
-    # p.xaxis.major_label_text_font_size = "18pt"
     p.xaxis.major_label_text_font_size = "13pt"
     p.xaxis.axis_label_text_font_size = "13pt"
     p.yaxis.major_label_text_font_size = "13pt"

@@ -32,4 +32,5 @@ from fsaps_order_order_answer fooa
                          on fcma.action_group_two_id = fdagt2.id
          left outer join fsaps_dictionary_action_group_three fdagt3
                          on fcc.action_group_three_id = fdagt3.id
+where fdago.id = 36
 
