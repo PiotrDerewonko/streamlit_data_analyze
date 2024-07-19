@@ -41,6 +41,8 @@ class CreateCharts:
                                            self.pivot_table)
         final_char_obj = final_char_obj.create_chart()
         st.bokeh_chart(final_char_obj)
+        with st.expander("Tabela przestawna"):
+            st.dataframe(self.pivot_table)
 
     def create_figure(self, index_for_char):
         """Metoda tworzaca figure do ktorej nastepnie dodawane sa wykresy"""

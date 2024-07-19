@@ -3,12 +3,12 @@ select distinct fooa.correspondent_id,
                 date_part('month', fooa.ordered_at) as miesiac_zamowienia,
                 date_part('year', fooa.ordered_at)  as rok_zamowienia,
                 ''                                  as patron,
-                fdago.text                          as grupa_akcji_1,
+                fdago.text                          as grupa_akcji_1_mailingu,
                 case
                     when fdagt.text is null then fdagt2.text
                     else fdagt.text
-                    end                                grupa_akcji_2,
-                fdagt3.text                         as grupa_akcji_3,
+                    end                                grupa_akcji_2_mailingu,
+                fdagt3.text                         as grupa_akcji_3_mailingu,
                 fcs.name                            as kod_akcji,
                 fpp.amount                          as kwota
 from fsaps_order_order_answer fooa

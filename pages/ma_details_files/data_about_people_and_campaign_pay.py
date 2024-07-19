@@ -67,7 +67,7 @@ def download_data_about_people(_con, refresh_data, limit, filtr_column):
  'WARSZAWA'	,
  'WŁOCŁAWEK'	,
  'ZAMOŚĆ'	,
- 'ZIELONA GÓRA'	)''', 'pozostałe'],['''select id_korespondenta,
+ 'ZIELONA GÓRA'	)''', 'pozostałe'], ['''select id_korespondenta,
        case
            when okreg_pocztowy = 0 then 'warszawski'
            when okreg_pocztowy = 1 then 'olsztyński'
@@ -80,10 +80,11 @@ def download_data_about_people(_con, refresh_data, limit, filtr_column):
            when okreg_pocztowy = 8 then 'gdański'
            when okreg_pocztowy = 9 then 'łódzki'
            end as okreg_pocztowy       from (
-select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all) a''', 'brak'
-], ['''select id_korespondenta,kod_akcji as kod_akcji_dodania, grupa_akcji_1 as grupa_akcji_1_dodania, grupa_akcji_2 as grupa_akcji_2_dodania, grupa_akcji_3 as grupa_akcji_3_dodania ,
- date_part('year', data ) as rok_dodania from v_akcja_dodania_korespondenta2''',
-    '']]
+select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all) a''',
+                                        'brak'
+                                        ], ['''select id_korespondenta,kod_akcji as kod_akcji_dodania, grupa_akcji_1 as grupa_akcji_1_dodania, grupa_akcji_2 as grupa_akcji_2_dodania, grupa_akcji_3 as grupa_akcji_3_dodania ,
+ date_part('year', data ) as rok_dodania, data as data_dadania from v_akcja_dodania_korespondenta2''',
+                                            '']]
 
         data_tmp_1 = pd.read_sql_query('select id_korespondenta from t_korespondenci', _con)
         for j in list_of_sql:
@@ -93,12 +94,12 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
             try:
                 data_tmp_1[data_tmp_2.columns[1]].fillna(j[1], inplace=True)
             except:
-                a=""
+                a = ""
         # okreslenie typu korespondenta
         try:
             rok = datetime.now().year
             liczba_lat = 3
-            for i in range(2008, rok+1):
+            for i in range(2008, rok + 1):
                 sql = f'''select id_korespondenta, count(kwota) as liczba_wplat_{i} from t_transakcje where data_wplywu_srodkow between '{i}-01-01' and '{i}-12-31'
                     group by id_korespondenta'''
                 data_tmp_3 = pd.read_sql_query(sql, _con)
@@ -106,8 +107,8 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
                 data_tmp_1[f'liczba_wplat_{i}'].fillna(0, inplace=True)
             people_camp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
             people_camp['TYP DARCZYŃCY'] = 'pozostali'
-            #dane do określenia typu darczyncy na dany rok
-            for year in range(2011, rok+1):
+            # dane do określenia typu darczyncy na dany rok
+            for year in range(2011, rok + 1):
                 data_tmp_1[f'liczba_lat_placacych_do_{year}'] = 0
                 data_tmp_1[f'laczna_liczba_wplat_do_{year}'] = 0
                 for i in range(year - liczba_lat, year):
@@ -115,30 +116,33 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
                         data_tmp_1[f'liczba_lat_placacych_do_{year}'] + 1
                     data_tmp_1[f'laczna_liczba_wplat_do_{year}'] = data_tmp_1[f'laczna_liczba_wplat_do_{year}'] + \
                                                                    data_tmp_1[f'liczba_wplat_{i}']
-                data_tmp_1[f'średnia_liczba_wplat_do_{year}'] = data_tmp_1[f'laczna_liczba_wplat_do_{year}']/\
+                data_tmp_1[f'średnia_liczba_wplat_do_{year}'] = data_tmp_1[f'laczna_liczba_wplat_do_{year}'] / \
                                                                 data_tmp_1[f'liczba_lat_placacych_do_{year}']
 
-                data_tmp_1[f'TYP DARCZYŃCY NA {year}'] ='pozostali'
-                lojalni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=2) &
-                                                (data_tmp_1['rok_dodania']<=year-liczba_lat) &
-                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)]
+                data_tmp_1[f'TYP DARCZYŃCY NA {year}'] = 'pozostali'
+                lojalni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}'] >= 2) &
+                                                             (data_tmp_1['rok_dodania'] <= year - liczba_lat) &
+                                                             (data_tmp_1[f'liczba_lat_placacych_do_{year}'] == 3)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
                                                  (people_camp['id_korespondenta'].isin(lojalni))] = 'lojalny'
 
-                systematyczni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}']<2) &
-                                                          (data_tmp_1[f'średnia_liczba_wplat_do_{year}']>=1) &
-                                                (data_tmp_1['rok_dodania']<=year-liczba_lat) &
-                                                (data_tmp_1[f'liczba_lat_placacych_do_{year}']==3)]
+                systematyczni = data_tmp_1['id_korespondenta'].loc[(data_tmp_1[f'średnia_liczba_wplat_do_{year}'] < 2) &
+                                                                   (data_tmp_1[
+                                                                        f'średnia_liczba_wplat_do_{year}'] >= 1) &
+                                                                   (data_tmp_1['rok_dodania'] <= year - liczba_lat) &
+                                                                   (data_tmp_1[f'liczba_lat_placacych_do_{year}'] == 3)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
-                                                 (people_camp['id_korespondenta'].isin(systematyczni))] = 'systematyczny'
+                                                 (people_camp['id_korespondenta'].isin(
+                                                     systematyczni))] = 'systematyczny'
 
-                nowi = data_tmp_1['id_korespondenta'].loc[(data_tmp_1['rok_dodania']>=year-liczba_lat+1) & (data_tmp_1['rok_dodania']<=year)]
+                nowi = data_tmp_1['id_korespondenta'].loc[
+                    (data_tmp_1['rok_dodania'] >= year - liczba_lat + 1) & (data_tmp_1['rok_dodania'] <= year)]
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
                                                  (people_camp['id_korespondenta'].isin(nowi))] = '<3 lata w bazie'
 
             people_camp.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
         except:
-            a=""
+            a = ""
 
         # tutaj dajemy tylko materialy z bazy
         sql = '''select id_materialu from public.t_materialy where id_typu_materialu in (8, 12)'''
@@ -161,8 +165,8 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
             except:
                 print(f'nie dodano materialu o id {i}')
 
-        #dodaje informacje ile razy zamawiali w sklepie
-        sql ='''select id_korespondenta, case when łączna_ilość_zamowień <10 then '0'::text || łączna_ilość_zamowień::text
+        # dodaje informacje ile razy zamawiali w sklepie
+        sql = '''select id_korespondenta, case when łączna_ilość_zamowień <10 then '0'::text || łączna_ilość_zamowień::text
 else łączna_ilość_zamowień::text end as łączna_ilość_zamowień
 from (select id_korespondenta, count(id_aktywnosci) as łączna_ilość_zamowień from t_aktywnosci_korespondentow where
 id_aktywnosci in (86, 41)
@@ -172,7 +176,7 @@ order by łączna_ilość_zamowień desc)a'''
         data_tmp_1 = data_tmp_1.merge(tmp, on='id_korespondenta', how='left')
         data_tmp_1['łączna_ilość_zamowień'].fillna('0', inplace=True)
 
-        #dodaje informajce na temat przez jaki material wszedl
+        # dodaje informajce na temat przez jaki material wszedl
         sql_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__),
                          '../.././sql_queries/2_ma_detail/origin_material.sql'))
@@ -180,25 +184,22 @@ order by łączna_ilość_zamowień desc)a'''
             sql = sql_file.read()
         tmp = pd.read_sql_query(sql, _con)
         data_tmp_1 = data_tmp_1.merge(tmp, on='id_korespondenta', how='left')
-        data_tmp_1['rodzaj_materialu_pozyskania'].loc[~(data_tmp_1['grupa_akcji_1_dodania']=='DRUKI BEZADRESOWE')] = 'brak'
-        data_tmp_1['material_pozyskania'].loc[~(data_tmp_1['grupa_akcji_1_dodania']=='DRUKI BEZADRESOWE')] = 'brak'
+        data_tmp_1['rodzaj_materialu_pozyskania'].loc[
+            ~(data_tmp_1['grupa_akcji_1_dodania'] == 'DRUKI BEZADRESOWE')] = 'brak'
+        data_tmp_1['material_pozyskania'].loc[~(data_tmp_1['grupa_akcji_1_dodania'] == 'DRUKI BEZADRESOWE')] = 'brak'
 
-
-
-
-        #zapis wyniku
+        # zapis wyniku
         data_tmp_1.to_csv('./pages/ma_details_files/tmp_file/people.csv')
-
 
     if limit == 0:
         data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
-                                 low_memory=False)
+                                     low_memory=False)
     else:
         data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                      low_memory=False, nrows=limit)
 
-
     return data_to_return
+
 
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp_pay(_con, refresh_data, _engine):
@@ -225,11 +226,10 @@ and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty, dzien_po_mailingu'''
         data = pd.read_sql_query(sql, _con)
 
-
-
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
     return data
+
 
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp(_con, refresh_data, _engine):
@@ -260,11 +260,9 @@ and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.i
         data = add_age_and_vip(data, _con)
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
 
-
-
-
     data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
     return data
+
 
 @st.cache_data(ttl=3600)
 def data_pay_all(_con, refresh_data):
@@ -286,11 +284,12 @@ def data_pay_all(_con, refresh_data):
         data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay_individual.csv', index_col='Unnamed: 0')
     return data
 
+
 def distinct_options(refresh_data):
     if refresh_data == 'True':
-        #plik z danymi ludzi
+        # plik z danymi ludzi
         tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
-                                     low_memory=False)
+                          low_memory=False)
         data_about_people = tmp.drop(['id_korespondenta'], axis=1)
         list = data_about_people.columns
         data_to_save = pd.DataFrame()
@@ -323,13 +322,8 @@ def distinct_options(refresh_data):
             tmp_2.drop_duplicates(inplace=True)
             data_to_save = pd.concat([data_to_save, tmp_2])
 
-
         data_to_save.to_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
     else:
         data_to_save = pd.read_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
         data_to_save[' '] = ' '
     return data_to_save
-
-
-
-

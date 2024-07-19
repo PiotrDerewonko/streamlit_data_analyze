@@ -6,15 +6,17 @@ select correspondent_id,
        date_part('month', fii.party_date) as miesiac_wezwania,
        date_part('year', fii.party_date)  as rok_wezwania,
        fdit.text                           as patron,
-       fdago.text                          as grupa_akcji_1,
+       fdago.text                          as grupa_akcji_1_mailingu,
        case
            when fdagt.text is null then fdagt2.text
            else fdagt.text
-           end                                grupa_akcji_2,
-       fdagt3.text                         as grupa_akcji_3,
+           end                                grupa_akcji_2_mailingu,
+       fdagt3.text                         as grupa_akcji_3_mailingu,
        fcma.name,
        fcs.name                            as kod_akcji,
-       1                                   as intencja
+       1                                   as intencja,
+        fcc.date_from as data_mailingu,
+        fdit.text as typ_intencji
 
 
 from fsaps_intention_intention_answer fiia

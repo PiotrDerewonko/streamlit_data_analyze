@@ -20,3 +20,4 @@ class ChooseOptionsForIntentions(ChooseOptions):
 
     def choose_options(self):
         return super().choose_options()
+

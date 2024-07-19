@@ -16,7 +16,6 @@ class ChooseOptions:
         self.options_gr1 = ChooseOptions.options_gr1
         self.options_gr2 = ChooseOptions.options_gr2
 
-
     def find_last_mailing(self) -> Tuple[str, int]:
         """Metoda zwraca biezacy rok oraz mialing aresowy na podsatwie kwerendy."""
         sql_file_path = os.path.abspath(
@@ -30,7 +29,7 @@ class ChooseOptions:
         return default_camp, current_year
 
     def choose_options(self) -> Tuple[List[str], List[str], List[str]]:
-        """Metoda zwraca listy do odfiltrowania danych. W przypadku roku brany jest 5 osoatnich lat liczac
+        """Metoda zwraca listy do odfiltrowania danych. W przypadku roku brany jest 5 ostatnich lat liczac
         od roku biezacego. """
         cls = self.__class__
         type_of_campaign = st.multiselect(options=cls.options_gr1, default=cls.default_gr1,
