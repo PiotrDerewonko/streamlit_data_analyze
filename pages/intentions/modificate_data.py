@@ -5,9 +5,9 @@ def modificate_data(data_intention, data_about_people) -> pd.DataFrame:
     data_to_return = pd.merge(data_intention, data_about_people, left_on='correspondent_id',
                               right_on='id_korespondenta',
                               how='left')
-    # data_to_return['stary_nowy'] = ''
-    # data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] <= data_to_return['data_mailingu']] = 'stary'
-    # data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] == ''] = 'nowy'
+    data_to_return['stary_nowy'] = ''
+    data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] <= data_to_return['data_mailingu']] = 'stary'
+    data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] > data_to_return['data_mailingu']] = 'nowy'
     return data_to_return
 
 
@@ -15,9 +15,9 @@ def options_to_choose():
     # options = ['grupa_akcji_1_mailingu', 'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu', 'typ_intencji',
     #            'stary_nowy', 'grupa_akcji_1_dodania', 'grupa_akcji_2_dodania', 'grupa_akcji_3_dodania'
     #            ]
-    options = ['grupa_akcji_1', 'grupa_akcji_2', 'grupa_akcji_3', 'typ_intencji',
+    options = ['grupa_akcji_1_mailingu', 'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu', 'typ_intencji',
                'stary_nowy', 'grupa_akcji_1_dodania', 'grupa_akcji_2_dodania', 'grupa_akcji_3_dodania', 'patron',
-               'rok_dodania'
+               'rok_dodania', 'miesiac_wezwania', 'rok_wezwania'
                ]
     return options
 
@@ -40,4 +40,13 @@ def change_int_to_str_columns(data, choose_columns) -> pd.DataFrame:
             data[i] = data[i].fillna(0)
             data[i] = data[i].astype('int')
             data[i] = data[i].astype('str')
+    for j in choose_columns:
+        data[j] = data[j].fillna(' ')
     return data
+
+def delate_dupliactes(data, choose_columns) -> pd.DataFrame:
+    columns_to_analyze = ['correspondent_id']
+    for i in choose_columns:
+        columns_to_analyze.append(i)
+    data_to_return = data.drop_duplicates(subset=columns_to_analyze)
+    return data_to_return
