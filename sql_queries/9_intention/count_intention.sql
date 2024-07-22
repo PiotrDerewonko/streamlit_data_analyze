@@ -40,5 +40,5 @@ from fsaps_intention_intention_answer fiia
                          on fcma.action_group_two_id = fdagt2.id
          left outer join fsaps_dictionary_action_group_three fdagt3
                          on fcc.action_group_three_id = fdagt3.id
-where intention_type_id <= 22
+where intention_type_id is not null
 order by correspondent_id, patron
