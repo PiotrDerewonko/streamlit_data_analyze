@@ -6,8 +6,8 @@ def modificate_data(data_intention, data_about_people) -> pd.DataFrame:
                               right_on='id_korespondenta',
                               how='left')
     data_to_return['stary_nowy'] = ''
-    data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] <= data_to_return['data_mailingu']] = 'stary'
-    data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] > data_to_return['data_mailingu']] = 'nowy'
+    data_to_return['stary_nowy'].loc[data_to_return['data_dodania']  <= data_to_return['data_mailingu']] = 'stary'
+    data_to_return['stary_nowy'].loc[data_to_return['data_dodania']  > data_to_return['data_mailingu']] = 'nowy'
     data_to_return['miesiac_wezwania'] = data_to_return['miesiac_wezwania'].fillna(0)
     data_to_return['miesiac_wezwania'] = data_to_return['miesiac_wezwania'].astype('int')
     data_to_return['miesiac_wezwania'] = data_to_return['miesiac_wezwania'].astype('str')

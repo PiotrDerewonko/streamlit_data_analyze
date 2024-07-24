@@ -83,7 +83,7 @@ def download_data_about_people(_con, refresh_data, limit, filtr_column):
 select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy from v_darczyncy_do_wysylki_z_poprawnymi_adresami_jeden_adres_all) a''',
                                         'brak'
                                         ], ['''select id_korespondenta,kod_akcji as kod_akcji_dodania, grupa_akcji_1 as grupa_akcji_1_dodania, grupa_akcji_2 as grupa_akcji_2_dodania, grupa_akcji_3 as grupa_akcji_3_dodania ,
- date_part('year', data ) as rok_dodania, data as data_dadania from v_akcja_dodania_korespondenta2''',
+ date_part('year', data ) as rok_dodania, data as data_dodania from v_akcja_dodania_korespondenta2''',
                                             '']]
 
         data_tmp_1 = pd.read_sql_query('select id_korespondenta from t_korespondenci', _con)

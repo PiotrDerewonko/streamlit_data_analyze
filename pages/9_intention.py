@@ -17,8 +17,10 @@ with st.container():
 
     count_intentions = download_data_intention_count(con, False)
     money_intentions = download_data_intention_money(con, False)
-    data_all_intentions = pd.concat([count_intentions, money_intentions])
-    data_all_intentions['kwota'].fillna(0, inplace=True)
+    #todo do zrobienia uwzglednianie wplat
+    #data_all_intentions = pd.concat([count_intentions, money_intentions])
+    #data_all_intentions['kwota'].fillna(0, inplace=True)
+    data_all_intentions = count_intentions
     data_about_people = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                     low_memory=False)
     data_to_analyze = modificate_data(data_all_intentions, data_about_people)
