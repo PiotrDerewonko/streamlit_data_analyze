@@ -2,13 +2,11 @@ import pandas as pd
 import streamlit as st
 from dotenv import dotenv_values
 
-from charts.basic_chart_bokeh import CreateCharts
 from database.source_db import deaful_set
+from pages.intentions.charts_for_intention import ChartForCountIntentions, ChartForUniqeIdFromIntentions
 from pages.intentions.choose_options import ChooseOptionsForIntentions
 from pages.intentions.download_data_intention import download_data_intention_count, download_data_intention_money
-from pages.intentions.filter_data import filter_data
-from pages.intentions.modificate_data import modificate_data, options_to_choose, create_df_with_options, \
-    change_int_to_str_columns, delate_dupliactes
+from pages.intentions.modificate_data import modificate_data, options_to_choose
 
 with st.container():
     sorce_main = dotenv_values('.env')
@@ -17,9 +15,6 @@ with st.container():
 
     count_intentions = download_data_intention_count(con, False)
     money_intentions = download_data_intention_money(con, False)
-    #todo do zrobienia uwzglednianie wplat
-    #data_all_intentions = pd.concat([count_intentions, money_intentions])
-    #data_all_intentions['kwota'].fillna(0, inplace=True)
     data_all_intentions = count_intentions
     data_about_people = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                     low_memory=False)
@@ -31,49 +26,54 @@ with st.container():
         intention_options = ChooseOptionsForIntentions(con)
         camp, year, type_of_campaign = intention_options.choose_options()
 
-    # wskazuje ktore dane maja pojawic sie na wykresie
     with st.container(border=True):
-        data_to_char_x_axis = st.multiselect(options=options, label='Wskaż dane na wykres', default=['patron'])
-        if len(data_to_char_x_axis) == 0:
-            data_to_char_x_axis = ['grupa_akcji_1']
+        tab1_prim, tab2_prim = st.tabs(['Wykresy z intencji', 'Wykresy z wpłat'])
 
-    with st.container(border=True):
-        tab1, tab2 = st.tabs(['Wykres ilości przesłaych intencji', 'Wykres ilości ludzi którzy przesłali intencje'])
-        with tab1:
-            # Filtruje dane dotyczace ilosci intencji
-            filtered_data = filter_data(data_to_analyze, type_of_campaign, camp, year)
-            data_to_pivot_table = change_int_to_str_columns(filtered_data, data_to_char_x_axis)
-            pivot_table_to_char = data_to_pivot_table.pivot_table(index=data_to_char_x_axis,
-                                                                  values='correspondent_id',
-                                                                  aggfunc='count',
-                                                                  margins=True)
-            # zmieniam nazwe kolumny w tabeli przestawnej aby bylo czytelniej na wykresie
-            pivot_table_to_char = pivot_table_to_char.rename({'correspondent_id': 'ilość_intencji'},
-                                                             axis='columns')
-            pivot_table_to_char_wout_margins = pivot_table_to_char.iloc[:-1]
-            temp_df = create_df_with_options(pivot_table_to_char_wout_margins)
-            intention_count_char = CreateCharts(data_to_pivot_table, data_to_char_x_axis,
-                                                'Wykres ilości przesłanych intencji', 'test', 'test',
-                                                pivot_table_to_char_wout_margins, temp_df)
-            intention_count_char.create_chart()
-            with st.expander("Tabela przestawna"):
-                st.dataframe(pivot_table_to_char)
-        with tab2:
-            data_without_duplicates = delate_dupliactes(data_to_pivot_table, data_to_char_x_axis)
-            pivot_table_to_char_wh_dupliacates = data_without_duplicates.pivot_table(index=data_to_char_x_axis,
-                                                                                     values='correspondent_id',
-                                                                                     aggfunc='count',
-                                                                                     margins=True)
-            # zmieniam nazwe kolumny w tabeli przestawnej aby bylo czytelniej na wykresie
-            pivot_table_to_char_wh_dupliacates = pivot_table_to_char_wh_dupliacates.rename(
-                {'correspondent_id': 'ilość_osób'}, axis='columns')
-            pivot_table_to_char_wh_dupliacates_wout_margins = pivot_table_to_char_wh_dupliacates.iloc[:-1]
-            temp_df_wh_dupliacates = create_df_with_options(pivot_table_to_char_wh_dupliacates_wout_margins)
-            intention_count_char_wh_duplicates = CreateCharts(data_to_pivot_table,
-                                                              data_to_char_x_axis,
-                                                              'Ilość osob które przesłały intencje', 'test', 'test',
-                                                              pivot_table_to_char_wh_dupliacates_wout_margins,
-                                                              temp_df_wh_dupliacates)
-            intention_count_char_wh_duplicates.create_chart()
-            with st.expander("Tabela przestawna"):
-                st.dataframe(pivot_table_to_char_wh_dupliacates)
+        with tab1_prim:
+            data_to_char_x_axis = st.multiselect(options=options, label='Wybierz dane do wykresu z intencji',
+                                                 default=['patron'])
+            if len(data_to_char_x_axis) == 0:
+                data_to_char_x_axis = ['grupa_akcji_1']
+            tab1, tab2 = st.tabs(
+                ['Wykres ilości przesłanych intencji', 'Wykres ilości ludzi którzy przesłali intencje'])
+            with tab1:
+                chart_count_intention = ChartForCountIntentions(data_to_analyze, type_of_campaign, camp, year,
+                                                                data_to_char_x_axis, 'liczba intencji',
+                                                                'Wykres ilości przesłanych intencji',
+                                                                '', 'ilość intencji')
+                chart_count_intention.prepare_data()
+                chart_count_intention.create_pivot_table('correspondent_id', 'count')
+                chart_count_intention.create_chart()
+            with tab2:
+                chart_uniq_intention = ChartForUniqeIdFromIntentions(data_to_analyze, type_of_campaign, camp, year,
+                                                                     data_to_char_x_axis, 'ilość_osób',
+                                                                     'Wykres ilości osób ktore przesłały intencje',
+                                                                     '', 'ilość_osób')
+                chart_uniq_intention.prepare_data()
+                chart_uniq_intention.create_pivot_table('correspondent_id', 'count')
+                chart_uniq_intention.create_chart()
+        with tab2_prim:
+            options_to_paymant_char = ['rok_wpłaty', 'miesiac_wpłaty', 'data_wpłaty', 'typ_intencji',
+                                       'grupa_akcji_1_mailingu',
+                                       'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu']
+            char_options_to_paymant_char = st.multiselect(options=options_to_paymant_char,
+                                                          label='Wybierz dane do wykresu z wpłat',
+                                                          default=['rok_wpłaty', 'miesiac_wpłaty'])
+            tab3, tab4 = st.tabs(['Suma wpłat', 'Liczba wpłat'])
+
+            with tab3:
+                chart_money_values_intention = ChartForCountIntentions(money_intentions, type_of_campaign, camp, year,
+                                                                       char_options_to_paymant_char, 'suma_wplat',
+                                                                       'Wykres sumy wpłat z intencji',
+                                                                       '', 'suma wpłat')
+                chart_money_values_intention.prepare_data()
+                chart_money_values_intention.create_pivot_table('kwota', 'sum')
+                chart_money_values_intention.create_chart()
+            with tab4:
+                chart_money_count_intention = ChartForCountIntentions(money_intentions, type_of_campaign, camp, year,
+                                                                      char_options_to_paymant_char, 'liczba_wplat',
+                                                                      'Wykres liczby wpłat z intencji',
+                                                                      '', 'liczba wpłat')
+                chart_money_count_intention.prepare_data()
+                chart_money_count_intention.create_pivot_table('kwota', 'count')
+                chart_money_count_intention.create_chart()

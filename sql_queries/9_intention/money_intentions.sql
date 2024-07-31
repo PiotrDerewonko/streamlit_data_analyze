@@ -1,8 +1,12 @@
 select distinct fooa.correspondent_id,
-                ordered_at                          as data,
-                date_part('month', fooa.ordered_at) as miesiac_zamowienia,
-                date_part('year', fooa.ordered_at)  as rok_zamowienia,
-                ''                                  as patron,
+                ordered_at                          as data_wpłaty,
+                date_part('month', fooa.ordered_at) as miesiac_wpłaty,
+                date_part('year', fooa.ordered_at)  as rok_wpłaty,
+                fpp.amount                          as kwota,
+                case
+                    when fdit.text is null then 'Brak'
+                    else fdit.text
+                    end                             as patron,
                 fdago.text                          as grupa_akcji_1_mailingu,
                 case
                     when fdagt.text is null then fdagt2.text
@@ -10,10 +14,17 @@ select distinct fooa.correspondent_id,
                     end                                grupa_akcji_2_mailingu,
                 fdagt3.text                         as grupa_akcji_3_mailingu,
                 fcs.name                            as kod_akcji,
-                fpp.amount                          as kwota
+                fdit.text                           as typ_intencji
+
 from fsaps_order_order_answer fooa
          left outer join fsaps_order_order foo
                          on fooa.order_id = foo.id
+         left outer join fsaps_order_order_subaction foos
+                         on fooa.order_id = foos.order_id and fooa.subaction_id = foos.subaction_id
+         left outer join fsaps_intention_intention fii
+                         on foos.intention_id = fii.id
+         left outer join fsaps_dictionary_intention_type fdit
+                         on fii.intention_type_id = fdit.id
          left outer join fsaps_payment_payment fpp
                          on fooa.payment_id = fpp.id
          left outer join fsaps_campaign_subaction fcs
@@ -33,4 +44,5 @@ from fsaps_order_order_answer fooa
          left outer join fsaps_dictionary_action_group_three fdagt3
                          on fcc.action_group_three_id = fdagt3.id
 where fdago.id = 36
+order by typ_intencji
 
