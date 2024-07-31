@@ -6,8 +6,8 @@ def modificate_data(data_intention, data_about_people) -> pd.DataFrame:
                               right_on='id_korespondenta',
                               how='left')
     data_to_return['stary_nowy'] = ''
-    data_to_return['stary_nowy'].loc[data_to_return['data_dodania']  <= data_to_return['data_mailingu']] = 'stary'
-    data_to_return['stary_nowy'].loc[data_to_return['data_dodania']  > data_to_return['data_mailingu']] = 'nowy'
+    data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] <= data_to_return['data_mailingu']] = 'stary'
+    data_to_return['stary_nowy'].loc[data_to_return['data_dodania'] > data_to_return['data_mailingu']] = 'nowy'
     data_to_return['miesiac_wezwania'] = data_to_return['miesiac_wezwania'].fillna(0)
     data_to_return['miesiac_wezwania'] = data_to_return['miesiac_wezwania'].astype('int')
     data_to_return['miesiac_wezwania'] = data_to_return['miesiac_wezwania'].astype('str')
@@ -17,9 +17,6 @@ def modificate_data(data_intention, data_about_people) -> pd.DataFrame:
 
 
 def options_to_choose():
-    # options = ['grupa_akcji_1_mailingu', 'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu', 'typ_intencji',
-    #            'stary_nowy', 'grupa_akcji_1_dodania', 'grupa_akcji_2_dodania', 'grupa_akcji_3_dodania'
-    #            ]
     options = ['grupa_akcji_1_mailingu', 'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu', 'typ_intencji',
                'stary_nowy', 'grupa_akcji_1_dodania', 'grupa_akcji_2_dodania', 'grupa_akcji_3_dodania', 'patron',
                'rok_dodania', 'miesiac_wezwania', 'rok_wezwania'
@@ -28,6 +25,8 @@ def options_to_choose():
 
 
 def create_df_with_options(data) -> pd.DataFrame:
+    """Tworzy tabele przestawna, ktora jest wykorzystywana jako przewodnik dla klasy tworzacej
+    wykresu z ktorej kolumny jaki wykres ma zrobic."""
     columns_names = data.columns
     df_to_return = pd.DataFrame()
     for i in columns_names:
@@ -40,6 +39,8 @@ def create_df_with_options(data) -> pd.DataFrame:
 
 
 def change_int_to_str_columns(data, choose_columns) -> pd.DataFrame:
+    """Zadaniem funkcji jest zamiana typow kolumn które maja znalesc sie na wykresie na wartosci tekstowe. Dotyczy
+    to tylko tych kolumn sluza jako index w przekazywanej tabeli przestawnej"""
     for i in choose_columns:
         if (data[i].dtype == float) | (data[i].dtype == int):
             data[i] = data[i].fillna(0)
@@ -51,6 +52,8 @@ def change_int_to_str_columns(data, choose_columns) -> pd.DataFrame:
 
 
 def delate_dupliactes(data, choose_columns) -> pd.DataFrame:
+    """zadanie funkcji jest usuniecie zdyuplikowanyc wierszy w przekazanych danych, na podstawie identyfikatora
+    korespondnta, oraz kolumn ktore zostaly wybrane do pokazania na wykresie"""
     columns_to_analyze = ['correspondent_id']
     for i in choose_columns:
         columns_to_analyze.append(i)

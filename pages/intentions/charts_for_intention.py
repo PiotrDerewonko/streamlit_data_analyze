@@ -6,6 +6,9 @@ from pages.intentions.modificate_data import create_df_with_options, change_int_
 
 
 class ChartForCountIntentions:
+    """Zadaniem tej klasy jest przygotowanie danych, które nastepnie są wykorzystywane do tworzenia wykresow
+    z danych dotyczacych przeslanych intencji oraz wplat. Klasa nie zwraca żadnych danych a jedynie wstawia
+    wykres i tabele przestwna w odpowiendi miejsce aplikacji"""
     def __init__(self, data_to_analyze, type_of_campaign, camp, year, data_to_char_x_axis,
                  columns_name, title, x_title, y_title):
         self.data_to_analyze = data_to_analyze
@@ -47,6 +50,8 @@ class ChartForCountIntentions:
 
 class ChartForUniqeIdFromIntentions(ChartForCountIntentions):
     def prepare_data(self):
+        """Dodatkowa linijka usuwa zduplikowane dane. Ma to na celu pokazanie ile osob przeslalo dany typ intencji
+        a nie ile bylo sztuk intencji."""
         self.data_to_analyze = delate_dupliactes(self.data_to_analyze, self.data_to_char_x_axis)
         super().prepare_data()
 

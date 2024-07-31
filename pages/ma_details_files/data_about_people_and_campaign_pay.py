@@ -234,13 +234,16 @@ and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp(_con, refresh_data, _engine):
     if refresh_data == 'True':
-        sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_2 as grupa_akcji_2_wysylki, 
+        sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_1 as grupa_akcji_1_wysylki, 
+        grupa_akcji_2 as grupa_akcji_2_wysylki, 
         grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad,
        takpog.nazwa_szczegolowa as powod_otrzymania_giftu, row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by 
        tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3)
         from t_akcje_korespondenci tak
         left outer join t_akcje ta 
         on ta.id_akcji=tak.id_akcji
+        left outer join t_grupy_akcji_1 gr1
+        on gr1.id_grupy_akcji_1 = ta.id_grupy_akcji_1
         left outer join t_grupy_akcji_2 gr2
         on gr2.id_grupy_akcji_2 = ta.id_grupy_akcji_2
         left outer join t_grupy_akcji_3 gr3
