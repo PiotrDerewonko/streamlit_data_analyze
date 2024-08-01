@@ -31,3 +31,22 @@ def test_mailing_sql():
         zapytanie = zapytanie.replace('{rok}', '2008')
         zapytanie_copy = zapytanie + ' limit 1'
         execute_sql_files(zapytanie_copy, 'mailing')
+
+
+def test_good_adress_sql():
+    sql_file_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/good_adress.sql'))
+    with open(sql_file_path, 'r') as sql_file:
+        zapytanie = sql_file.read()
+        zapytanie_copy = zapytanie + ' limit 1'
+        execute_sql_files(zapytanie_copy, 'good_adress')
+
+
+def test_current_mailing_sql():
+    sql_file_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), f'../.././sql_queries/7/current_mailing.sql'))
+    with open(sql_file_path, 'r') as sql_file:
+        zapytanie = sql_file.read()
+        zapytanie = zapytanie.replace('{rok}', '2008')
+        zapytanie_copy = zapytanie + ' limit 1'
+        execute_sql_files(zapytanie_copy, 'current_mailing')

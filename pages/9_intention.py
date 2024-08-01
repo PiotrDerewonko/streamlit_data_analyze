@@ -3,7 +3,8 @@ import streamlit as st
 from dotenv import dotenv_values
 
 from database.source_db import deaful_set
-from pages.intentions.charts_for_intention import ChartForCountIntentions, ChartForUniqeIdFromIntentions
+from pages.intentions.charts_for_intention import ChartForCountIntentions, ChartForUniqeIdFromIntentions, \
+    ChartForPercentOfPaymentWithIntentions
 from pages.intentions.choose_options import ChooseOptionsForIntentions
 from pages.intentions.download_data_intention import download_data_intention_count, download_data_intention_money
 from pages.intentions.modificate_data import modificate_data, options_to_choose
@@ -31,11 +32,11 @@ with st.container():
 
         with tab1_prim:
             data_to_char_x_axis = st.multiselect(options=options, label='Wybierz dane do wykresu z intencji',
-                                                 default=['patron'])
+                                                 default=['typ_intencji'])
             if len(data_to_char_x_axis) == 0:
                 data_to_char_x_axis = ['grupa_akcji_1']
-            tab1, tab2 = st.tabs(
-                ['Wykres ilości przesłanych intencji', 'Wykres ilości ludzi którzy przesłali intencje'])
+            tab1, tab2, tab5 = st.tabs(
+                ['Wykres ilości przesłanych intencji', 'Wykres ilości ludzi którzy przesłali intencje', '% opłaconych intencji'])
             with tab1:
                 chart_count_intention = ChartForCountIntentions(data_to_analyze, type_of_campaign, camp, year,
                                                                 data_to_char_x_axis, 'liczba intencji',
@@ -52,6 +53,15 @@ with st.container():
                 chart_uniq_intention.prepare_data()
                 chart_uniq_intention.create_pivot_table('correspondent_id', 'count')
                 chart_uniq_intention.create_chart()
+            with tab5:
+                chart_percent = ChartForPercentOfPaymentWithIntentions(data_to_analyze, type_of_campaign, camp, year,
+                                                                       data_to_char_x_axis, 'liczba_wplat',
+                                                                       '% opłaconych intencji',
+                                                                       '',
+                                                                       '%')
+                chart_percent.prepare_data()
+                chart_percent.create_pivot_table('correspondent_id', 'count', money_intentions)
+                chart_percent.create_chart()
         with tab2_prim:
             options_to_paymant_char = ['rok_wpłaty', 'miesiac_wpłaty', 'data_wpłaty', 'typ_intencji',
                                        'grupa_akcji_1_mailingu',
@@ -77,3 +87,4 @@ with st.container():
                 chart_money_count_intention.prepare_data()
                 chart_money_count_intention.create_pivot_table('kwota', 'count')
                 chart_money_count_intention.create_chart()
+
