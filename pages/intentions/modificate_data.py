@@ -19,7 +19,7 @@ def modificate_data(data_intention, data_about_people) -> pd.DataFrame:
 def options_to_choose():
     options = ['grupa_akcji_1_mailingu', 'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu', 'typ_intencji',
                'stary_nowy', 'grupa_akcji_1_dodania', 'grupa_akcji_2_dodania', 'grupa_akcji_3_dodania',
-               'rok_dodania', 'miesiac_wezwania', 'rok_wezwania'
+               'rok_dodania', 'miesiac_wezwania', 'rok_wezwania', 'rok_zamowienia', 'miesiac_zamowienia'
                ]
     return options
 

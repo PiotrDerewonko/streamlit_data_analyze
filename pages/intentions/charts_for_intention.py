@@ -30,7 +30,7 @@ class ChartForCountIntentions:
         filtered_data = filter_data(self.data_to_analyze, self.type_of_campaign, self.camp, self.year)
         self.data_to_pivot_table = change_int_to_str_columns(filtered_data, self.data_to_char_x_axis)
 
-    def create_pivot_table(self, value_param, aggfunc_par):
+    def create_pivot_table(self, value_param, aggfunc_par, is_cum_sum):
         self.pivot_table_to_char = self.data_to_pivot_table.pivot_table(index=self.data_to_char_x_axis,
                                                                         values=value_param,
                                                                         aggfunc=aggfunc_par,
@@ -39,6 +39,9 @@ class ChartForCountIntentions:
         self.pivot_table_to_char = self.pivot_table_to_char.rename({'correspondent_id': self.columns_name},
                                                                    axis='columns')
         self.pivot_table_to_char_wout_margins = self.pivot_table_to_char.iloc[:-1]
+        if is_cum_sum:
+            self.pivot_table_to_char = self.pivot_table_to_char.cumsum()
+            self.pivot_table_to_char_wout_margins = self.pivot_table_to_char_wout_margins.cumsum()
 
     def create_chart(self):
         temp_df = create_df_with_options(self.pivot_table_to_char_wout_margins)
@@ -70,9 +73,7 @@ class ChartForPercentOfPaymentWithIntentions(ChartForCountIntentions):
         money_direct = money.copy()
         money_direct['kwota'] = 1
         money_direct = money_direct[['correspondent_id', 'kod_akcji', 'kwota']].drop_duplicates()
-        data_intention_plus_money = pd.merge(self.data_to_pivot_table[
-                                                 ['correspondent_id', 'kod_akcji', 'grupa_akcji_1_mailingu',
-                                                  'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu', 'typ_intencji']],
+        data_intention_plus_money = pd.merge(self.data_to_pivot_table,
                                              money_direct,
                                              how='left',
                                              on=['correspondent_id', 'kod_akcji'])
