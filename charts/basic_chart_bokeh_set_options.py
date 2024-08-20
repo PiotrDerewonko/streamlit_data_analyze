@@ -34,7 +34,7 @@ class SetOptions:
             self.is_second_x_axis = False
             self.max_value_for_y_second = None
         self.max_value_for_y_prime = self.check_max_value_for_prime_y_axis()
-        self.main_class.pivot_table.fillna(value=0, inplace=True)
+        self.main_class.pivot_table = self.main_class.pivot_table.fillna(value=0)
         index_for_char = self.main_class.data.groupby(self.main_class.multindex, dropna=True)
         source = ColumnDataSource(self.main_class.pivot_table)
         str_mutlindex = ''

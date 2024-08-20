@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 
-def dwonload_data(con, text) -> pd.DataFrame:
+def download_data(con, text) -> pd.DataFrame:
     list_of_id_gr2 = pd.read_sql_query('''select id from fsaps_dictionary_action_group_two 
     where is_for_billing = True order by text''', con)
     list_of_id_gr2 = list_of_id_gr2['id'].tolist()
@@ -37,7 +37,7 @@ def dwonload_data(con, text) -> pd.DataFrame:
 
 def down_data_sum_and_count(con, refresh_data, engine) -> pd.DataFrame:
     if refresh_data == 'True':
-        data = dwonload_data(con, 'count_and_sum_amount_char_for_days')
+        data = download_data(con, 'count_and_sum_amount_char_for_days')
         data['dzien_po_mailingu'].fillna(999, inplace=True)
         data['dzien_po_mailingu'] = data['dzien_po_mailingu'].astype(int)
         data.to_sql('dash_char_ma_data', engine, if_exists='replace', schema='raporty', index=False)
@@ -46,7 +46,7 @@ def down_data_sum_and_count(con, refresh_data, engine) -> pd.DataFrame:
 
 def down_data_cost_and_circulation(con, refresh_data, engine) -> pd.DataFrame:
     if refresh_data == 'True':
-        data = dwonload_data(con, 'cost_and_cirtulation_for_char_days')
+        data = download_data(con, 'cost_and_cirtulation_for_char_days')
         data.to_sql('dash_char_ma_data_cost_cir', engine, if_exists='replace', schema='raporty', index=False)
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data_cost_cir''', con)
     return data
