@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 
 from database.source_db import deaful_set
 from pages.ma_details_files.char_options.char_options import char_options
-from pages.ma_details_files.chars_for_days import charts
+from pages.ma_details_files.chars_for_days import ChartsByDays
 from pages.ma_details_files.choose_options import ChooseOptions
 from pages.ma_details_files.column_order import column_options
 from pages.ma_details_files.cost_structure import structure
@@ -60,7 +60,7 @@ with st.container():
                 create_pivot()
 
     st.header('Wykresy w dniach od nadania')
-    charts(qamp, con, years, refresh_data, engine)
+    ChartsByDays(qamp, con, years, refresh_data, engine)
 
     st.header('Struktura kosztów')
     structure(con, qamp, years, engine)
