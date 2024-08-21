@@ -32,7 +32,7 @@ def create_df_with_options(data) -> pd.DataFrame:
     for i in columns_names:
         temp_df = pd.DataFrame(data={'Nazwa parametru': [i],
                                      'oś': ['Oś główna'],
-                                     'Opcje': ['Wykres Słupkowy', ]
+                                     'Opcje': ['Wykres Słupkowy']
                                      }, index=[0])
         df_to_return = pd.concat([df_to_return, temp_df], ignore_index=True)
     return df_to_return

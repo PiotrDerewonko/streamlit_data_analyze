@@ -77,14 +77,14 @@ def line_chart_for_m(pivot, title, y_axis_label, pivot_circ, *args) -> figure:
     return p
 
 
-def change_list_to_string(list, para):
-    if len(list) >= 1:
+def change_list_to_string(list_of_param, para):
+    if len(list_of_param) >= 1:
         tmp = f'{para}'
-        for i in range(0, len(list)):
+        for i in range(0, len(list_of_param)):
             if i == 0:
-                tmp = tmp + ' ' + list[i]
+                tmp = tmp + ' ' + list_of_param[i]
             else:
-                tmp = tmp + ', ' + list[i]
+                tmp = tmp + ', ' + list_of_param[i]
     else:
         tmp = ''
     return tmp

@@ -15,6 +15,9 @@ class CreateCharts:
     group_x_label_oriantation = "horizontal"
     sub_group_x_label_oriantation = "horizontal"
 
+    # zmienna wskazuje ktorej klasy do tworzenia wykresow nalezy uzywac
+    chart_class = ChartBokehCreateChart
+
     def __init__(self, data: pd.DataFrame, multindex: list, title: str, xlabel: str, ylabel: str,
                  pivot_table: pd.DataFrame, df_with_options: pd.DataFrame, dict_of_orientations: Optional[dict] = None,
                  y_label_second: Optional[str] = None):
@@ -29,7 +32,7 @@ class CreateCharts:
         self.y_label_second = y_label_second
 
     def create_chart(self):
-        """Metoda tworzaca wykresy, w pierwszej kolejnosci tworze obiekt, ktory bedzie ustawial podsatwowe opcje
+        """Metoda tworzaca wykresy, w pierwszej kolejnosci tworze obiekt, ktory bedzie ustawial podstawowe opcje
          wykresu"""
         char_options = SetOptions(self, self.pivot_table, self.df_with_options)
         (index_for_char, source, str_mutlindex, max_value_for_y_prime, max_value_for_y_second,
@@ -37,11 +40,13 @@ class CreateCharts:
         figure = self.create_figure(index_for_char)
         figure_after_custom = self.custom_figure(figure, max_value_for_y_prime, max_value_for_y_second,
                                                  is_second_x_axis)
-        final_char_obj = ChartBokehCreateChart(self.df_with_options, figure_after_custom, str_mutlindex, source,
-                                           self.pivot_table)
-        final_char_obj = final_char_obj.create_chart()
-        st.bokeh_chart(final_char_obj)
 
+        # tutaj uzywam klasy do tworzenia wykresow
+        final_char_obj = self.chart_class(self.df_with_options, figure_after_custom, str_mutlindex, source,
+                                          self.pivot_table)
+        final_char_obj.prepare_data()
+        final_char = final_char_obj.create_chart()
+        st.bokeh_chart(final_char)
 
     def create_figure(self, index_for_char):
         """Metoda tworzaca figure do ktorej nastepnie dodawane sa wykresy"""
