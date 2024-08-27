@@ -27,6 +27,9 @@ with st.container():
     days_range, cumulative, new_old, chose_new_old, tab1, tab2, tab3, tab4, tab5 = ChartsInDaysBasic.create_tabs()
     ChartsInDaysBasic.download_data()
 
+    # tworze staly element tytulu
+    title_basic = change_list_to_string(qamp, 'dla mailingów') + change_list_to_string(years, ' za lata')
+
     # tworzenie tabeli przestwnej i wykresu dla sumy wplat
     SumAmount = CreatePivotTableAndChart(tab1, qamp, years, days_range[0], days_range[-1],
                                          ChartsInDaysBasic.data_sum_count,
@@ -34,7 +37,9 @@ with st.container():
     pivot_table_sum_amount, list_of_columns_sum_amount = SumAmount.create_pivot_table()
     pivot_table_sum_amount = SumAmount.change_pivot_table(pivot_table_sum_amount, list_of_columns_sum_amount)
     pivot_table_sum_amount = SumAmount.customize_pivot_table_(pivot_table_sum_amount)
-    # SumAmount.put_data_into_streamlit(pivot_table_sum_amount, None)
+    title_sum_amount = ' Wykres sumy wpłat ' + title_basic
+    sum_char = SumAmount.create_char_helper(pivot_table_sum_amount, 'Suma wpłat', title_sum_amount)
+    SumAmount.put_data_into_streamlit(pivot_table_sum_amount, sum_char)
 
     # tworzenie tabeli przestwnej i wykresu dla liczby wplat
     CountAmount = CreatePivotTableAndChart(tab2, qamp, years, days_range[0], days_range[-1],
@@ -43,10 +48,8 @@ with st.container():
     pivot_table_count_amount, list_of_columns_count_amount = CountAmount.create_pivot_table()
     pivot_table_count_amount = CountAmount.change_pivot_table(pivot_table_count_amount, list_of_columns_count_amount)
     pivot_table_count_amount = CountAmount.customize_pivot_table_(pivot_table_count_amount)
-    title_count_amount = ' Wykres liczby wpłat ' + change_list_to_string(qamp, 'dla mailingów') + change_list_to_string(years,
-                                                                                                          ' za lata')
-    count_char = CountAmount.create_char_helper(pivot_table_count_amount, 'Liczba wpłat',
-                                   title_count_amount)
+    title_count_amount = ' Wykres liczby wpłat ' + title_basic
+    count_char = CountAmount.create_char_helper(pivot_table_count_amount, 'Liczba wpłat', title_count_amount)
     CountAmount.put_data_into_streamlit(pivot_table_count_amount, count_char)
 
     # tworzenie tabeli przestawnej dla kosztu

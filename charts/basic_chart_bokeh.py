@@ -30,7 +30,7 @@ class CreateCharts:
         self.dict_of_orientations = dict_of_orientations
         self.y_label_second = y_label_second
 
-    def create_chart(self):
+    def create_chart(self) -> ChartBokehCreateChart:
         """Metoda tworzaca wykresy, w pierwszej kolejnosci tworze obiekt, ktory bedzie ustawial podstawowe opcje
          wykresu"""
         char_options = SetOptions(self, self.pivot_table, self.df_with_options)

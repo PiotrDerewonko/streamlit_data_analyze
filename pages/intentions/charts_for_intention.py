@@ -48,7 +48,8 @@ class ChartForCountIntentions:
         intention_count_char = CreateCharts(self.data_to_pivot_table, self.data_to_char_x_axis,
                                             self.title, self.x_title, self.y_title,
                                             self.pivot_table_to_char_wout_margins, temp_df)
-        intention_count_char.create_chart()
+        char = intention_count_char.create_chart()
+        st.bokeh_chart(char)
         with st.expander("Tabela przestawna"):
             st.dataframe(self.pivot_table_to_char)
 

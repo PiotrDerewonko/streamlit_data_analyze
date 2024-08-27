@@ -94,10 +94,10 @@ class CreatePivotTableForChartsInDays:
     def create_char(self, pivot_table, y_label_title, char_title):
         df_with_options = create_df_with_options(pivot_table, 'Wykres liniowy')
         self.data['dzien_po_mailingu'] = self.data['dzien_po_mailingu'].astype(str)
-        Char = BasicChartBokehOverwrite(self.data, ['dzien_po_mailingu'], char_title,
+        char_class = BasicChartBokehOverwrite(self.data, ['dzien_po_mailingu'], char_title,
                                         'Dzień po mailingu', y_label_title, pivot_table, df_with_options)
         # Char = CreateCharts(self.data, ['dzien_po_mailingu'], 'testowy tytul', 'x', 'y', pivot_table, df_with_options)
-        final_char = Char.create_chart()
+        final_char = char_class.create_chart()
         return final_char
     # if type_of_operation == 'sum':
     #     values = 'suma_wplat'
