@@ -6,9 +6,9 @@ import streamlit as st
 from pages.ma_details_files.charts_in_days.pivot_table_fo_charts_in_days import CreatePivotTableForChartsInDays
 
 
-def put_data_into_stremlit(tab_param, pivot_table_to_show):
+def put_data_into_stremlit(tab_param, pivot_table_to_show, char):
     with tab_param:
-        # st.bokeh_chart(char_profit, use_container_width=True)
+        st.bokeh_chart(char, use_container_width=True)
         with st.expander('Zobacz tabele z danymi'):
             st.dataframe(pivot_table_to_show)
 
@@ -38,6 +38,7 @@ class CreatePivotTableAndChart:
                                                                          self.new_old, self.chosen_new_old)
         self.create_pivot_table_object.filtr_data_by_days_from_to()
         list_of_columns = self.create_pivot_table_object.filtr_data_by_user_options()
+        self.create_pivot_table_object.change_index_to_str(['dzien_po_mailingu'])
         pivot_table_sum_amount = self.create_pivot_table_object.create_main_pivot_table(self.values, list_of_columns)
         return pivot_table_sum_amount, list_of_columns
 
@@ -51,8 +52,12 @@ class CreatePivotTableAndChart:
         pivot_table = self.create_pivot_table_object.customize_pivot_table(pivot_table)
         return pivot_table
 
-    def put_data_into_streamlit(self, pivot_table) -> None:
-        put_data_into_stremlit(self.tab_param, pivot_table)
+    def put_data_into_streamlit(self, pivot_table, char) -> None:
+        put_data_into_stremlit(self.tab_param, pivot_table, char)
+
+    def create_char_helper(self, pivot_table, y_label_title, char_title):
+        char = self.create_pivot_table_object.create_char(pivot_table, y_label_title, char_title)
+        return char
 
     @staticmethod
     def calculation_roi_or_szlw(data_sum_or_count_amount, data_cost_or_circ, operation) -> pd.DataFrame:

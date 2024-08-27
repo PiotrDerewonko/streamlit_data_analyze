@@ -49,4 +49,5 @@ def down_data_cost_and_circulation(con, refresh_data, engine) -> pd.DataFrame:
         data = download_data(con, 'cost_and_cirtulation_for_char_days')
         data.to_sql('dash_char_ma_data_cost_cir', engine, if_exists='replace', schema='raporty', index=False)
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data_cost_cir''', con)
+    data['koszt'] = data['koszt'].astype(float)
     return data

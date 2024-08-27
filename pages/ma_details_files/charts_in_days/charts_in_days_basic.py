@@ -38,3 +38,4 @@ class ChartsInDays:
                                                                        'count_and_sum_amount_char_for_days')
         self.data_cost_and_circulation = download_data_for_days_charts(self, False, 'dash_char_ma_data_cost_cir',
                                                             'cost_and_cirtulation_for_char_days')
+        self.data_cost_and_circulation['koszt'] = self.data_cost_and_circulation['koszt'].astype(float)

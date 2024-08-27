@@ -28,7 +28,7 @@ def check_max_value(pivot, data, axis):
     tmp = data.loc[data['oś'] == axis]
     if len(tmp) >= 1:
         for i, row in tmp.iterrows():
-            tmp_sum = pivot[f'''{row['Nazwa parametru']}'''].max()
+            tmp_sum = pivot[row['Nazwa parametru']].max()
             if tmp_sum > max:
                 max = tmp_sum
         tmp_2 = tmp.loc[tmp['Opcje'] == 'Wykres Słupkowy Skumulowany']

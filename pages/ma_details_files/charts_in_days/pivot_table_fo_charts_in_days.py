@@ -2,6 +2,9 @@ from typing import List
 
 import pandas as pd
 
+from pages.intentions.modificate_data import create_df_with_options
+from pages.ma_details_files.charts_in_days.basic_chart_bokeh_overwrite import BasicChartBokehOverwrite
+
 
 class CreatePivotTableForChartsInDays:
     def __init__(self, mailing, years, days_from, days_to, data, cumulative, new_old, choose):
@@ -53,6 +56,15 @@ class CreatePivotTableForChartsInDays:
 
         return columns_for_pivot_table
 
+    def change_index_to_str(self, index: List) -> None:
+        for i in index:
+
+            if pd.api.types.is_integer_dtype(self.data[i]) or pd.api.types.is_float_dtype(self.data[i]):
+                self.data[f'{i}_str'] = self.data[i].astype(str)
+                self.data[f'{i}_str'].loc[self.data[i] < 10] = ('0' + self.data[f'{i}_str'])
+                self.data = self.data.drop(columns=[i])
+                self.data = self.data.rename(columns={f'{i}_str': i})
+
     def create_main_pivot_table(self, values, columns_for_pivot_table) -> pd.DataFrame:
         pivot_table = pd.pivot_table(self.data, index='dzien_po_mailingu', values=values,
                                      columns=columns_for_pivot_table, aggfunc='sum')
@@ -79,6 +91,14 @@ class CreatePivotTableForChartsInDays:
             pivot_table = pivot_table.cumsum()
         return pivot_table
 
+    def create_char(self, pivot_table, y_label_title, char_title):
+        df_with_options = create_df_with_options(pivot_table, 'Wykres liniowy')
+        self.data['dzien_po_mailingu'] = self.data['dzien_po_mailingu'].astype(str)
+        Char = BasicChartBokehOverwrite(self.data, ['dzien_po_mailingu'], char_title,
+                                        'Dzień po mailingu', y_label_title, pivot_table, df_with_options)
+        # Char = CreateCharts(self.data, ['dzien_po_mailingu'], 'testowy tytul', 'x', 'y', pivot_table, df_with_options)
+        final_char = Char.create_chart()
+        return final_char
     # if type_of_operation == 'sum':
     #     values = 'suma_wplat'
     # elif type_of_operation == 'count':

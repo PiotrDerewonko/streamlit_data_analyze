@@ -19,14 +19,14 @@ class ChartBokehCreateChart:
                          width=width, legend_label=parametr_name, y_range_name=axis, color='blue')
 
     def create_line_chart(self, parametr_name, axis, colour):
-        self.figure.line(self.pivot_table.index.values, self.pivot_table[f'''{parametr_name}'''], line_width=5,
+        self.figure.line(self.pivot_table.index.values, self.pivot_table[parametr_name], line_width=5,
                          y_range_name=axis,
-                         legend=parametr_name, color=colour)
+                         legend=f'{parametr_name}', color=colour)
 
     def create_position_chart(self, parametr_name, axis, colour):
-        self.figure.circle(self.pivot_table.index.values.index.values, self.pivot_table[f'''{parametr_name}'''],
+        self.figure.circle(self.pivot_table.index.values, self.pivot_table[parametr_name],
                            y_range_name=axis,
-                           legend=parametr_name, color=colour)
+                           legend=f'{parametr_name}', color=colour)
 
     # def create_stacke_bar_chart(self, str_mutlindex, position, source, value):
     #     self.figure.vbar_stack(test, x=dodge(str_mutlindex, position,
@@ -86,5 +86,6 @@ class ChartBokehCreateChart:
             elif row['Opcje'] == 'Wykres liniowy':
                 self.create_line_chart(row['Nazwa parametru'], row['oś'], 'red')
                 self.create_position_chart(row['Nazwa parametru'], row['oś'], 'red')
+
 
         return self.figure

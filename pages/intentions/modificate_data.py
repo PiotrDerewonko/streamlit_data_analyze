@@ -24,15 +24,16 @@ def options_to_choose():
     return options
 
 
-def create_df_with_options(data) -> pd.DataFrame:
+def create_df_with_options(data, char_type) -> pd.DataFrame:
     """Tworzy tabele przestawna, ktora jest wykorzystywana jako przewodnik dla klasy tworzacej
     wykresu z ktorej kolumny jaki wykres ma zrobic."""
+
     columns_names = data.columns
     df_to_return = pd.DataFrame()
     for i in columns_names:
         temp_df = pd.DataFrame(data={'Nazwa parametru': [i],
                                      'oś': ['Oś główna'],
-                                     'Opcje': ['Wykres Słupkowy']
+                                     'Opcje': [char_type]
                                      }, index=[0])
         df_to_return = pd.concat([df_to_return, temp_df], ignore_index=True)
     return df_to_return
