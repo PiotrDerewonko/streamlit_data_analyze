@@ -18,7 +18,7 @@ class CreatePivotTableAndChart:
     Klasa zosatal wprowadozna po to aby, efektywnie tworzyc tabele przestawne i wykresy"""
 
     def __init__(self, tab_param, qamp, years, days_from, days_to, data, cumulative, new_old,
-                 chose_new_old, values):
+                 chose_new_old, values, choosed_options):
         self.tab_param = tab_param
         self.qamp = qamp
         self.years = years
@@ -29,14 +29,17 @@ class CreatePivotTableAndChart:
         self.new_old = new_old
         self.chosen_new_old = chose_new_old
         self.values = values
+        self.choosed_options = choosed_options
         self.create_pivot_table_object = None
 
     def create_pivot_table(self) -> Tuple[pd.DataFrame, List]:
         """Metoda tworzy now obiekt klasy odpowiedzialnej za tworzenie tabel przestanwych i wykresow"""
         self.create_pivot_table_object = CreatePivotTableForChartsInDays(self.qamp, self.years, self.days_from,
                                                                          self.days_to, self.data, self.cumulative,
-                                                                         self.new_old, self.chosen_new_old)
+                                                                         self.new_old, self.chosen_new_old,
+                                                                         self.choosed_options)
         self.create_pivot_table_object.filtr_data_by_days_from_to()
+        # todo ta funckje trzeba przerobic tak, aby przyjmowala liste wybrana przez uzytkowniak i petla for gdzie sie da filtorwala oraz tworzyla finalna liste dla tabeli
         list_of_columns = self.create_pivot_table_object.filtr_data_by_user_options()
         self.create_pivot_table_object.change_index_to_str(['dzien_po_mailingu'])
         pivot_table_sum_amount = self.create_pivot_table_object.create_main_pivot_table(self.values, list_of_columns)
@@ -59,6 +62,10 @@ class CreatePivotTableAndChart:
         char = self.create_pivot_table_object.create_char(pivot_table, y_label_title, char_title)
         return char
 
+    def create_char_helper_custom(self, pivot_table, y_label_title, char_title, extra_data):
+        char = self.create_pivot_table_object.create_char_custom(pivot_table, y_label_title, char_title, extra_data)
+        return char
+
     @staticmethod
     def calculation_roi_or_szlw(data_sum_or_count_amount, data_cost_or_circ, operation) -> pd.DataFrame:
         """Metoda przyjmuje trzy parametry, jeden to dataframe z liczba badz suma wplat, a drugi to data frame
@@ -75,3 +82,4 @@ class CreatePivotTableAndChart:
         method = getattr(data_sum_or_count_amount, operation)
         data_to_return = method(data_cost_or_circ)
         return data_to_return
+

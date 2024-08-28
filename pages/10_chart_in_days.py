@@ -30,21 +30,35 @@ with st.container():
     # tworze staly element tytulu
     title_basic = change_list_to_string(qamp, 'dla mailingów') + change_list_to_string(years, ' za lata')
 
+
+    # tworzenie tabeli przestawnej dla kosztu
+    CostAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
+                                          ChartsInDaysBasic.data_cost_and_circulation, False, False, None, 'koszt',
+                                          choosed_options)
+    pivot_table_cost_amount, list_of_columns_cost_amount = CostAmount.create_pivot_table()
+
+    # tworznie tabeli przestwnej dla nakladu
+    CircAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
+                                          ChartsInDaysBasic.data_cost_and_circulation, False, False, None, 'naklad',
+                                          choosed_options)
+    pivot_table_circ_amount, list_of_columns_circ_amount = CircAmount.create_pivot_table()
+
     # tworzenie tabeli przestwnej i wykresu dla sumy wplat
     SumAmount = CreatePivotTableAndChart(tab1, qamp, years, days_range[0], days_range[-1],
                                          ChartsInDaysBasic.data_sum_count,
-                                         cumulative, new_old, chose_new_old, 'suma_wplat')
+                                         cumulative, new_old, chose_new_old, 'suma_wplat', choosed_options)
     pivot_table_sum_amount, list_of_columns_sum_amount = SumAmount.create_pivot_table()
     pivot_table_sum_amount = SumAmount.change_pivot_table(pivot_table_sum_amount, list_of_columns_sum_amount)
     pivot_table_sum_amount = SumAmount.customize_pivot_table_(pivot_table_sum_amount)
     title_sum_amount = ' Wykres sumy wpłat ' + title_basic
-    sum_char = SumAmount.create_char_helper(pivot_table_sum_amount, 'Suma wpłat', title_sum_amount)
+    sum_char = SumAmount.create_char_helper_custom(pivot_table_sum_amount, 'Suma wpłat', title_sum_amount,
+                                                   pivot_table_circ_amount)
     SumAmount.put_data_into_streamlit(pivot_table_sum_amount, sum_char)
 
     # tworzenie tabeli przestwnej i wykresu dla liczby wplat
     CountAmount = CreatePivotTableAndChart(tab2, qamp, years, days_range[0], days_range[-1],
                                            ChartsInDaysBasic.data_sum_count,
-                                           cumulative, new_old, chose_new_old, 'liczba_wplat')
+                                           cumulative, new_old, chose_new_old, 'liczba_wplat', choosed_options)
     pivot_table_count_amount, list_of_columns_count_amount = CountAmount.create_pivot_table()
     pivot_table_count_amount = CountAmount.change_pivot_table(pivot_table_count_amount, list_of_columns_count_amount)
     pivot_table_count_amount = CountAmount.customize_pivot_table_(pivot_table_count_amount)
@@ -52,30 +66,20 @@ with st.container():
     count_char = CountAmount.create_char_helper(pivot_table_count_amount, 'Liczba wpłat', title_count_amount)
     CountAmount.put_data_into_streamlit(pivot_table_count_amount, count_char)
 
-    # tworzenie tabeli przestawnej dla kosztu
-    CostAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
-                                          ChartsInDaysBasic.data_cost_and_circulation, False, False, None, 'koszt')
-    pivot_table_cost_amount, list_of_columns_cost_amount = CostAmount.create_pivot_table()
-
-    # tworznie tabeli przestwnej dla nakladu
-    CircAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
-                                          ChartsInDaysBasic.data_cost_and_circulation, False, False, None, 'naklad')
-    pivot_table_circ_amount, list_of_columns_circ_amount = CircAmount.create_pivot_table()
-
     # tworzenie tabeli przestawnej dla SZLW
     SZLW = CreatePivotTableAndChart(tab3, qamp, years, None, None, None, None,
-                                    None, None, None)
+                                    None, None, None, choosed_options)
     szlw_pivot = SZLW.calculation_roi_or_szlw(pivot_table_count_amount, pivot_table_circ_amount, 'div')
     # SZLW.put_data_into_streamlit(szlw_pivot)
 
     # tworzenie tabeli przestawnej dla ROI
     ROI = CreatePivotTableAndChart(tab4, qamp, years, None, None, None, None,
-                                   None, None, None)
+                                   None, None, None, choosed_options)
     szlw_pivot = ROI.calculation_roi_or_szlw(pivot_table_sum_amount, pivot_table_cost_amount, 'div')
     # ROI.put_data_into_streamlit(szlw_pivot)
 
     # tworzenie tabeli przestawnej dla profitu
     profit = CreatePivotTableAndChart(tab5, qamp, years, None, None, None, None,
-                                      None, None, None)
+                                      None, None, None, choosed_options)
     profit_pivot = profit.calculation_roi_or_szlw(pivot_table_sum_amount, pivot_table_cost_amount, 'subtract')
     # profit.put_data_into_streamlit(profit_pivot)

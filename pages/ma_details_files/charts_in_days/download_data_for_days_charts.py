@@ -4,13 +4,13 @@ import os
 import pandas as pd
 
 
-def download_data_for_days_charts(self, refresh_data, table_name, file_name):
+def download_data_for_days_charts(con, engine, refresh_data, table_name, file_name):
     if refresh_data == 'True':
-        data = download_data(self.con, file_name)
+        data = download_data(con, file_name)
         data['dzien_po_mailingu'].fillna(999, inplace=True)
         data['dzien_po_mailingu'] = data['dzien_po_mailingu'].astype(int)
-        data.to_sql(table_name, self.engine, if_exists='replace', schema='raporty', index=False)
-    data = pd.read_sql_query(f'''select * from raporty.{table_name}''', self.con)
+        data.to_sql(table_name, engine, if_exists='replace', schema='raporty', index=False)
+    data = pd.read_sql_query(f'''select * from raporty.{table_name}''', con)
     return data
 
 
@@ -22,9 +22,10 @@ def download_data(con, text) -> pd.DataFrame:
     where id <>7 order by text''', con)
     list_of_years = list_of_years['id'].tolist()
     data = pd.DataFrame()
+    a = os.path.join(os.path.dirname(__file__))
     sql_file_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__),
-                     f'../.././sql_queries/2_ma_detail/{text}.sql'))
+                     f'../../../sql_queries/{text}.sql'))
     with open(sql_file_path, 'r') as sql_file:
         zapytanie = sql_file.read()
 

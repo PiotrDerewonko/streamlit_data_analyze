@@ -30,7 +30,7 @@ class CreateCharts:
         self.dict_of_orientations = dict_of_orientations
         self.y_label_second = y_label_second
 
-    def create_chart(self) -> ChartBokehCreateChart:
+    def create_chart(self, chart_class) -> ChartBokehCreateChart:
         """Metoda tworzaca wykresy, w pierwszej kolejnosci tworze obiekt, ktory bedzie ustawial podstawowe opcje
          wykresu"""
         char_options = SetOptions(self, self.pivot_table, self.df_with_options)
@@ -41,8 +41,8 @@ class CreateCharts:
                                                  is_second_x_axis)
 
         # tutaj uzywam klasy do tworzenia wykresow
-        final_char_obj = self.chart_class(self.df_with_options, figure_after_custom, str_mutlindex, source,
-                                          self.pivot_table)
+        final_char_obj = chart_class(self.df_with_options, figure_after_custom, str_mutlindex, source,
+                                                    self.pivot_table)
         final_char_obj.prepare_data()
         final_char = final_char_obj.create_chart()
         return final_char
@@ -92,7 +92,6 @@ class CreateCharts:
             pass
             'Nie trzeba nic robić. Błąd może wystąpić przy wykresach prostych jak line, gdzie nie ma ty atrybutow'
 
-
         # ustawienie zakresów osi i ewentualne tworzenie dodatkowe osi
         p.y_range = Range1d(0, max_value_for_y_prime * 1.1)
         if is_second_x_axis:
@@ -105,6 +104,5 @@ class CreateCharts:
 
         p.y_range.start = 0
         p.x_range.range_padding = 0.1
-
 
         return p

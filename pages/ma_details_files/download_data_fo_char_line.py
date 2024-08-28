@@ -14,7 +14,7 @@ def download_data(con, text) -> pd.DataFrame:
     data = pd.DataFrame()
     sql_file_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__),
-                     f'../.././sql_queries/2_ma_detail/{text}.sql'))
+                     f'../.././sql_queries/{text}.sql'))
     with open(sql_file_path, 'r') as sql_file:
         zapytanie = sql_file.read()
 
@@ -37,7 +37,7 @@ def download_data(con, text) -> pd.DataFrame:
 
 def down_data_sum_and_count(con, refresh_data, engine) -> pd.DataFrame:
     if refresh_data == 'True':
-        data = download_data(con, 'count_and_sum_amount_char_for_days')
+        data = download_data(con, '2_ma_detail/count_and_sum_amount_char_for_days')
         data['dzien_po_mailingu'].fillna(999, inplace=True)
         data['dzien_po_mailingu'] = data['dzien_po_mailingu'].astype(int)
         data.to_sql('dash_char_ma_data', engine, if_exists='replace', schema='raporty', index=False)
@@ -46,7 +46,7 @@ def down_data_sum_and_count(con, refresh_data, engine) -> pd.DataFrame:
 
 def down_data_cost_and_circulation(con, refresh_data, engine) -> pd.DataFrame:
     if refresh_data == 'True':
-        data = download_data(con, 'cost_and_cirtulation_for_char_days')
+        data = download_data(con, '2_ma_detail/cost_and_cirtulation_for_char_days')
         data.to_sql('dash_char_ma_data_cost_cir', engine, if_exists='replace', schema='raporty', index=False)
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data_cost_cir''', con)
     data['koszt'] = data['koszt'].astype(float)

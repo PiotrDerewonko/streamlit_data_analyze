@@ -1,7 +1,7 @@
 import itertools
 
+from bokeh.palettes import Category20_20 as palette
 from bokeh.palettes import Category20_20 as palette_for_prim
-from bokeh.palettes import Dark2_5 as palette
 from bokeh.transform import dodge
 
 
@@ -41,6 +41,22 @@ class ChartBokehCreateChart:
                                legend_label=stock_second_axis['Nazwa parametru'].to_list(), y_range_name=y_range_name,
                                color=colors_fin_stock[len(stock_default):len(stock_default) + len(stock_second_axis)])
 
+    def count_weidht_and_position(self, len_vbar, len_vbar_count):
+        # zmienna pomocnicza do wyliczenia ile ma byc pozycji na liscie
+        tmp = 0
+
+        #wyliczam jaka szerokosc ma miesc wykres slukowy oraz na jkich pozycjach maja byc poszczegolne slupki
+        if len_vbar >= 1:
+            if len_vbar == 1:
+                self.width_value_for_bar = 0.8
+            else:
+                self.width_value_for_bar = round(0.9 / len_vbar_count, 2)
+            count = 1
+            while tmp <= 1:
+                self.list_of_position_bar_chars.append(count * self.width_value_for_bar)
+                self.list_of_position_bar_chars.append(count * self.width_value_for_bar * -1)
+                tmp += self.width_value_for_bar
+                count += 1
     def prepare_data(self):
         """Przygotowuje niezbene dane do tworzenia wykresu """
         self.df_with_options = self.df_with_options.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
@@ -59,27 +75,15 @@ class ChartBokehCreateChart:
         len_vbar = len_vbar_ + self.len_stock
         len_vbar_count = len_vbar_ + tmp_vbar_stock_len
 
-        # zmienna pomocnicza do wyliczenia ile ma byc pozycji na liscie
-        tmp = 0
+        self.count_weidht_and_position(len_vbar, len_vbar_count)
 
-        if len_vbar >= 1:
-            if len_vbar == 1:
-                self.width_value_for_bar = 0.8
-            else:
-                self.width_value_for_bar = round(0.9 / len_vbar_count, 2)
-            count = 1
-            while tmp <= 1:
-                self.list_of_position_bar_chars.append(count * self.width_value_for_bar)
-                self.list_of_position_bar_chars.append(count * self.width_value_for_bar * -1)
-                tmp += self.width_value_for_bar
-                count += 1
-
+        #tworze palete kolorow dla wykresow zwyklych
         colors = itertools.cycle(palette)
         for m, color in zip(range(len(self.df_with_options)), colors):
             self.colors_fin.append(color)
         self.df_with_options.sort_values(['Opcje'], inplace=True)
 
-        #
+
 
     def create_chart(self):
         """Metoda dodajace do przekazanej figury obiekty"""
@@ -123,5 +127,7 @@ class ChartBokehCreateChart:
                                            colour=self.colors_fin[self.colour_number])
 
             self.colour_number += 1
+
+        self.figure.legend.location = 'top_left'
 
         return self.figure
