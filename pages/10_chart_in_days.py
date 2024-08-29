@@ -2,9 +2,9 @@ import streamlit as st
 from dotenv import dotenv_values
 
 from database.source_db import deaful_set
+from pages.chart_in_days.choose_options_overwrite import ChooseOptionsOverwrite
 from pages.ma_details_files.charts_in_days.charts_in_days_basic import ChartsInDays
 from pages.ma_details_files.charts_in_days.helper_functions import CreatePivotTableAndChart
-from pages.ma_details_files.choose_options import ChooseOptions
 from pages.ma_details_files.column_order import distinct_columns
 from pages.ma_details_files.line_charts_for_ma import change_list_to_string
 
@@ -14,7 +14,7 @@ with st.container():
     mailings, con, engine = deaful_set(f'{sorce_main}')
 
     # wybor ktorych mailingow ma dotyczyc analiza
-    class_options = ChooseOptions(con)
+    class_options = ChooseOptionsOverwrite(con)
     qamp, years, type_of_campaign = class_options.choose_options()
 
     # wybor jakie dane maja znalesc sie na wykresie
@@ -63,7 +63,8 @@ with st.container():
     pivot_table_count_amount = CountAmount.change_pivot_table(pivot_table_count_amount, list_of_columns_count_amount)
     pivot_table_count_amount = CountAmount.customize_pivot_table_(pivot_table_count_amount)
     title_count_amount = ' Wykres liczby wpłat ' + title_basic
-    count_char = CountAmount.create_char_helper(pivot_table_count_amount, 'Liczba wpłat', title_count_amount)
+    count_char = CountAmount.create_char_helper_custom(pivot_table_count_amount, 'Liczba wpłat',
+                                                       title_count_amount, pivot_table_circ_amount)
     CountAmount.put_data_into_streamlit(pivot_table_count_amount, count_char)
 
     # tworzenie tabeli przestawnej dla SZLW

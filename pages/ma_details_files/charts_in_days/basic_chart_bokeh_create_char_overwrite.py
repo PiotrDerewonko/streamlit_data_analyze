@@ -9,11 +9,13 @@ class BasicChartBokehCreateChartOverwrite(ChartBokehCreateChart):
                          y_range_name=axis,
                          legend=legend, color=colour)
 
+
     def create_chart(self):
         """Nadpisuje domyslna metode w celu iinnego prezentowania danych na wykresie liniowym"""
         for i, row in self.df_with_options.iterrows():
+            legeng_label = f"""{row['Nazwa parametru']} - naklad {row['Nakład']})"""
             self.create_line_chart(row['Nazwa parametru'], row['oś'], colour=self.colors_fin[self.colour_number],
-                                   legend=f"""{row['Nazwa parametru']} - naklad {row['Nakład']})""")
+                                   legend=legeng_label)
             self.create_position_chart(row['Nazwa parametru'], row['oś'],
                                            colour=self.colors_fin[self.colour_number])
             self.colour_number += 1

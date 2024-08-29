@@ -109,7 +109,7 @@ class CreatePivotTableForChartsInDays:
         self.data['dzien_po_mailingu'] = self.data['dzien_po_mailingu'].astype(str)
         char_class = BasicChartBokehOverwrite(self.data, ['dzien_po_mailingu'], char_title,
                                               'Dzień po mailingu', y_label_title, pivot_table, df_with_options)
-        final_char = char_class.create_chart()
+        final_char = char_class.create_chart(char_class.chart_class)
         return final_char
 
     @staticmethod

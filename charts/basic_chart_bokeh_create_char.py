@@ -31,8 +31,7 @@ class ChartBokehCreateChart:
 
     def create_position_chart(self, parametr_name, axis, colour):
         self.figure.circle(self.pivot_table.index.values, self.pivot_table[parametr_name],
-                           y_range_name=axis, size=12,
-                           legend=f'{parametr_name}', color=colour)
+                           y_range_name=axis, size=12, color=colour)
 
     def create_stacke_bar_chart(self, str_mutlindex, position, source, value, colors_fin_stock, stock_second_axis,
                                 stock_default, test, y_range_name):

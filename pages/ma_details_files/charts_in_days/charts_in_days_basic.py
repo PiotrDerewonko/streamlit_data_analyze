@@ -45,3 +45,4 @@ class ChartsInDays:
         self.data_cost_and_circulation['koszt'] = self.data_cost_and_circulation['koszt'].astype(float)
         data_about_people = download_data_about_people(self.con, False, 1000, [])
         self.data_sum_count = pd.merge(self.data_sum_count, data_about_people, on='id_korespondenta', how='left')
+        self.data_cost_and_circulation = pd.merge(self.data_cost_and_circulation, data_about_people, on='id_korespondenta', how='left')
