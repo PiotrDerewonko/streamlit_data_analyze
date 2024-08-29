@@ -43,6 +43,8 @@ class ChartsInDays:
                                                                        'dash_char_ma_data_cost_cir_by_id',
                                                                        '10_chart_in_days/cost_and_cirtulation_for_char_days')
         self.data_cost_and_circulation['koszt'] = self.data_cost_and_circulation['koszt'].astype(float)
+        self.data_cost_and_circulation['grupa_akcji_3_wysylki'] = self.data_cost_and_circulation['grupa_akcji_3_wysylki'].astype(str)
         data_about_people = download_data_about_people(self.con, False, 1000, [])
         self.data_sum_count = pd.merge(self.data_sum_count, data_about_people, on='id_korespondenta', how='left')
+        self.data_sum_count['grupa_akcji_3_wysylki'] = self.data_sum_count['grupa_akcji_3_wysylki'].astype(str)
         self.data_cost_and_circulation = pd.merge(self.data_cost_and_circulation, data_about_people, on='id_korespondenta', how='left')

@@ -2,9 +2,9 @@ import streamlit as st
 from dotenv import dotenv_values
 
 from database.source_db import deaful_set
-from pages.chart_in_days.choose_options_overwrite import ChooseOptionsOverwrite
 from pages.ma_details_files.charts_in_days.charts_in_days_basic import ChartsInDays
 from pages.ma_details_files.charts_in_days.helper_functions import CreatePivotTableAndChart
+from pages.ma_details_files.choose_options import ChooseOptions
 from pages.ma_details_files.column_order import distinct_columns
 from pages.ma_details_files.line_charts_for_ma import change_list_to_string
 
@@ -14,7 +14,7 @@ with st.container():
     mailings, con, engine = deaful_set(f'{sorce_main}')
 
     # wybor ktorych mailingow ma dotyczyc analiza
-    class_options = ChooseOptionsOverwrite(con)
+    class_options = ChooseOptions(con)
     qamp, years, type_of_campaign = class_options.choose_options()
 
     # wybor jakie dane maja znalesc sie na wykresie
@@ -29,7 +29,6 @@ with st.container():
 
     # tworze staly element tytulu
     title_basic = change_list_to_string(qamp, 'dla mailingów') + change_list_to_string(years, ' za lata')
-
 
     # tworzenie tabeli przestawnej dla kosztu
     CostAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
@@ -71,16 +70,25 @@ with st.container():
     SZLW = CreatePivotTableAndChart(tab3, qamp, years, None, None, None, None,
                                     None, None, None, choosed_options)
     szlw_pivot = SZLW.calculation_roi_or_szlw(pivot_table_count_amount, pivot_table_circ_amount, 'div')
-    # SZLW.put_data_into_streamlit(szlw_pivot)
+    title_szlw_amount = ' Wykres stopy zwrotu liczby wpłat ' + title_basic
+    szlw_char = SZLW.create_char_helper_custom_wo_pivot_class(szlw_pivot, 'Stopa zwrotu liczby wpłat',
+                                                              title_szlw_amount, pivot_table_circ_amount)
+    SZLW.put_data_into_streamlit(szlw_pivot, szlw_char)
 
     # tworzenie tabeli przestawnej dla ROI
     ROI = CreatePivotTableAndChart(tab4, qamp, years, None, None, None, None,
                                    None, None, None, choosed_options)
-    szlw_pivot = ROI.calculation_roi_or_szlw(pivot_table_sum_amount, pivot_table_cost_amount, 'div')
-    # ROI.put_data_into_streamlit(szlw_pivot)
+    roi_pivot = ROI.calculation_roi_or_szlw(pivot_table_sum_amount, pivot_table_cost_amount, 'div')
+    title_roi_amount = ' Wykres ROI ' + title_basic
+    roi_char = ROI.create_char_helper_custom_wo_pivot_class(roi_pivot, 'ROI',
+                                                             title_roi_amount, pivot_table_circ_amount)
+    ROI.put_data_into_streamlit(roi_pivot, roi_char)
 
     # tworzenie tabeli przestawnej dla profitu
     profit = CreatePivotTableAndChart(tab5, qamp, years, None, None, None, None,
                                       None, None, None, choosed_options)
     profit_pivot = profit.calculation_roi_or_szlw(pivot_table_sum_amount, pivot_table_cost_amount, 'subtract')
-    # profit.put_data_into_streamlit(profit_pivot)
+    title_profit_amount = ' Wykres profitu ' + title_basic
+    profit_char = profit.create_char_helper_custom_wo_pivot_class(profit_pivot, 'Profit',
+                                                                title_profit_amount, pivot_table_circ_amount)
+    profit.put_data_into_streamlit(profit_pivot, profit_char)

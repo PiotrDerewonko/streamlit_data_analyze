@@ -9,8 +9,10 @@ def download_data_for_days_charts(con, engine, refresh_data, table_name, file_na
         data = download_data(con, file_name)
         data['dzien_po_mailingu'].fillna(999, inplace=True)
         data['dzien_po_mailingu'] = data['dzien_po_mailingu'].astype(int)
-        data.to_sql(table_name, engine, if_exists='replace', schema='raporty', index=False)
-    data = pd.read_sql_query(f'''select * from raporty.{table_name}''', con)
+        data.to_csv(f'./pages/chart_in_days/tmp_file/{table_name}.csv')
+    else:
+        data = pd.read_csv(f'./pages/chart_in_days/tmp_file/{table_name}.csv', index_col='Unnamed: 0',
+                                     low_memory=False)
     return data
 
 

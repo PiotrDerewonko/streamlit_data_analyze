@@ -28,14 +28,6 @@ class ChooseOptions:
         current_year = int(data['grupa_akcji_3'].iloc[0])
         return default_camp, current_year
 
-    def find_years(self, current_year, test=-5) -> List[int]:
-        years_options = []
-        for i in range(2008, current_year + 1):
-            years_options.append(str(i))
-        years = st.multiselect(options=years_options, label='Proszę wybrać rok mailingu',
-                               default=years_options[test:])
-        return years
-
     def choose_options(self) -> Tuple[List[str], List[str], List[str]]:
         """Metoda zwraca listy do odfiltrowania danych. W przypadku roku brany jest 5 ostatnich lat liczac
         od roku biezacego. """
@@ -46,6 +38,9 @@ class ChooseOptions:
         qamp = st.multiselect(options=cls.options_gr2,
                               label='Proszę wybrać mailing',
                               default=default_camp)
-        years = self.find_years(current_year)
-
+        years_options = []
+        for i in range(2008, current_year + 1):
+            years_options.append(str(i))
+        years = st.multiselect(options=years_options, label='Proszę wybrać rok mailingu',
+                               default=years_options[-5:])
         return qamp, years, type_of_campaign

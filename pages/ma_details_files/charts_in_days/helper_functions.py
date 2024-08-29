@@ -3,6 +3,7 @@ from typing import Tuple, List
 import pandas as pd
 import streamlit as st
 
+from pages.ma_details_files.charts_in_days.basic_chart_bokeh_overwrite import BasicChartBokehOverwrite
 from pages.ma_details_files.charts_in_days.pivot_table_fo_charts_in_days import CreatePivotTableForChartsInDays
 
 
@@ -66,6 +67,15 @@ class CreatePivotTableAndChart:
         char = self.create_pivot_table_object.create_char_custom(pivot_table, y_label_title, char_title, extra_data)
         return char
 
+    def create_char_helper_custom_wo_pivot_class(self, pivot_table, y_label_title, char_title, extra_data):
+        df_with_options = CreatePivotTableForChartsInDays.create_df_with_options_custom(pivot_table, 'Wykres liniowy',
+                                                                                        extra_data)
+        # self.data['dzien_po_mailingu'] = self.data['dzien_po_mailingu'].astype(str)
+        char_class = BasicChartBokehOverwrite(pivot_table, ['dzien_po_mailingu'], char_title,
+                                              'Dzień po mailingu', y_label_title, pivot_table, df_with_options)
+        final_char = char_class.create_chart(BasicChartBokehOverwrite.chart_class)
+        return final_char
+
     @staticmethod
     def calculation_roi_or_szlw(data_sum_or_count_amount, data_cost_or_circ, operation) -> pd.DataFrame:
         """Metoda przyjmuje trzy parametry, jeden to dataframe z liczba badz suma wplat, a drugi to data frame
@@ -74,12 +84,17 @@ class CreatePivotTableAndChart:
         dodajemy kolejne wiersze z kosztem lub nakladem ale z kolejnym dniem. W ten sposob uzyskujemy datafrme ktory ma
         taka sama ilsoc wierszy jak dataframe z suma/liczba wplat, i mozemy dokonac operacji"""
         df1_index_len = len(data_sum_or_count_amount)
+        data_cost_or_circ = data_cost_or_circ.reset_index()
+        data_cost_or_circ['dzien_po_mailingu'] = data_cost_or_circ['dzien_po_mailingu'].astype(str)
+        data_cost_or_circ['dzien_po_mailingu'] = '0' + data_cost_or_circ['dzien_po_mailingu']
         data_cost_or_circ_in_one_day = data_cost_or_circ.copy()
         for i in range(2, df1_index_len + 3):
-            data_cost_or_circ_in_one_day['dzien_po_mailingu'] = i
+            if i < 10:
+                data_cost_or_circ_in_one_day['dzien_po_mailingu'] = f'0{i}'
+            else:
+                data_cost_or_circ_in_one_day['dzien_po_mailingu'] = f'{i}'
             data_cost_or_circ = pd.concat([data_cost_or_circ, data_cost_or_circ_in_one_day])
         data_cost_or_circ.set_index('dzien_po_mailingu', inplace=True)
         method = getattr(data_sum_or_count_amount, operation)
         data_to_return = method(data_cost_or_circ)
         return data_to_return
-
