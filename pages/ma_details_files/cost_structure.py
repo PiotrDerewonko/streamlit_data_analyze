@@ -17,14 +17,18 @@ def structure(con, mailing, years, engine):
             list_index.append('grupa_akcji_2')
             data_with_info = data_with_info.loc[data_with_info['grupa_akcji_2'].isin(mailing)]
         table_witch_costs = data_with_info.pivot_table(index=list_index, values=['id_korespondenta', 'final_post_cost',
-                                                                            'koszt_drukow', 'koszt_giftow', 'if_gifts',
-                                                                           'koszt_konfekcjonowania', 'koszt_personalizacji'],
-                                            aggfunc={'id_korespondenta': 'count', 'final_post_cost': 'sum', 'koszt_drukow':
-                                                     'sum', 'koszt_giftow': 'sum', 'if_gifts': 'sum', 'koszt_personalizacji': 'sum',
-                                                     'koszt_konfekcjonowania': 'sum'})
+                                                                                 'koszt_drukow', 'koszt_giftow',
+                                                                                 'if_gifts',
+                                                                                 'koszt_konfekcjonowania',
+                                                                                 'koszt_personalizacji'],
+                                                       aggfunc={'id_korespondenta': 'count', 'final_post_cost': 'sum',
+                                                                'koszt_drukow':
+                                                                    'sum', 'koszt_giftow': 'sum', 'if_gifts': 'sum',
+                                                                'koszt_personalizacji': 'sum',
+                                                                'koszt_konfekcjonowania': 'sum'})
         df_with_costs = pd.DataFrame(table_witch_costs.to_records())
         df_with_costs.set_index(list_index, inplace=True)
-        #Średnie koszty
+        # Średnie koszty
         df_with_costs['avg_post_cost'] = 0
         df_with_costs['avg_post_cost'] = df_with_costs['final_post_cost'] / df_with_costs['id_korespondenta']
         df_with_costs['avg_conf_cost'] = 0
@@ -35,53 +39,71 @@ def structure(con, mailing, years, engine):
         df_with_costs['avg_printing_cost'] = df_with_costs['koszt_drukow'] / df_with_costs['id_korespondenta']
         df_with_costs['avg_perso_cost'] = 0
         df_with_costs['avg_perso_cost'] = df_with_costs['koszt_personalizacji'] / df_with_costs['id_korespondenta']
-        df_with_costs.drop(['koszt_konfekcjonowania', 'id_korespondenta', 'koszt_drukow', 'final_post_cost', 'koszt_giftow',
-                            'if_gifts', 'koszt_personalizacji'], axis=1, inplace=True)
-        df_with_costs.rename(columns={'avg_post_cost': 'koszt_poczty', 'avg_conf_cost': 'koszt_konfekcjonowania' ,
-                                      'avg_gift_cost' : 'koszt_giftów' ,
-        'avg_printing_cost': 'koszt_drukow', 'avg_perso_cost': 'koszt_personalizacji'}, inplace=True)
+        df_with_costs.drop(
+            ['koszt_konfekcjonowania', 'id_korespondenta', 'koszt_drukow', 'final_post_cost', 'koszt_giftow',
+             'if_gifts', 'koszt_personalizacji'], axis=1, inplace=True)
+        df_with_costs.rename(columns={'avg_post_cost': 'koszt_poczty', 'avg_conf_cost': 'koszt_konfekcjonowania',
+                                      'avg_gift_cost': 'koszt_giftów',
+                                      'avg_printing_cost': 'koszt_drukow', 'avg_perso_cost': 'koszt_personalizacji'},
+                             inplace=True)
         temp_df = pd.DataFrame(data={'Nazwa parametru': ['koszt_poczty', 'koszt_konfekcjonowania', 'koszt_giftów',
                                                          'koszt_drukow', 'koszt_personalizacji'],
                                      'oś': ['Oś główna', 'Oś główna', 'Oś główna', 'Oś główna', 'Oś główna'],
-                                     'Opcje': ['Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
+                                     'Opcje': ['Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
+                                               'Wykres Słupkowy Skumulowany',
                                                'Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany']
                                      }, index=[0, 1, 2, 3, 4])
         dict_of_oriantation = {'major': 'vertical', 'group': 'vertical', 'sub_group': 'vertical'}
 
-        #srednie koszty oraz ich struktura
-        char_cost, a = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
-                                           df_with_costs, temp_df,'Średni koszt z wybranych mailingów', dict_of_oriantation)
-        df_with_costs_100 = data_to_100_percent(df_with_costs)
-        char_cost_to_100, b = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ', 'Wybrane kolumny',
+        # srednie koszty oraz ich struktura
+        char_cost, a = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ', 'Wybrane kolumny',
                                                 {},
-                                                df_with_costs_100, temp_df, 'Struktura średnich kosztów z wybranych mailingów',
+                                                df_with_costs, temp_df, 'Średni koszt z wybranych mailingów',
                                                 dict_of_oriantation)
-        table_witch_costs.rename(columns={'id_korespondenta': 'nakład', 'final_post_cost': 'koszt_poczty'}, inplace=True)
+        df_with_costs_100 = data_to_100_percent(df_with_costs)
+        char_cost_to_100, b = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ',
+                                                       'Wybrane kolumny',
+                                                       {},
+                                                       df_with_costs_100, temp_df,
+                                                       'Struktura średnich kosztów z wybranych mailingów',
+                                                       dict_of_oriantation)
+        table_witch_costs.rename(columns={'id_korespondenta': 'nakład', 'final_post_cost': 'koszt_poczty'},
+                                 inplace=True)
 
-        #koszty calkowite i struktura kosztow calkowitych
+        # koszty calkowite i struktura kosztow calkowitych
         temp_df_2 = pd.DataFrame(data={'Nazwa parametru': ['koszt_poczty', 'koszt_konfekcjonowania', 'koszt_giftow',
                                                            'koszt_drukow', 'koszt_personalizacji', 'nakład'],
-                                     'oś': ['Oś główna', 'Oś główna', 'Oś główna', 'Oś główna',
-                                            'Oś główna', 'Oś pomocnicza'],
-                                     'Opcje': ['Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
-                                               'Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
-                                               'Wykres liniowy']
-                                     }, index=[0, 1, 2, 3, 4, 5])
+                                       'oś': ['Oś główna', 'Oś główna', 'Oś główna', 'Oś główna',
+                                              'Oś główna', 'Oś pomocnicza'],
+                                       'Opcje': ['Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
+                                                 'Wykres Słupkowy Skumulowany',
+                                                 'Wykres Słupkowy Skumulowany', 'Wykres Słupkowy Skumulowany',
+                                                 'Wykres liniowy']
+                                       }, index=[0, 1, 2, 3, 4, 5])
         table_witch_costs_100 = data_to_100_percent(table_witch_costs[['koszt_poczty', 'koszt_drukow', 'koszt_giftow',
-                                                                           'koszt_konfekcjonowania',
+                                                                       'koszt_konfekcjonowania',
                                                                        'koszt_personalizacji']])
-        table_witch_costs_100 = pd.merge(table_witch_costs_100, table_witch_costs[['nakład']], how='left', left_index=True, right_index=True)
-        char_cost_values, a = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
-                                           table_witch_costs[['koszt_poczty', 'koszt_drukow', 'koszt_giftow','nakład',
-                                                                           'koszt_konfekcjonowania',
-                                                              'koszt_personalizacji']],
-                                                    temp_df_2,'Całkowity koszt wybranych mailingów', dict_of_oriantation)
-        char_cost_values_100, a = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ', 'Wybrane kolumny', {},
-                                           table_witch_costs_100[['koszt_poczty', 'koszt_drukow', 'koszt_giftow','nakład',
-                                                                           'koszt_konfekcjonowania', 'koszt_personalizacji']],
-                                                    temp_df_2,'Struktura całkowitych kosztów wybranych mailingów', dict_of_oriantation)
+        table_witch_costs_100 = pd.merge(table_witch_costs_100, table_witch_costs[['nakład']], how='left',
+                                         left_index=True, right_index=True)
+        char_cost_values, a = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ',
+                                                       'Wybrane kolumny', {},
+                                                       table_witch_costs[
+                                                           ['koszt_poczty', 'koszt_drukow', 'koszt_giftow', 'nakład',
+                                                            'koszt_konfekcjonowania',
+                                                            'koszt_personalizacji']],
+                                                       temp_df_2, 'Całkowity koszt wybranych mailingów',
+                                                       dict_of_oriantation)
+        char_cost_values_100, a = pivot_and_chart_for_dash(data_with_info, list_index, 'me_detail', 'Wykres ',
+                                                           'Wybrane kolumny', {},
+                                                           table_witch_costs_100[
+                                                               ['koszt_poczty', 'koszt_drukow', 'koszt_giftow',
+                                                                'nakład',
+                                                                'koszt_konfekcjonowania', 'koszt_personalizacji']],
+                                                           temp_df_2,
+                                                           'Struktura całkowitych kosztów wybranych mailingów',
+                                                           dict_of_oriantation)
         tab1, tab2, tab3, tab4, tab5 = st.tabs(['Średnie koszty', 'Koszty całościowe', 'Struktura Średnich kosztów',
-                              'Struktura kosztów całkowitych', 'Zestawienie kosztów i materiałów'])
+                                                'Struktura kosztów całkowitych', 'Zestawienie kosztów i materiałów'])
         with tab1:
             st.bokeh_chart(char_cost, use_container_width=True)
             with st.expander('Zobacz tabele z danymi'):
@@ -134,10 +156,7 @@ order by grupa_akcji_3, grupa_akcji_2, typ_materialu, kod_materialu
             if checkbox:
                 to_show.append('kod_materialu')
             pivot = pd.pivot_table(data=data_tmp, index=to_show, columns=list_index,
-                                       values='koszt_jednostkowy', aggfunc={'koszt_jednostkowy': 'sum'})
+                                   values='koszt_jednostkowy', aggfunc={'koszt_jednostkowy': 'sum'})
             st.dataframe(pivot, use_container_width=True)
             st.download_button('Pobierz dane w formacie .csv', pivot.to_csv(decimal=','),
                                file_name='koszty_jednostkowe.csv', mime='text/csv')
-
-
-

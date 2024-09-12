@@ -42,7 +42,7 @@ class CreateCharts:
 
         # tutaj uzywam klasy do tworzenia wykresow
         final_char_obj = chart_class(self.df_with_options, figure_after_custom, str_mutlindex, source,
-                                                    self.pivot_table)
+                                     self.pivot_table)
         final_char_obj.prepare_data()
         final_char = final_char_obj.create_chart()
         return final_char

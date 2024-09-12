@@ -33,6 +33,9 @@ with st.container():
         with tab1_prim:
             data_to_char_x_axis = st.multiselect(options=options, label='Wybierz dane do wykresu z intencji',
                                                  default=['typ_intencji'])
+
+            # dodaje zmienna ktora okresja czy podzilic dane na od darczyncow zidentyfikowanych i anonimowych
+            dived_by_anonymus = st.checkbox(label='Wydziel darczyńce anonimowego', value=False)
             if len(data_to_char_x_axis) == 0:
                 data_to_char_x_axis = ['grupa_akcji_1']
             tab1, tab2, tab5 = st.tabs(
@@ -45,7 +48,8 @@ with st.container():
                                                                 'Wykres ilości przesłanych intencji',
                                                                 '', 'ilość intencji')
                 chart_count_intention.prepare_data()
-                chart_count_intention.create_pivot_table('correspondent_id', 'count', is_cum_sum_count_int)
+                chart_count_intention.create_pivot_table('correspondent_id', 'count', is_cum_sum_count_int,
+                                                         dived_by_anonymus)
                 chart_count_intention.create_chart()
             with tab2:
                 chart_uniq_intention = ChartForUniqeIdFromIntentions(data_to_analyze, type_of_campaign, camp, year,
@@ -53,7 +57,7 @@ with st.container():
                                                                      'Wykres ilości osób ktore przesłały intencje',
                                                                      '', 'ilość_osób')
                 chart_uniq_intention.prepare_data()
-                chart_uniq_intention.create_pivot_table('correspondent_id', 'count', False)
+                chart_uniq_intention.create_pivot_table('correspondent_id', 'count', False, dived_by_anonymus)
                 chart_uniq_intention.create_chart()
             with tab5:
                 chart_percent = ChartForPercentOfPaymentWithIntentions(data_to_analyze, type_of_campaign, camp, year,
@@ -80,7 +84,8 @@ with st.container():
                                                                        'Wykres sumy wpłat z intencji',
                                                                        '', 'suma wpłat')
                 chart_money_values_intention.prepare_data()
-                chart_money_values_intention.create_pivot_table('kwota', 'sum', is_cum_sum_money_values)
+                chart_money_values_intention.create_pivot_table('kwota', 'sum', is_cum_sum_money_values,
+                                                                dived_by_anonymus)
                 chart_money_values_intention.create_chart()
             with tab4:
                 is_cum_sum_money_count = st.checkbox('Dane o liczbie wpłat kumulacyjnie', value=False)
@@ -89,5 +94,6 @@ with st.container():
                                                                       'Wykres liczby wpłat z intencji',
                                                                       '', 'liczba wpłat')
                 chart_money_count_intention.prepare_data()
-                chart_money_count_intention.create_pivot_table('kwota', 'count', is_cum_sum_money_count)
+                chart_money_count_intention.create_pivot_table('kwota', 'count', is_cum_sum_money_count,
+                                                               dived_by_anonymus)
                 chart_money_count_intention.create_chart()

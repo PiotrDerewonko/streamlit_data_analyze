@@ -19,10 +19,10 @@ class ChartBokehCreateChart:
         self.count_of_y_prime = 0
         self.len_stock = None
 
-    def create_bar_chart(self, position, parametr_name, axis, width):
+    def create_bar_chart(self, position, parametr_name, axis, width, colour):
         self.figure.vbar(x=dodge(self.str_multindex, position,
                                  range=self.figure.x_range), top=parametr_name, source=self.source,
-                         width=width, legend_label=parametr_name, y_range_name=axis, color='blue')
+                         width=width, legend_label=parametr_name, y_range_name=axis, color=colour)
 
     def create_line_chart(self, parametr_name, axis, colour):
         self.figure.line(self.pivot_table.index.values, self.pivot_table[parametr_name], line_width=5,
@@ -44,7 +44,7 @@ class ChartBokehCreateChart:
         # zmienna pomocnicza do wyliczenia ile ma byc pozycji na liscie
         tmp = 0
 
-        #wyliczam jaka szerokosc ma miesc wykres slukowy oraz na jkich pozycjach maja byc poszczegolne slupki
+        # wyliczam jaka szerokosc ma miesc wykres slukowy oraz na jkich pozycjach maja byc poszczegolne slupki
         if len_vbar >= 1:
             if len_vbar == 1:
                 self.width_value_for_bar = 0.8
@@ -56,6 +56,7 @@ class ChartBokehCreateChart:
                 self.list_of_position_bar_chars.append(count * self.width_value_for_bar * -1)
                 tmp += self.width_value_for_bar
                 count += 1
+
     def prepare_data(self):
         """Przygotowuje niezbene dane do tworzenia wykresu """
         self.df_with_options = self.df_with_options.replace({'Oś główna': 'default', 'Oś pomocnicza': 'secon_axis'})
@@ -76,13 +77,11 @@ class ChartBokehCreateChart:
 
         self.count_weidht_and_position(len_vbar, len_vbar_count)
 
-        #tworze palete kolorow dla wykresow zwyklych
+        # tworze palete kolorow dla wykresow zwyklych
         colors = itertools.cycle(palette)
         for m, color in zip(range(len(self.df_with_options)), colors):
             self.colors_fin.append(color)
         self.df_with_options.sort_values(['Opcje'], inplace=True)
-
-
 
     def create_chart(self):
         """Metoda dodajace do przekazanej figury obiekty"""
@@ -102,9 +101,11 @@ class ChartBokehCreateChart:
             if len(stock_default) >= 1:
                 position = self.list_of_position_bar_chars[self.count_of_y_prime]
                 self.count_of_y_prime += 1
-                test = self.pivot_table[stock_default['Nazwa parametru'].to_list()].columns
+                pt_columns = self.pivot_table.columns
+                pt_columns = pt_columns.to_list()
+                # test = self.pivot_table[stock_default['Nazwa parametru'].to_list()].columns
                 self.create_stacke_bar_chart(self.str_multindex, position, self.source, self.width_value_for_bar,
-                                             colors_fin_stock, stock_second_axis, stock_default, test, 'default')
+                                             colors_fin_stock, stock_second_axis, stock_default, pt_columns, 'default')
                 self.colour_number += 1
             if len(stock_second_axis) >= 1:
                 position = self.list_of_position_bar_chars[self.count_of_y_prime]
@@ -119,7 +120,8 @@ class ChartBokehCreateChart:
             if row['Opcje'] == 'Wykres Słupkowy':
                 position = self.list_of_position_bar_chars[self.count_of_y_prime]
                 self.count_of_y_prime += 1
-                self.create_bar_chart(position, row['Nazwa parametru'], row['oś'], width=self.width_value_for_bar)
+                self.create_bar_chart(position, row['Nazwa parametru'], row['oś'], width=self.width_value_for_bar,
+                                      colour=self.colors_fin[self.colour_number])
             elif row['Opcje'] == 'Wykres liniowy':
                 self.create_line_chart(row['Nazwa parametru'], row['oś'], colour=self.colors_fin[self.colour_number])
                 self.create_position_chart(row['Nazwa parametru'], row['oś'],

@@ -28,11 +28,6 @@ download_dash_address_data(con, refresh_data, engine, 'address')
 download_dash_address_data(con, refresh_data, engine, 'non address')
 down_data_cost_and_circulation(con, refresh_data, engine)
 down_data_sum_and_count(con, refresh_data, engine)
-download_data_for_days_charts(con, engine, refresh_data, 'dash_char_ma_data_by_id',
-                              '10_chart_in_days/count_and_sum_amount_for_char_days')
-download_data_for_days_charts(con, engine, refresh_data,
-                              'dash_char_ma_data_cost_cir_by_id',
-                              '10_chart_in_days/cost_and_cirtulation_for_char_days')
 download_increase_data(con, refresh_data, engine)
 distance_between_first_and_second_pay(con, engine, refresh_data)
 download_data_about_people_camp(con, refresh_data, engine)
@@ -51,5 +46,10 @@ download_data_cycle_of_life(con, refresh_data)
 download_data_about_age(con, refresh_data, engine)
 download_data_intention_money(con, refresh_data)
 download_data_intention_count(con, refresh_data)
+download_data_for_days_charts(con, engine, refresh_data, 'dash_char_ma_data_by_id',
+                              '10_chart_in_days/count_and_sum_amount_for_char_days')
+download_data_for_days_charts(con, engine, refresh_data,
+                              'dash_char_ma_data_cost_cir_by_id',
+                              '10_chart_in_days/cost_and_cirtulation_for_char_days')
 
 print('zakonczono przeladowanie danych')

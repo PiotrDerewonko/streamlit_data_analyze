@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from charts.basic_chart_bokeh import CreateCharts
+from charts.basic_chart_bokeh_create_char import ChartBokehCreateChart
 from pages.intentions.filter_data import filter_data
 from pages.intentions.modificate_data import create_df_with_options, change_int_to_str_columns, delate_dupliactes
 
@@ -28,27 +29,37 @@ class ChartForCountIntentions:
 
     def prepare_data(self):
         filtered_data = filter_data(self.data_to_analyze, self.type_of_campaign, self.camp, self.year)
+        filtered_data['darczynca_anonimowy'] = 'zidentyfikowany'
+        filtered_data['darczynca_anonimowy'].loc[filtered_data['correspondent_id'] == 86074] = 'anonimowy'
         self.data_to_pivot_table = change_int_to_str_columns(filtered_data, self.data_to_char_x_axis)
 
-    def create_pivot_table(self, value_param, aggfunc_par, is_cum_sum):
-        self.pivot_table_to_char = self.data_to_pivot_table.pivot_table(index=self.data_to_char_x_axis,
-                                                                        values=value_param,
-                                                                        aggfunc=aggfunc_par,
-                                                                        margins=True)
-        # zmieniam nazwe kolumny w tabeli przestawnej aby bylo czytelniej na wykresie
-        self.pivot_table_to_char = self.pivot_table_to_char.rename({'correspondent_id': self.columns_name},
-                                                                   axis='columns')
+    def create_pivot_table(self, value_param, aggfunc_par, is_cum_sum, dived_by_anonymus):
+        if dived_by_anonymus:
+            self.pivot_table_to_char = self.data_to_pivot_table.pivot_table(index=self.data_to_char_x_axis,
+                                                                            values=value_param,
+                                                                            aggfunc=aggfunc_par,
+                                                                            margins=True, columns='darczynca_anonimowy')
+            self.pivot_table_to_char = self.pivot_table_to_char[self.pivot_table_to_char.columns[:-1]]
+        else:
+            self.pivot_table_to_char = self.data_to_pivot_table.pivot_table(index=self.data_to_char_x_axis,
+                                                                            values=value_param,
+                                                                            aggfunc=aggfunc_par,
+                                                                            margins=True)
+            # zmieniam nazwe kolumny w tabeli przestawnej aby bylo czytelniej na wykresie
+            self.pivot_table_to_char = self.pivot_table_to_char.rename({'correspondent_id': self.columns_name},
+                                                                       axis='columns')
+
         self.pivot_table_to_char_wout_margins = self.pivot_table_to_char.iloc[:-1]
         if is_cum_sum:
             self.pivot_table_to_char = self.pivot_table_to_char.cumsum()
             self.pivot_table_to_char_wout_margins = self.pivot_table_to_char_wout_margins.cumsum()
 
     def create_chart(self):
-        temp_df = create_df_with_options(self.pivot_table_to_char_wout_margins, 'Wykres Słupkowy')
+        temp_df = create_df_with_options(self.pivot_table_to_char_wout_margins, 'Wykres Słupkowy Skumulowany')
         intention_count_char = CreateCharts(self.data_to_pivot_table, self.data_to_char_x_axis,
                                             self.title, self.x_title, self.y_title,
                                             self.pivot_table_to_char_wout_margins, temp_df)
-        char = intention_count_char.create_chart()
+        char = intention_count_char.create_chart(ChartBokehCreateChart)
         st.bokeh_chart(char)
         with st.expander("Tabela przestawna"):
             st.dataframe(self.pivot_table_to_char)
@@ -70,7 +81,7 @@ class ChartForPercentOfPaymentWithIntentions(ChartForCountIntentions):
         jedna intencja od danego czlowieka, a dokonal on jednej wplaty, to wszystkie intencje polaczone z dana wplata
         zosrtana oznaczone jako oplacone.'''
 
-        #lacze dane z intencji z danymi wplat po id korespodnenta i kodzie akcji
+        # lacze dane z intencji z danymi wplat po id korespodnenta i kodzie akcji
         money_direct = money.copy()
         money_direct['kwota'] = 1
         money_direct = money_direct[['correspondent_id', 'kod_akcji', 'kwota']].drop_duplicates()
@@ -83,7 +94,7 @@ class ChartForPercentOfPaymentWithIntentions(ChartForCountIntentions):
         data_intention_plus_money['grupa_akcji_3_mailingu'] = data_intention_plus_money[
             'grupa_akcji_3_mailingu'].fillna(' ')
 
-        #pobieram z danych o wplatach kolumny do laczenia po mailingach, odfiltrowuje dane, usuwam duplikaty we wplatach
+        # pobieram z danych o wplatach kolumny do laczenia po mailingach, odfiltrowuje dane, usuwam duplikaty we wplatach
         short_money = money[
             ['correspondent_id', 'kod_akcji', 'grupa_akcji_1_mailingu', 'grupa_akcji_2_mailingu',
              'grupa_akcji_3_mailingu', 'kwota']].copy()
@@ -92,19 +103,19 @@ class ChartForPercentOfPaymentWithIntentions(ChartForCountIntentions):
         short_money_filtered = short_money.loc[short_money['grupa_akcji_2_mailingu'].isin(
             ['MAILING Q1', 'MAILING Q2', 'MAILING Q3', 'MAILING Q4'])]
 
-        #prowencyjnie zamieniam grupe akcji 3 na str poniewaz pandas moze je potraktowac jako rok
+        # prowencyjnie zamieniam grupe akcji 3 na str poniewaz pandas moze je potraktowac jako rok
         short_money_filtered['grupa_akcji_3_mailingu'] = short_money_filtered['grupa_akcji_3_mailingu'].astype('str')
         data_intention_plus_money['grupa_akcji_3_mailingu'] = data_intention_plus_money[
             'grupa_akcji_3_mailingu'].astype('str')
 
-        #lacze dotychczasowe dane z wplatami raz jeszcze ale tym raz warunek laczenia mam bardzie ogolny
+        # lacze dotychczasowe dane z wplatami raz jeszcze ale tym raz warunek laczenia mam bardzie ogolny
         data_intention_plus_money_extra = pd.merge(data_intention_plus_money,
                                                    short_money_filtered, how='left',
                                                    on=['correspondent_id', 'grupa_akcji_1_mailingu',
                                                        'grupa_akcji_2_mailingu', 'grupa_akcji_3_mailingu']
                                                    )
 
-        #tworze pomocnicze kolumny oraz na jej podstawie tabele przestwna
+        # tworze pomocnicze kolumny oraz na jej podstawie tabele przestwna
         data_intention_plus_money_extra['is_payment'] = 'brak wpłaty'
         data_intention_plus_money_extra['is_payment'].loc[
             (data_intention_plus_money_extra['kwota_x'] > 0) | (
@@ -115,7 +126,7 @@ class ChartForPercentOfPaymentWithIntentions(ChartForCountIntentions):
             values=value_param,
             aggfunc=aggfunc_par, fill_value=0)
 
-        #wyliczam procentowy udzial
+        # wyliczam procentowy udzial
         data_intention_plus_money_pivot_percent = data_intention_plus_money_pivot_values.copy()
         data_intention_plus_money_pivot_percent['% wpłat'] = data_intention_plus_money_pivot_percent[
                                                                  'Wpłata'] / (
