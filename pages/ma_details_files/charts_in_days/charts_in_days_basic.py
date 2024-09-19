@@ -17,14 +17,13 @@ class ChartsInDays:
         self.data_cost_and_circulation = None
         self.data_sum_count = None
 
-
     def create_tabs(self) -> Tuple[Any, Any, Any, Any, Any, Any, Any, Any, Any]:
         """Metoda tworzy zakladki potrzebne, w których wybieramy jakie dane mają znaleść się na wykresie. 
         Dodatkowo metoda umiesza wygenerowane wykresy i tabele przestawne """
         with st.container():
-            tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+            tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
                 ['Suma Wpłat', 'Liczba Wpłat', 'Stopa zwrotu liczby wplat', 'ROI',
-                 'Profit', 'Ustawienia'])
+                 'Profit', 'Ustawienia', 'Filtry'])
             with tab6:
                 days_range = st.slider('Proszę wybrać dnia od nadania mailingu', min_value=1, max_value=60,
                                        value=[1, 60])
@@ -33,6 +32,8 @@ class ChartsInDays:
 
                 chose_new_old = st.multiselect(label='Kogo wyświetlać', options=['nowy', 'stary'],
                                                default=['nowy', 'stary'])
+            with tab7:
+                st.markdown("dodaj filtry")
         return days_range, cumulative, new_old, chose_new_old, tab1, tab2, tab3, tab4, tab5
 
     def download_data(self):
@@ -43,8 +44,10 @@ class ChartsInDays:
                                                                        'dash_char_ma_data_cost_cir_by_id',
                                                                        '10_chart_in_days/cost_and_cirtulation_for_char_days')
         self.data_cost_and_circulation['koszt'] = self.data_cost_and_circulation['koszt'].astype(float)
-        self.data_cost_and_circulation['grupa_akcji_3_wysylki'] = self.data_cost_and_circulation['grupa_akcji_3_wysylki'].astype(str)
+        self.data_cost_and_circulation['grupa_akcji_3_wysylki'] = self.data_cost_and_circulation[
+            'grupa_akcji_3_wysylki'].astype(str)
         data_about_people = download_data_about_people(self.con, False, 1000, [])
         self.data_sum_count = pd.merge(self.data_sum_count, data_about_people, on='id_korespondenta', how='left')
         self.data_sum_count['grupa_akcji_3_wysylki'] = self.data_sum_count['grupa_akcji_3_wysylki'].astype(str)
-        self.data_cost_and_circulation = pd.merge(self.data_cost_and_circulation, data_about_people, on='id_korespondenta', how='left')
+        self.data_cost_and_circulation = pd.merge(self.data_cost_and_circulation, data_about_people,
+                                                  on='id_korespondenta', how='left')

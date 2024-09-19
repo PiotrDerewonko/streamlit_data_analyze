@@ -55,7 +55,7 @@ class ChartForCountIntentions:
             self.pivot_table_to_char_wout_margins = self.pivot_table_to_char_wout_margins.cumsum()
 
     def create_chart(self):
-        temp_df = create_df_with_options(self.pivot_table_to_char_wout_margins, 'Wykres Słupkowy Skumulowany')
+        temp_df = create_df_with_options(self.pivot_table_to_char_wout_margins, 'Wykres Słupkowy')
         intention_count_char = CreateCharts(self.data_to_pivot_table, self.data_to_char_x_axis,
                                             self.title, self.x_title, self.y_title,
                                             self.pivot_table_to_char_wout_margins, temp_df)

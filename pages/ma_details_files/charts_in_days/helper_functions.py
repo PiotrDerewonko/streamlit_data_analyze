@@ -88,7 +88,7 @@ class CreatePivotTableAndChart:
         data_cost_or_circ['dzien_po_mailingu'] = data_cost_or_circ['dzien_po_mailingu'].astype(str)
         data_cost_or_circ['dzien_po_mailingu'] = '0' + data_cost_or_circ['dzien_po_mailingu']
         data_cost_or_circ_in_one_day = data_cost_or_circ.copy()
-        for i in range(2, df1_index_len + 3):
+        for i in range(2, df1_index_len + 1):
             if i < 10:
                 data_cost_or_circ_in_one_day['dzien_po_mailingu'] = f'0{i}'
             else:

@@ -32,13 +32,13 @@ with st.container():
 
     # tworzenie tabeli przestawnej dla kosztu
     CostAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
-                                          ChartsInDaysBasic.data_cost_and_circulation, False, False, None, 'koszt',
+                                          ChartsInDaysBasic.data_cost_and_circulation, False, new_old, chose_new_old, 'koszt',
                                           choosed_options)
     pivot_table_cost_amount, list_of_columns_cost_amount = CostAmount.create_pivot_table()
 
     # tworznie tabeli przestwnej dla nakladu
     CircAmount = CreatePivotTableAndChart(None, qamp, years, 1, 1,
-                                          ChartsInDaysBasic.data_cost_and_circulation, False, False, None, 'naklad',
+                                          ChartsInDaysBasic.data_cost_and_circulation, False, new_old, chose_new_old, 'naklad',
                                           choosed_options)
     pivot_table_circ_amount, list_of_columns_circ_amount = CircAmount.create_pivot_table()
 

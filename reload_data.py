@@ -23,7 +23,7 @@ sorce_main = list(sorce_main.values())[0]
 refresh_data = 'True'
 mail, con, engine = deaful_set(sorce_main)
 print('rozpoczynam przeladowanie danych')
-
+#
 download_dash_address_data(con, refresh_data, engine, 'address')
 download_dash_address_data(con, refresh_data, engine, 'non address')
 down_data_cost_and_circulation(con, refresh_data, engine)
