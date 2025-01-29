@@ -67,7 +67,7 @@ class ChartsInDays:
         self.data_cost_and_circulation['koszt'] = self.data_cost_and_circulation['koszt'].astype(float)
         self.data_cost_and_circulation['grupa_akcji_3_wysylki'] = self.data_cost_and_circulation[
             'grupa_akcji_3_wysylki'].astype(str)
-        data_about_people = download_data_about_people(self.con, False, 10000, [])
+        data_about_people = download_data_about_people(self.con, False, 1000, [])
         self.data_sum_count = pd.merge(self.data_sum_count, data_about_people, on='id_korespondenta', how='left')
         self.data_sum_count['grupa_akcji_3_wysylki'] = self.data_sum_count['grupa_akcji_3_wysylki'].astype(str)
         self.data_cost_and_circulation = pd.merge(self.data_cost_and_circulation, data_about_people,
@@ -77,7 +77,9 @@ class ChartsInDays:
         """Metoda filtruje dane na podsatwie wybranych przez uzuytkonika danych w zakaldce filtry"""
         for i, j in filtr_value.items():
             column_to_filter = i
-            values_to_filter = j
-            self.data_sum_count = self.data_sum_count.loc[self.data_sum_count[column_to_filter].isin(values_to_filter)]
-            self.data_cost_and_circulation = self.data_cost_and_circulation.loc[
-                self.data_cost_and_circulation[column_to_filter].isin(values_to_filter)]
+            if column_to_filter != ' ':
+                values_to_filter = j
+                self.data_sum_count = self.data_sum_count.loc[
+                    self.data_sum_count[column_to_filter].isin(values_to_filter)]
+                self.data_cost_and_circulation = self.data_cost_and_circulation.loc[
+                    self.data_cost_and_circulation[column_to_filter].isin(values_to_filter)]

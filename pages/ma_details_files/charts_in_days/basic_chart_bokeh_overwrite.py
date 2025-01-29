@@ -21,6 +21,7 @@ class BasicChartBokehOverwrite(CreateCharts):
             y_axis_label=self.ylabel,
             sizing_mode='stretch_both'
         )
+
         return p
 
     def create_chart(self, chart_class):

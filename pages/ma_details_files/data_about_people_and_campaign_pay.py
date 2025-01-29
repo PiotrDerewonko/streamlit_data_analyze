@@ -140,6 +140,11 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
                 people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == year) &
                                                  (people_camp['id_korespondenta'].isin(nowi))] = '<3 lata w bazie'
 
+            # dodaje wszystkim z 3 pierwszych lat niej niz 3 lata w bazie
+            people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == 2008)] = '<3 lata w bazie'
+            people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == 2009)] = '<3 lata w bazie'
+            people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == 2010)] = '<3 lata w bazie'
+
             people_camp.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
         except:
             a = ""

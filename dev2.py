@@ -1,28 +1,55 @@
-from datetime import datetime
-
 import pandas as pd
-from pymongo import MongoClient
-
-add = False
+from xhtml2pdf import pisa
 
 # Przykładowy DataFrame
-t1 = datetime.now()
-df = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
-t2 = datetime.now()
-# Utwórz połączenie z bazą danych MongoDB
-client = MongoClient(host='localhost', port=27017)
-print(f'odczyt csv {t2 - t1} ')
-db = client.moja_baza_danych
-collection = db.moja_kolekcja
+df = pd.DataFrame({
+    "Kolumna1": ["Wartość 1", "Wartość 2"],
+    "Kolumna2": ["Wartość 3", "Wartość 4"]
+})
 
-if add:
-    # Konwertuj DataFrame do listy słowników (dokumentów MongoDB)
-    documents = df.to_dict(orient='records')
+# Konwersja DataFrame do HTML
+df_html = df.to_html(index=False)
 
-    # Zapisz dokumenty do kolekcji MongoDB
-    collection.insert_many(documents)
+# Zawartość HTML
+html_content = f"""
+<html>
+<head>
+    <style>
+        body {{
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 14px;
+        }}
+        h1 {{
+            text-align: center;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }}
+        th, td {{
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }}
+        th {{
+            background-color: #f2f2f2;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Raport</h1>
+    <p>To jest przykładowy tekst zawierający polskie znaki: ą, ć, ę, ł, ń, ó, ś, ź, ż.</p>
+    {df_html}
+</body>
+</html>
+"""
 
-t3 = datetime.now()
-df = pd.DataFrame(list(collection.find()))
-t4 = datetime.now()
-print(f'odczyt csv {t2 - t1} odczyt mongo {t4 - t3}')
+# Funkcja do zapisu HTML jako PDF
+def create_pdf(html_content, filename):
+    with open(filename, "w+b") as result_file:
+        pisa_status = pisa.CreatePDF(html_content, dest=result_file)
+    return pisa_status.err
+
+# Przykładowe użycie
+create_pdf(html_content, "report.pdf")

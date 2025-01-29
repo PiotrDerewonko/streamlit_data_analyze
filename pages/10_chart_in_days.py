@@ -21,7 +21,7 @@ with st.container():
     option_list = distinct_columns()
     choosed_options = st.multiselect(options=option_list, default=['grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'],
                                      label='Wybierz dane do wykresu')
-    przelicz_dane = st.button('Wygenereuj dane')
+    przelicz_dane = st.button('Wygeneruj dane')
 
     # wybor opcji do wykresow
     ChartsInDaysBasic = ChartsInDays(mailings, con, years, False, engine)

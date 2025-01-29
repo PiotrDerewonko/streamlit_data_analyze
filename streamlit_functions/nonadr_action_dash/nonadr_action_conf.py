@@ -9,23 +9,28 @@ from streamlit_functions.dashboard.localization_label_db import label_orientatio
 def non_action_main_conf(data_to_show_db, con):
     prime = st.container()
     with prime:
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu', 'Ustawienie wykresu',
-                                    'Filtr danych'])
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(
+            ['Wykres', 'Tabela przestawna', 'Kolumny do wykresu', 'Ustawienie wykresu',
+             'Filtr danych'])
         with tab5:
             magazine = st.multiselect(options=['GOŚĆ NIEDZIELNY', 'NIEDZIELA', 'IDZIEMY', 'CUDA I ŁASKI BOŻE',
-                                               'KTÓŻ JAK BÓG', 'DO RZECZY', 'SIECI', 'DOBRY TYDZIEŃ', 'CUDA I OBJAWIENIA',
+                                               'KTÓŻ JAK BÓG', 'DO RZECZY', 'SIECI', 'DOBRY TYDZIEŃ',
+                                               'CUDA I OBJAWIENIA',
                                                'LUDZIE I WIARA', 'TELETYDZIEŃ', 'PRZYJACIÓŁKA', 'TO I OWO',
                                                'ŻYCIE NA GORĄCO', 'CHWILA DLA CIEBIE', 'TELEŚWIAT', 'TV14', 'KURIER TV',
-                                               'SUPER TV', 'TELEMAX', 'POLSKA PRESS'], label='Prosze wybrać gazety')
-            options_kind_of_gift = pd.read_sql_query('''select distinct value from fsaps_material_parameter where utility_parameter_name_id=1''', con)
+                                               'SUPER TV', 'TELEMAX', 'POLSKA PRESS', 'MOTOR', 'TWOJE IMPERIUM'],
+                                      label='Prosze wybrać gazety')
+            options_kind_of_gift = pd.read_sql_query(
+                '''select distinct value from fsaps_material_parameter where utility_parameter_name_id=1''', con)
 
-            kind_of_gift = st.multiselect(options=options_kind_of_gift['value'].tolist(), label='Proszę wybrać rodzaj giftu')
+            kind_of_gift = st.multiselect(options=options_kind_of_gift['value'].tolist(),
+                                          label='Proszę wybrać rodzaj giftu')
             month_db = st.slider(min_value=1, max_value=12, value=[1, 12], label='Proszę wybrać miesiąc')
             if len(magazine) >= 1:
                 data_to_show_db = data_to_show_db.loc[data_to_show_db['grupa_akcji_2'].isin(magazine)]
             if len(kind_of_gift) >= 1:
                 data_to_show_db = data_to_show_db.loc[data_to_show_db['rodzaj_giftu'].isin(kind_of_gift)]
-            if len(month_db)>=1:
+            if len(month_db) >= 1:
                 data_to_show_db['miesiac_int'] = data_to_show_db['miesiac'].astype(int)
                 data_to_show_db = data_to_show_db.loc[(data_to_show_db['miesiac_int'] >= month_db[0]) & (
                         data_to_show_db['miesiac_int'] <= month_db[1]
@@ -45,7 +50,6 @@ def non_action_main_conf(data_to_show_db, con):
                     {sub_title}'''
             else:
                 title_fin = ''
-
 
             cam_adr_plot_db, test_pivot_db = pivot_and_chart_for_dash(data_to_show_db, levels_db, 'nonaddress',
                                                                       'Wyniki wrzutek bezadresowych za lata ',
