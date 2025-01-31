@@ -29,6 +29,10 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
 
         # todo dodac odcietych i zablkowanych ludzi
 
+        #dodaje wszystkich ludzi ktorzy weszli w danym
+        #max_year = int(str(data_original_people['data_dodania'].max())[:4])
+        max_year = 2009
+
         # zapisuje dane w bazie mongo
         data_all = pd.merge(data_original_short, data_original_people_short, how='left', on=['id_korespondenta'])
 
