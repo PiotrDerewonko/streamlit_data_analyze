@@ -1,55 +1,39 @@
 import pandas as pd
-from xhtml2pdf import pisa
+import streamlit as st
 
 # Przykładowy DataFrame
-df = pd.DataFrame({
-    "Kolumna1": ["Wartość 1", "Wartość 2"],
-    "Kolumna2": ["Wartość 3", "Wartość 4"]
-})
+data = {
+    "Czy ma książkę XYZ": ["tak", "nie", "tak", "nie", "tak"],
+    "Ile książek ma łącznie": [0, 1, 2, 3, 4],
+    "Ulubiony gatunek": ["fantasy", "sci-fi", "kryminał", "fantasy", "sci-fi"]
+}
+df = pd.DataFrame(data)
 
-# Konwersja DataFrame do HTML
-df_html = df.to_html(index=False)
+# Inicjalizacja session state
+if "selected_column" not in st.session_state:
+    st.session_state["selected_column"] = " "
+if "selected_values" not in st.session_state:
+    st.session_state["selected_values"] = []
 
-# Zawartość HTML
-html_content = f"""
-<html>
-<head>
-    <style>
-        body {{
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 14px;
-        }}
-        h1 {{
-            text-align: center;
-        }}
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }}
-        th, td {{
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }}
-        th {{
-            background-color: #f2f2f2;
-        }}
-    </style>
-</head>
-<body>
-    <h1>Raport</h1>
-    <p>To jest przykładowy tekst zawierający polskie znaki: ą, ć, ę, ł, ń, ó, ś, ź, ż.</p>
-    {df_html}
-</body>
-</html>
-"""
+# Lista opcji z domyślną wartością
+column_options = [" "] + list(df.columns)
 
-# Funkcja do zapisu HTML jako PDF
-def create_pdf(html_content, filename):
-    with open(filename, "w+b") as result_file:
-        pisa_status = pisa.CreatePDF(html_content, dest=result_file)
-    return pisa_status.err
+# Wybór kolumny
+selected_column = st.selectbox("Wybierz kolumnę do filtrowania", column_options, index=0)
 
-# Przykładowe użycie
-create_pdf(html_content, "report.pdf")
+# Jeśli użytkownik wybrał kolumnę, wyświetlamy multiselect
+if selected_column != " ":
+    if selected_column != st.session_state["selected_column"]:
+        st.session_state["selected_column"] = selected_column
+        st.session_state["selected_values"] = []  # Reset wyboru
+
+    # Pobranie unikalnych wartości dla wybranej kolumny
+    options = df[selected_column].unique().tolist()
+
+    # Multiselect z dynamicznymi opcjami
+    selected_values = st.multiselect("Wybierz wartości", options, default=st.session_state["selected_values"])
+    st.session_state["selected_values"] = selected_values
+
+    # Wynikowy słownik filtrów
+    filters = {selected_column: selected_values}
+    st.write("Zastosowane filtry:", filters)

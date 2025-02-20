@@ -1,14 +1,12 @@
-from streamlit.web import bootstrap
+import pandas as pd
 
+from database.source_db import mongo_connect
 
-def main():
-    #real_script = './pages/4_db_analyze.py'
-    #real_script = './pages/2_ma_detail.py'
-    #real_script = './pages/7_cycle_of_life.py'
-    real_script = 'main.py'
+db = mongo_connect()
+collectionv2 = db['data_flow']
+collectionv2.delete_many({})
 
-    bootstrap.run(real_script, f'run.py {real_script}', [], {})
-
-
-if __name__ == "__main__":
-    main()
+collection = db['people']
+data_all = pd.read_csv('pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+                                   low_memory=False)
+collection.insert_many(data_all.to_dict('records'))

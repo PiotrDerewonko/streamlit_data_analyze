@@ -1,55 +1,80 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 import pandas as pd
 
-from database.source_db import mongo_connect
+# from database.source_db import mongo_connect
+from pages.flow.add_cut_and_wrong_address import add_cut_and_wrong_address
+from pages.flow.filtr_options import FiltrOptions
 
 
 def download_data_about_flow(refresh_data) -> pd.DataFrame:
     """Funkcja tworzy dane do wykresu przeplywow, jej zadaniem jest przygotowanie danych z ktorych mozna odfiltrowac
      korespondentow po filtrach"""
 
-    db = mongo_connect()
-    collection = db['data_flow']
+    # db = mongo_connect()
+    # collection = db['data_flow']
 
     if refresh_data:
         # pobranie orginlanych danych o kampaniach i ich odfiltorowanie
-        data_original_campaing = pd.read_csv('../ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0',
+        data_original_campaing = pd.read_csv('pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0',
                                              low_memory=False)
         data_original_campaing = data_original_campaing.sort_values(by=['id_korespondenta'])
         data_original_short = data_original_campaing[
             ['id_korespondenta', 'grupa_akcji_3_wysylki', 'TYP DARCZYŃCY']].drop_duplicates()
         data_original_short = data_original_short.iloc[0:10000]
+        # data_original_short = data_original_short
 
         # pobieram orginalne dane na temat ludzi
-        data_original_people = pd.read_csv('../ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+        data_original_people = pd.read_csv('pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                            low_memory=False)
         data_original_people = data_original_people.sort_values(by=['id_korespondenta'])
         data_original_people_short = data_original_people.iloc[0:10000]
-
-        # todo dodac odcietych i zablkowanych ludzi
-
-        #dodaje wszystkich ludzi ktorzy weszli w danym
-        #max_year = int(str(data_original_people['data_dodania'].max())[:4])
-        max_year = 2009
+        # data_original_people_short = data_original_people
 
         # zapisuje dane w bazie mongo
         data_all = pd.merge(data_original_short, data_original_people_short, how='left', on=['id_korespondenta'])
 
+        # todo dodać odciętych i zablokowanych ludzi
+
+        # dodaje wszystkich ludzi ktorzy weszli w danym
+        max_year = int(str(data_original_people['data_dodania'].dropna().max())[:4])
+        data_all = add_cut_and_wrong_address(data_all, max_year, data_original_people_short)
+
         # collection.delete_many({})
-        collection.insert_many(data_all.to_dict('records'))
+        # collection.insert_many(data_all.to_dict('records'))
+
+        # todo po zainstlwoaniu mongo zmienic na mongo a nic csv
+        data_all.to_csv('./pages/flow/tmp_files/data_all.csv', index=False)
 
     else:
         # Pobierz wszystkie dokumenty z kolekcji
-        documents = list(collection.find())
+        # documents = list(collection.find())
 
         # Zamień wynik na ramkę danych
-        data = pd.DataFrame(documents)
+        # data = pd.DataFrame(documents)
+
+        data = pd.read_csv('./pages/flow/tmp_files/data_all.csv', low_memory=False)
         return data
 
 
-def filtr_data_about_flow(data: pd.DataFrame, filtr: Dict) -> pd.DataFrame:
-    # todo zrobic filttrowanie
+def create_filter() -> Tuple[pd.DataFrame, Dict]:
+    filtr_options = FiltrOptions()
+    filtr_options.choose_years_of_add()
+    filtr_options.choose_years_to_analyze()
+    filtr_options.add_other_options()
+
+    return filtr_options.options
+
+
+def filtr_data(data, options) -> pd.DataFrame:
+    """Metoda filtruje ramkę danych na podstawie przekazanego słownika z filtrami. Jeżeli jest przekazny tuple,
+    wtedy znaczy to, że wartośc jest pobrana ze slajdera. Jeśli jest przekazana lista znaczy, że pochodzi od filtra
+    użytkownika. """
+    for i, j in options.items():
+        if isinstance(j, tuple):
+            data = data.loc[(data[i] >= j[0]) & (data[i] <= j[1])]
+        elif isinstance(j, list):
+            data = data.loc[data[i].isin(j)]
     return data
 
 

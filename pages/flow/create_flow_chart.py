@@ -17,8 +17,10 @@ def create_flow_chart(df):
     color_map = {
         "lojalny": "blue",
         "systematyczny": "green",
-        "mniej_niz_3_lata": "orange",
-        "pozostali": "gray"
+        "3 lata w bazie": "orange",
+        "pozostali": "gray",
+        "odcięci": "red",
+        "zwrot": "yellow",
     }
 
     # Przypisujemy kolory do węzłów na podstawie nazw

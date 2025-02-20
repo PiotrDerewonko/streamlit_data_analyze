@@ -14,16 +14,17 @@ def filtr_options(con):
     list_values_3 = [' ']
     list_values_4 = [' ']
     list_of_final_filtr = [[], [], [], []]
-    #inicjalizacja obiektow pierwszych
+    # inicjalizacja obiektow pierwszych
     list_of_objects = ['f1', 'f2', 'f3', 'f4']
     for x in list_of_objects:
         if x not in st.session_state:
             st.session_state[x] = ' '
-    #inicjalizacja obiektow drugich
+    # inicjalizacja obiektow drugich
     list_of_objects_2 = ['f1_value', 'f2_value', 'f3_value', 'f4_value']
     for x in list_of_objects_2:
         if x not in st.session_state:
             st.session_state[x] = ' '
+
     # funkcje do zawezania listy opcji po wybraniu odpowiednije kolumny
     # todo dodac filtry z bazy danych
     def change_options_1(value):
@@ -33,30 +34,38 @@ def filtr_options(con):
 
         for z, row in tmp.items():
             list_values_1.append(row)
+
     def change_options_2(value):
         tmp = filter_value[value]
         tmp.dropna(inplace=True)
         for z, row in tmp.items():
             list_values_2.append(row)
+
     def change_options_3(value):
         tmp = filter_value[value]
         tmp.dropna(inplace=True)
         for z, row in tmp.items():
             list_values_3.append(row)
+
     def change_options_4(value):
         tmp = filter_value[value]
         tmp.dropna(inplace=True)
         for z, row in tmp.items():
             list_values_4.append(row)
+
     # funkcje do tworzenie fina lnego slownika z filtrami
     def filtr_falue_1(value1, value2):
         list_of_final_filtr[0] = [value1, value2]
+
     def filtr_falue_2(value1, value2):
         list_of_final_filtr[1] = [value1, value2]
+
     def filtr_falue_3(value1, value2):
         list_of_final_filtr[2] = [value1, value2]
+
     def filtr_falue_4(value1, value2):
         list_of_final_filtr[3] = [value1, value2]
+
     with c1:
         st.selectbox(label="Pierwszy filtr", options=list, on_change=change_options_1(st.session_state.f1), key='f1')
         st.multiselect(label='Wartosc filtru 1', options=list_values_1,
@@ -70,8 +79,9 @@ def filtr_options(con):
         st.multiselect(label='Wartosc filtru 3', options=list_values_3,
                        on_change=filtr_falue_3(st.session_state.f3, st.session_state.f3_value), key='f3_value')
     with c4:
-        st.selectbox(label="Czwarty filtr", options=[' ', 'Taki sam zakres dni'], on_change=filtr_falue_4(st.session_state.f4,
-                                                                                                     st.session_state.f4_value), key='f4_value')
+        st.selectbox(label="Czwarty filtr", options=[' ', 'Taki sam zakres dni'],
+                     on_change=filtr_falue_4(st.session_state.f4,
+                                             st.session_state.f4_value), key='f4_value')
 
     st.markdown(list_of_final_filtr)
     return list_of_final_filtr
