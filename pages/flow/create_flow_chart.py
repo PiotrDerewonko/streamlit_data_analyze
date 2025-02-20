@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-def create_flow_chart(df):
+def create_flow_chart(df, title):
     # Tworzymy unikalną listę węzłów
     nodes = list(set(df["source"]).union(set(df["target"])))
 
@@ -43,5 +43,5 @@ def create_flow_chart(df):
         )
     )])
 
-    fig.update_layout(title_text="Przepływy ludzi między grupami w latach 2011-2013", font_size=10)
+    fig.update_layout(title_text=title, font_size=10)
     return fig
