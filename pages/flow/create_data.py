@@ -14,7 +14,7 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
     # db = mongo_connect()
     # collection = db['data_flow']
 
-    if refresh_data:
+    if refresh_data =='True':
         # pobranie orginlanych danych o kampaniach i ich odfiltorowanie
         data_original_campaing = pd.read_csv('pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0',
                                              low_memory=False)

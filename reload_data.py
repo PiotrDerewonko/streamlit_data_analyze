@@ -9,6 +9,7 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.distance i
 from pages.cycle_of_life.download_data import download_data_cycle_of_life
 from pages.db_analyze.get_data_to_db_analyze import live_people_from_db, weeks_of_db
 from pages.flow.create_data import download_data_about_flow
+from pages.flow.wrong_address import wrong_address
 from pages.intentions.download_data_intention import download_data_intention_count, download_data_intention_money
 from pages.ma_details_files.add_prefix import add_prefix
 from pages.ma_details_files.addpromisegift import promise_gift
@@ -52,6 +53,7 @@ download_data_for_days_charts(con, engine, refresh_data, 'dash_char_ma_data_by_i
 download_data_for_days_charts(con, engine, refresh_data,
                               'dash_char_ma_data_cost_cir_by_id',
                               '10_chart_in_days/cost_and_cirtulation_for_char_days')
-download_data_about_flow(True)
+download_data_about_flow(refresh_data)
+wrong_address(refresh_data, con)
 
 print('zakończono przeładowanie danych')

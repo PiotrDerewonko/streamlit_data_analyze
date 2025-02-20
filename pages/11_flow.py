@@ -8,7 +8,6 @@ with st.container():
 
     # tworze filtry
     dictionary = create_filter()
-    st.markdown(dictionary, unsafe_allow_html=True)
     reload_data = st.button(label='Przelicz dane')
 
     tab1, = st.tabs(['Wykres'])
