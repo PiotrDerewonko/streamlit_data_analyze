@@ -53,7 +53,8 @@ download_data_for_days_charts(con, engine, refresh_data, 'dash_char_ma_data_by_i
 download_data_for_days_charts(con, engine, refresh_data,
                               'dash_char_ma_data_cost_cir_by_id',
                               '10_chart_in_days/cost_and_cirtulation_for_char_days')
-download_data_about_flow(refresh_data)
 wrong_address(refresh_data, con)
+download_data_about_flow(refresh_data)
+
 
 print('zakończono przeładowanie danych')

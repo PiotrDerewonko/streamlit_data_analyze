@@ -93,7 +93,6 @@ def pivot_and_chart_for_dash(data, multindex, type, title, x_label, dict, *args)
         max_value_for_y_prime = pivot_table_ma.max().max()
     pivot_table_ma.fillna(0, inplace=True)
     source = ColumnDataSource(pivot_table_ma)
-    # todo dokonczyc tooltips tak aby po njaechaniu pokazywal wartosci
 
     'petla w celu uwtorzenia polaczonych nazws kolumn multindexu potrzebnych do wykresu'
     str_mutlindex = ''

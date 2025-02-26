@@ -13,7 +13,6 @@ class ChooseOptionsForIntentions(ChooseOptions):
         super().__init__(con)
 
     def find_last_mailing(self):
-        #todo to jeszcze do przemyslenia co ma sie tu domyslnie wysiwetlac
         default_camp = 'MAILING Q2'
         current_year = datetime.now().year
         return default_camp, current_year

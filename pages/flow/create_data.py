@@ -21,20 +21,18 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
         data_original_campaing = data_original_campaing.sort_values(by=['id_korespondenta'])
         data_original_short = data_original_campaing[
             ['id_korespondenta', 'grupa_akcji_3_wysylki', 'TYP DARCZYŃCY']].drop_duplicates()
-        data_original_short = data_original_short.iloc[0:10000]
-        # data_original_short = data_original_short
+        # data_original_short = data_original_short.iloc[0:10000]
+        data_original_short = data_original_short
 
         # pobieram orginalne dane na temat ludzi
         data_original_people = pd.read_csv('pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
                                            low_memory=False)
         data_original_people = data_original_people.sort_values(by=['id_korespondenta'])
-        data_original_people_short = data_original_people.iloc[0:10000]
-        # data_original_people_short = data_original_people
+        # data_original_people_short = data_original_people.iloc[0:10000]
+        data_original_people_short = data_original_people
 
         # zapisuje dane w bazie mongo
         data_all = pd.merge(data_original_short, data_original_people_short, how='left', on=['id_korespondenta'])
-
-        # todo dodać odciętych i zablokowanych ludzi
 
         # dodaje wszystkich ludzi ktorzy weszli w danym
         max_year = int(str(data_original_people['data_dodania'].dropna().max())[:4])

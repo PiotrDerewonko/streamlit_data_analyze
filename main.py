@@ -43,7 +43,6 @@ with st.container():
     main_action_config(data_to_show_ma, True)
 
     st.header('Dane z głównych wrzutek bezadresowych')
-    # todo wykres z przychodu i do 100 % porzychod
     non_action_main_conf(data_to_show_db, con)
     st.header('Dane dotyczące przyrostu korespondentów')
     tab7, tab8, tab9, tab10 = st.tabs(['Wykres', 'Tabela przestawna', 'Kolumny do wykresu', 'Filtr'])
