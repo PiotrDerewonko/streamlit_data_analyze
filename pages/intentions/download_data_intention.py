@@ -24,7 +24,7 @@ def download_data_intention_count(_con, refresh_data) -> pd.DataFrame:
 
 @st.cache_data(ttl=3600)
 def download_data_intention_money(_con, refresh_data) -> pd.DataFrame:
-    """Zadaniem funkcji jest zwrocenie data frame zawierjacego informacje na temat wplat zwiaznych z intencjami
+    """Zadaniem funkcji jest zwrócenie data frame zawierającego informacje na temat wpłat związanych z intencjami
     swietych i blogoslawionych. Istotne jest aby pokaznae bylo od jakich swietych i blogoslawionych przychodzily
     wplaty (jesli jest to mozliwe do zidentyfikowania)"""
     if refresh_data:

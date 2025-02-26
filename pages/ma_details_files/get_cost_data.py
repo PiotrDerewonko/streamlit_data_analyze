@@ -4,6 +4,7 @@ import streamlit as st
 @st.cache_resource(ttl=7200)
 def get_costs(_con, refresh_data, _engine):
     if refresh_data == 'True':
+        #todo sql do poprawki
         sql = f'''select akc.id_korespondenta, akc.id_akcji,gr3.grupa_akcji_3, gr2.grupa_akcji_2,miejscowosc, jest_zagranica, 
             druki.koszt as koszt_drukow, 
             gifty.koszt as koszt_giftow,

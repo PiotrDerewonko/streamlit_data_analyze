@@ -14,6 +14,7 @@ def add_prefix(con, refresh_data, engine):
         #data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
         #print('zapisano')
         data = change_name_shot_to_long(data)
+        #todo sql do wstawienia w pliki
         sql = '''
 select kod_akcji,grupa_akcji_2, grupa_akcji_3::int, fcma.name as akcja_glowna_mailingu, fca.name as akcja_mailingu 
 from t_akcje ta

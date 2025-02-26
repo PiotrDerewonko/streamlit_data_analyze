@@ -12,6 +12,7 @@ def download_data_cycle_of_life(_con, refresh_data) -> pd.DataFrame:
     if refresh_data == 'True':
         aktualny_rok = int(datetime.datetime.now().year)
         data_all = pd.DataFrame()
+        #todo sqle do porawki
         data_all = download_correspondent_data(_con, aktualny_rok, data_all)
         data_all = download_pay_data(_con, data_all, aktualny_rok)
         data_all = download_mailings(_con, data_all, aktualny_rok)

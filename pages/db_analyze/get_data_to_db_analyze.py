@@ -5,8 +5,10 @@ from dateutil.relativedelta import relativedelta
 
 @st.cache_data(ttl=7200)
 def live_people_from_db(_con, refresh_data):
+    #todo sql do poprawki
     if refresh_data == 'True':
-        id_group_two = '(1, 2, 4,  5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 82, 117, 118, 119,86)'
+        id_group_two = '''(1, 2, 4,  5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 82, 117, 118, 119,86, 120, 121, 122, 
+        123, 124, 125, 126, 127, 128)'''
         sql = f'''select id_akcji, kod_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two} 
         and id_grupy_akcji_3>=8 order by id_akcji desc'''
         list_of_sub_actions = pd.read_sql_query(sql, _con)
@@ -126,6 +128,7 @@ def live_people_from_db(_con, refresh_data):
 @st.cache_resource(ttl=7200)
 def weeks_of_db(_con, refresh_data, _engine):
     if refresh_data == 'True':
+        #todo sql do poprawki
         sql_1 = '''select grupa_akcji_3, grupa_akcji_2,kod_akcji,suma_wplat,pozyskano,
        row_number() over (partition by  kod_akcji order by kod_akcji,rok, num_tygodnia) as numer_tygodnia from (
 

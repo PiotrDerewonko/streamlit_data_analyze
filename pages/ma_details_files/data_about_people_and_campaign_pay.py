@@ -11,6 +11,7 @@ from pages.ma_details_files.data_about_peopla_year_and_vip import add_age_and_vi
 @st.cache_data(ttl=7200)
 def download_data_about_people(_con, refresh_data, limit, filtr_column):
     if refresh_data == 'True':
+        #todo sql do przerobki
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
         list_of_sql = [['''select id_korespondenta, 'jest w \nmodlitwie różańcowej' as modlitwa_rozancowa from 
         t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', '''nie jest \nw modlitwie różańcowej'''],
@@ -209,6 +210,7 @@ order by łączna_ilość_zamowień desc)a'''
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp_pay(_con, refresh_data, _engine):
     if refresh_data == 'True':
+        #todo sql do przerobki
         sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
          grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty, 
          row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by
@@ -239,6 +241,7 @@ and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp(_con, refresh_data, _engine):
     if refresh_data == 'True':
+        #todo sql do przerobki
         sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_1 as grupa_akcji_1_wysylki, 
         grupa_akcji_2 as grupa_akcji_2_wysylki, 
         grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad,
