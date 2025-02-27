@@ -11,7 +11,7 @@ where correspondent_id in (select correspondent_id
                                                                                                where campaign_id in
                                                                                                      (select id
                                                                                                       from fsaps_campaign_campaign
-                                                                                                      where action_group_two_id = 12
-                                                                                                        and action_group_three_id = 18)))))
+                                                                                                      where action_group_two_id = {default_camp}
+                                                                                                        and action_group_three_id = {default_year})))))
 and fvzpd.grupa_akcji_1 in ('DRUKI BEZADRESOWE', 'EVENT')
 group by kod_akcji

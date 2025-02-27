@@ -14,9 +14,8 @@ def execute_sql_files(zapytanie_copy, file):
     mailings, con, engine = deaful_set(f'{sorce_main}')
     try:
         wynik = pd.read_sql_query(zapytanie_copy, con)
-    except psycopg2.Error:
-        assert False, f"Zapytanie SQL spowodowało błąd: dla pliku: {file}"
-    except Exception:
+    except psycopg2.Error as e:
+        print(f"🔴 Błąd podczas wykonywania zapytania z pliku {file}:\n{e}")
         assert False, f"Zapytanie SQL spowodowało błąd: dla pliku: {file}"
     else:
         assert len(wynik) == 1, f"Błędna długość wyniku dla pliku: {file}"

@@ -17,7 +17,6 @@ def download_dash_address_data(con, refresh, engine, type):
         from v_akcja_dodania_korespondenta2
         where id_akcji in (select id_akcji from t_akcje where id_grupy_akcji_2 in {id_group_two})
                 group by grupa_akcji_3, grupa_akcji_2,kod_akcji, miesiac'''
-    # todo sql do przerobki
     if refresh == 'True':
         sql = f'''select grupa_akcji_3, grupa_akcji_2,kod_akcji, sum(kwota) as suma_wplat, count(tr.id_transakcji)
                  as liczba_wplat {extra} from public.t_aktywnosci_korespondentow tak

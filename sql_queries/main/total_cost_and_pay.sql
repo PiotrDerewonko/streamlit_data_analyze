@@ -21,4 +21,4 @@ from fsaps_v_zrodlo_pozyskania_darczyncy fvzpd
                                                    on cost.correspondent_id = zrodlo.correspondent_id
                           group by zrodlo.kod_akcji) koszt
                          on fvzpd.kod_akcji = koszt.kod_akcji
-where fvzpd.grupa_akcji_1 in ('DRUKI BEZADRESOWE', 'EVENT');
+where fvzpd.grupa_akcji_1 in ('DRUKI BEZADRESOWE', 'EVENT')
