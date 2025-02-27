@@ -15,5 +15,5 @@ left outer join fsaps_dictionary_action_group_two fdagt2
 on fcc.action_group_two_id = fdagt2.id
 left outer join fsaps_payment_payment fpp
 on fooa.payment_id = fpp.id
-where fcc.action_group_two_id in (9,10,11,12,24,67,100)
+where fcc.action_group_two_id in (9,10,11,12,24,67,100) and fcc.action_group_one_id = 23
 group by grupa_akcji_3, grupa_akcji_2, kod_akcji
