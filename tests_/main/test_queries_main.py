@@ -4,13 +4,13 @@ import pytest
 
 from tests_.execute_sql_files import execute_sql_files
 
-SQL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../sql_queries/main"))
+SQL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../sql_queries/1_main"))
 EXCLUDE_LIMIT_FILES = {"last_mailing.sql"}
 
 
 @pytest.mark.parametrize("filename, params", [
     ("cost_campaign.sql", {}),
-    ("db_campign.sql", {}),
+    ("db_campaign.sql", {}),
     ("is_still_active.sql", {"{default_camp}": "12", "{default_year}": "18"}),
     ("last_mailing.sql", {}),
     ("ma_campaign.sql", {}),

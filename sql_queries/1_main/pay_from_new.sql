@@ -9,3 +9,4 @@ from fsaps_order_order_answer fooa
 where fvzpd.kod_akcji = fcs.name
 and fvzpd.grupa_akcji_1 in ('DRUKI BEZADRESOWE', 'EVENT')
 group by kod_ackji
+order by fcs.name
