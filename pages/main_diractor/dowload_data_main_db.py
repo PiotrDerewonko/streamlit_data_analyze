@@ -2,7 +2,7 @@
 from pages.main_diractor.download_data_main import DownloadDataMain
 
 def generate_data_main_db(con, engine, test_mode=False):
-    db_data = DownloadDataMain(con, engine, 'dash_db_data')
+    db_data = DownloadDataMain(con, engine, 'dash_db_data', test_mode=test_mode)
     data_db_amount = db_data.get_data_from_sql('sql_queries/1_main/db_campaign.sql')
     data_db_cost = db_data.get_data_from_sql('sql_queries/1_main/cost_campaign.sql')
     list_to_merge_db = [data_db_cost]
@@ -14,7 +14,7 @@ def generate_data_main_db(con, engine, test_mode=False):
     list_to_merge_db.append(data_db_new_people_pay)
     data_db_promise_gift = db_data.get_data_from_sql('sql_queries/1_main/promise_gifts.sql')
     list_to_merge_db.append(data_db_promise_gift)
-    last_mailng = db_data.get_data_from_sql('sql_queries/1_main/last_mailing.sql')
+    last_mailng = db_data.get_data_from_sql_with_out_limit('sql_queries/1_main/last_mailing.sql')
     dict_to_replace = {'{default_camp}': last_mailng['grupa_akcji_2'].iloc[0],
                        '{default_year}': last_mailng['grupa_akcji_3'].iloc[0]}
     data_db_is_still_active = db_data.get_data_from_sql_with_replace('sql_queries/1_main/is_still_active.sql',

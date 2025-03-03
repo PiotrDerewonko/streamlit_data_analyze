@@ -19,6 +19,13 @@ class DownloadDataMain:
         print(f'pobrano dane z {file_name}')
         return data
 
+    def get_data_from_sql_with_out_limit(self, file_name) -> pd.DataFrame:
+        """Metoda pobiera dane dotyczące wpływów z mailingów."""
+        sql = read_file_sql(file_name)
+        data = pd.read_sql(sql, con=self.con)
+        print(f'pobrano dane z {file_name}')
+        return data
+
     def get_data_from_sql_with_replace(self, file_name, dictionary) -> pd.DataFrame:
         """Metoda pobiera dane dotyczące wpływów z mailingów."""
         sql = read_file_sql(file_name)

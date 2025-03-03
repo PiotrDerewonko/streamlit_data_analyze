@@ -9,9 +9,10 @@ EXCLUDE_LIMIT_FILES = {"last_mailing.sql"}
 
 
 @pytest.mark.parametrize("filename, params", [
+    ("increase_correspondents.sql", {"{default_camp}": "MAILING Q4", "{default_year}": "2024"}),
     ("cost_campaign.sql", {}),
     ("db_campaign.sql", {}),
-    ("is_still_active.sql", {"{default_camp}": "12", "{default_year}": "18"}),
+    ("is_still_active.sql", {"{default_camp}": "MAILING Q4", "{default_year}": "2024"}),
     ("last_mailing.sql", {}),
     ("ma_campaign.sql", {}),
     ("pay_from_new.sql", {}),

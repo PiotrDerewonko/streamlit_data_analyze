@@ -15,12 +15,12 @@ where correspondent_id in (select correspondent_id
                                                                                                           action_group_two_id in
                                                                                                           (select id
                                                                                                            from fsaps_dictionary_action_group_two
-                                                                                                           where name = '{default_camp}')
+                                                                                                           where text = '{default_camp}')
                                                                                                         and
                                                                                                           action_group_three_id in
                                                                                                           (select id
                                                                                                            from fsaps_dictionary_action_group_three
-                                                                                                           where name = '{default_year}'))))))
+                                                                                                           where text = '{default_year}'))))))
                              and fvzpd.grupa_akcji_1 in ('DRUKI BEZADRESOWE', 'EVENT')
                            group by kod_akcji
 order by kod_akcji

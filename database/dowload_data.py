@@ -134,7 +134,6 @@ group by kod_akcji'''
 
 def download_increase_data(con, refresh, engine):
     if refresh == 'True':
-        # todo sql do przerobki
         sql = '''select id_grupy_akcji_2, ta.id_grupy_akcji_3, data, gr3.grupa_akcji_3 from t_akcje_korespondenci tak
          left outer join t_akcje ta 
          on ta.id_akcji = tak.id_akcji
