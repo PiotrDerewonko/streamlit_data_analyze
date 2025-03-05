@@ -35,10 +35,10 @@ with st.container():
 
     last_mailing = st.checkbox(label='Tylko osoby z ostatnim mailingiem Q', value=True)
     positive_adr = st.checkbox(label='Tylko osoby z poprawnym adresem', value=True)
-    if last_mailing == True:
+    if last_mailing:
         data = data.loc[data['last_mailing'] == True]
 
-    if positive_adr == True:
+    if positive_adr:
         data = data.loc[data['good_address'] == 'poprawny_adres']
 
     data.dropna(subset=['grupa_akcji_1'], inplace=True)

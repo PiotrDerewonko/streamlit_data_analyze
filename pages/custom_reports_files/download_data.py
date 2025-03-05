@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from pages.main_diractor.download_data_main import DownloadDataMain
@@ -40,9 +42,23 @@ class DownloadDataDistance(DownloadDataMain):
         data['status_second_pay'].loc[data['status_second_pay'] == ''] = 'Nie ponowił wpłaty'
         return data
 
+    @staticmethod
+    def app_data_to_pay_data(data) -> pd.DataFrame:
+        """Metoda określa daty pierwszej i drugiej wpłaty"""
+        tmp = data['id_korespondenta'].drop_duplicates().to_frame()
+        tmp2 = data.loc[data['numer'] == 1]
+        tmp2 = tmp2.rename(columns={'data_wplywu_srodkow': 'first_pay'})
+        tmp = tmp.merge(tmp2, on='id_korespondenta', how='left')
+        tmp2 = data.loc[data['numer'] == 2]
+        tmp2 = tmp2.rename(columns={'data_wplywu_srodkow': 'second_pay'})
+        tmp = tmp.merge(tmp2, on='id_korespondenta', how='left')
+        return tmp
+
 
 def generate_data_distance_first_nad_second_pay(con, engine, test_mode=False):
-    data_distance = DownloadDataDistance(con, engine, 'pages/cycle_of_life/tmp_file/data_distance.csv',
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    csv_path = csv_path + '/tmp_files/data_distance.csv'
+    data_distance = DownloadDataDistance(con, engine, csv_path,
                                          test_mode=test_mode)
     last_mailing = data_distance.get_data_from_sql_with_out_limit('sql_queries/1_main/last_mailing.sql')
     dict_to_replace = {'{default_camp}': last_mailing['grupa_akcji_2'].iloc[0],
@@ -50,6 +66,7 @@ def generate_data_distance_first_nad_second_pay(con, engine, test_mode=False):
     data_about_corr = data_distance.get_data_from_sql_with_replace(
         'sql_queries/3_distance_1_and_second_pay/data_about_correspondents.sql', dict_to_replace)
     data_about_pay = data_distance.get_data_from_sql('sql_queries/3_distance_1_and_second_pay/data_about_pay.sql')
+    data_about_pay = data_distance.app_data_to_pay_data(data_about_pay)
     data_all = data_distance.merge_data(data_about_corr, [data_about_pay], 'id_korespondenta')
     data_all = data_distance.setup_data(data_all)
     data_all = data_distance.check_first_pay(data_all)
@@ -57,7 +74,9 @@ def generate_data_distance_first_nad_second_pay(con, engine, test_mode=False):
     data_distance.insert_data(data_all)
 
 def download_data_distance_first_nad_second_pay(con, engine, test_mode=False) -> pd.DataFrame:
-    data_distance = DownloadDataDistance(con, engine, 'pages/cycle_of_life/tmp_file/data_distance.csv',
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    csv_path = csv_path + '/tmp_files/data_distance.csv'
+    data_distance = DownloadDataDistance(con, engine, csv_path,
                                          test_mode=test_mode)
     data_to_return = data_distance.download_data()
     return data_to_return

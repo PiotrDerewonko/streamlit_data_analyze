@@ -59,6 +59,7 @@ from fsaps_v_zrodlo_pozyskania_darczyncy fvzpd
                          on fvzpd.correspondent_id = adr.id_korespondenta
          left outer join fsaps_correspondent_correspondent_salutation fccs
                          on adr.tytul = fccs.text
+order by fvzpd.correspondent_id
 
 
 

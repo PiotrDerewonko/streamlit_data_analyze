@@ -5,7 +5,6 @@ from pages.custom_reports_files.distance_between_first_and_second_pay.down_data_
 
 
 def distance_between_first_and_second_pay(con, engine, refresh_data):
-    #todo sql do przerobki
     data_corr = down_data_about_cor(con, engine, refresh_data)
     data_pay = down_data_about_pay(con, engine, refresh_data)
     data_corr_pay = data_corr.merge(data_pay, on='id_korespondenta', how='left')
