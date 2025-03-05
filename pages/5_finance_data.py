@@ -2,14 +2,18 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from dotenv import dotenv_values
+
 sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
 from database.source_db import deaful_set
+
 mailings, con, engine = deaful_set(f'{sorce_main}')
 refresh_data = 'False'
 from datetime import datetime as date
+
 with st.container():
+    #todo sql do przerobki
     sql = '''select suma_wplat, rok, case when miesiac<10 then '0'||(miesiac)::text else miesiac::text end as miesiac, typ from (
 select sum(kwota) as suma_wplat, date_part('year', data_wplywu_srodkow) as rok,
  date_part('month', data_wplywu_srodkow) as miesiac,
@@ -31,7 +35,7 @@ group by rok, miesiac, typ)a'''
     with st.sidebar:
         year_range_slider = st.slider('Proszę wybrać lata', min_value=2008, max_value=date.now().year,
                                       value=[date.now().year - 4, date.now().year])
-        month_range_slider = st.slider('Proszę wybrać miesiące', min_value=1, max_value=12, value=[1,12])
+        month_range_slider = st.slider('Proszę wybrać miesiące', min_value=1, max_value=12, value=[1, 12])
         choose_type = st.multiselect('Wybierz typ wpłaty', options=list_options, default=list_options)
 
     year_from = year_range_slider[0]
@@ -47,7 +51,8 @@ group by rok, miesiac, typ)a'''
     data['miesiac'] = data['miesiac'].astype(str)
     columns_options = st.multiselect(options=['rok', 'miesiac'], default=['rok'],
                                      label='Prosze wybrać dane do układu')
-    pivot = pd.pivot_table(data.loc[data['typ'].isin(choose_type)], index=columns_options, values='suma_wplat', columns='typ', aggfunc='sum')
+    pivot = pd.pivot_table(data.loc[data['typ'].isin(choose_type)], index=columns_options, values='suma_wplat',
+                           columns='typ', aggfunc='sum')
     list_of_columns = pivot.columns
     pivot_cum = pivot.copy()
     pivot_cum.fillna(0, inplace=True)
@@ -62,18 +67,22 @@ group by rok, miesiac, typ)a'''
 
     char_options_df_weeks = pd.DataFrame(columns=['Nazwa parametru', 'oś', 'Opcje'])
     for i in range(0, len(pivot.columns)):
-        tmp = pd.DataFrame(data={'Nazwa parametru': pivot.columns[i], 'oś': 'Oś główna', 'Opcje': 'Wykres Słupkowy Skumulowany'}, index=[i])
+        tmp = pd.DataFrame(
+            data={'Nazwa parametru': pivot.columns[i], 'oś': 'Oś główna', 'Opcje': 'Wykres Słupkowy Skumulowany'},
+            index=[i])
         char_options_df_weeks = pd.concat([char_options_df_weeks, tmp])
     dict_of_oriantation = {'major': 'vertical', 'group': 'vertical', 'sub_group': 'vertical'}
 
     char_finance, aa = pivot_and_chart_for_dash(data, columns_options, 'me_detail', 'test tytulu',
-                                          'Rok/miesiąc', {}, pivot, char_options_df_weeks, 'Suma wpłat w podziale na źrodło darowizny',
-                                               dict_of_oriantation
-                                          )
+                                                'Rok/miesiąc', {}, pivot, char_options_df_weeks,
+                                                'Suma wpłat w podziale na źrodło darowizny',
+                                                dict_of_oriantation
+                                                )
     char_finance_to100, aaa = pivot_and_chart_for_dash(data, columns_options, 'me_detail', 'test tytulu',
-                                          'Rok/miesiąc', {}, pivot_cum, char_options_df_weeks, 'Suma wpłat w podziale na źrodło darowizny',
-                                               dict_of_oriantation
-                                          )
+                                                       'Rok/miesiąc', {}, pivot_cum, char_options_df_weeks,
+                                                       'Suma wpłat w podziale na źrodło darowizny',
+                                                       dict_of_oriantation
+                                                       )
     tab1, tab2, tab3 = st.tabs(['Suma wpłat', 'Struktura wpłat', 'ROI'])
     with tab1:
         st.bokeh_chart(char_finance, use_container_width=True)
@@ -89,7 +98,7 @@ group by rok, miesiac, typ)a'''
             switch_value = ['rok', 'typ']
         else:
             switch_value = ['typ', 'rok']
-        sql ='''select koszt as suma_wplat, rok::int, typ from (
+        sql = '''select koszt as suma_wplat, rok::int, typ from (
 select sum(koszt_calkowity) as koszt, grupa_akcji_3 as rok,
        case when ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100) then a.grupa_akcji_2
 when ta.id_grupy_akcji_1 in (22, 24) then 'Druki i prawdopodobne druki'
@@ -105,10 +114,12 @@ group by rok,  typ)a'''
         cost_data.dropna(inplace=True)
         cost_data = cost_data.loc[(cost_data['rok'] >= year_from) & (cost_data['rok'] <= year_to)]
         cost_data['rok'] = cost_data['rok'].astype(str)
-        pivot_pay_year = pd.pivot_table(data.loc[data['typ'].isin(choose_type)], index=switch_value, values='suma_wplat',
-                                aggfunc='sum')
-        pivot_cost_year = pd.pivot_table(cost_data.loc[cost_data['typ'].isin(choose_type)], index=switch_value, values='suma_wplat',
-                                aggfunc='sum')
+        pivot_pay_year = pd.pivot_table(data.loc[data['typ'].isin(choose_type)], index=switch_value,
+                                        values='suma_wplat',
+                                        aggfunc='sum')
+        pivot_cost_year = pd.pivot_table(cost_data.loc[cost_data['typ'].isin(choose_type)], index=switch_value,
+                                         values='suma_wplat',
+                                         aggfunc='sum')
         pivot_cost_year.fillna(0, inplace=True)
         pivot_pay_year.fillna(0, inplace=True)
         pivot_dev = pivot_pay_year.div(pivot_cost_year)
@@ -124,10 +135,10 @@ group by rok,  typ)a'''
         pivot_dev['rok'] = pivot_dev['rok'].astype(str)
         pivot_dev.set_index(switch_value, inplace=True)
         roi, aa = pivot_and_chart_for_dash(cost_data, switch_value, 'me_detail', 'test tytulu',
-                                                    'Rok/miesiąc', {}, pivot_dev, char_options_df_weeks,
-                                                    'Suma wpłat w podziale na źrodło darowizny',
-                                                    dict_of_oriantation
-                                                    )
+                                           'Rok/miesiąc', {}, pivot_dev, char_options_df_weeks,
+                                           'Suma wpłat w podziale na źrodło darowizny',
+                                           dict_of_oriantation
+                                           )
         st.bokeh_chart(roi, use_container_width=True)
         with st.expander('Kiknij i zobacz dane'):
             st.dataframe(pivot_dev)

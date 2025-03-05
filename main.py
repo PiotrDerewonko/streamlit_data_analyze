@@ -26,6 +26,7 @@ with st.sidebar:
 year_from = year_range_slider[0]
 year_to = year_range_slider[1]
 
+#todo zmienic zrodlo danych
 data_ma = download_dash_address_data(con, refresh_data, engine, 'address')
 data_to_show_ma = data_ma.loc[(data_ma['grupa_akcji_3'] >= year_from) & (data_ma['grupa_akcji_3'] <= year_to)]
 data_db = download_dash_address_data(con, refresh_data, engine, 'non address')

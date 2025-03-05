@@ -55,7 +55,6 @@ left outer join (select tytul , case when id_plci=1 then 'mężczyźni'
 @st.cache_resource(ttl=7200)
 def down_data_about_pay(_con, _engine, refresh):
     if refresh == 'True':
-        #todo poporawic gdy druga wplata byla tego samego dnia to jej nie brac
         sql = '''select id_korespondenta, data_wplywu_srodkow, numer from (
         select id_korespondenta, data_wplywu_srodkow, row_number() over (PARTITION BY id_korespondenta
         order by id_korespondenta, data_wplywu_srodkow) as numer from (select distinct id_korespondenta

@@ -3,8 +3,7 @@ from dotenv import dotenv_values
 
 from database.source_db import deaful_set
 from functions_pandas.plot_cam_adr_dash import pivot_and_chart_for_dash
-from pages.custom_reports_files.distance_between_first_and_second_pay.distance import \
-    distance_between_first_and_second_pay
+from pages.custom_reports_files.download_data import download_data_distance_first_nad_second_pay
 
 with st.container():
     sorce_main = dotenv_values('.env')
@@ -20,7 +19,7 @@ with st.container():
                                label='Prosze wybrac index',
                                default=['grupa_akcji_1'])
 
-    data = distance_between_first_and_second_pay(con, engine, refresh_data)
+    data = download_data_distance_first_nad_second_pay(con, engine)
     default_gr1 = data['grupa_akcji_1'].drop_duplicates()
     gr1 = st.multiselect(options=default_gr1,
                          label='Prosze wybrac zawezenie danych',
