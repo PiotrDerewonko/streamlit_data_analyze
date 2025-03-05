@@ -49,13 +49,20 @@ class DownloadDataMain:
         return main_df
 
     def insert_data(self, main_df):
-        """Metoda wstawia dane do bazy danych."""
-        main_df.to_sql(self.table_name, self.engine, if_exists='replace', schema='raporty', index=False)
+        """Metoda na podstawie nazwy tabeli wstawia dane do bazy danych lub zapisuje do pliku csv."""
+        if self.table_name.endswith(".csv"):
+            main_df.to_csv(self.table_name, index=False)
+        else:
+            main_df.to_sql(self.table_name, self.engine, if_exists='replace', schema='raporty', index=False)
         print(f'dodano do bazy danych dane do tabeli {self.table_name}')
 
     def download_data(self) -> pd.DataFrame:
-        """Metoda do pobierania danych i zwrócenia data frame"""
-        sql = f'''select * from raporty.{self.table_name}'''
-        data_to_return = pd.read_sql_query(sql, self.con)
-        data_to_return['grupa_akcji_3'] = data_to_return['grupa_akcji_3'].astype(int)
+        """Metoda do pobierania danych i zwrócenia data frame. W zależności od przekazanego parametru table_name
+        pobiera dane z csv lub z bazy danych."""
+        if self.table_name.endswith(".csv"):
+            data_to_return = pd.read_csv(self.table_name)
+        else:
+            sql = f'''select * from raporty.{self.table_name}'''
+            data_to_return = pd.read_sql_query(sql, self.con)
+            data_to_return['grupa_akcji_3'] = data_to_return['grupa_akcji_3'].astype(int)
         return data_to_return

@@ -13,3 +13,4 @@ pages/ma_details_files/tmp_file/*
 /pages/intentions/tmp_files/
 /pages/chart_in_days/tmp_file/*
 /pages/flow/tmp_files/*
+/pages/custom_reports_files/tmp_files/*
