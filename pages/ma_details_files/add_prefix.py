@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -8,31 +9,15 @@ from functions_pandas.short_mailings_names import change_name_shot_to_long
 def add_prefix(con, refresh_data, engine):
     if refresh_data=='True':
         data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
-        #tmp = pd.read_excel('./pages/ma_details_files/tmp_file/zastepcze.xlsx', sheet_name='Arkusz1')
-        #data = pd.merge(data, tmp, on='kod_akcji_wysylki', how='left')
-
-        #data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
-        #print('zapisano')
         data = change_name_shot_to_long(data)
-        #todo sql do wstawienia w pliki
-        sql = '''
-select kod_akcji,grupa_akcji_2, grupa_akcji_3::int, fcma.name as akcja_glowna_mailingu, fca.name as akcja_mailingu 
-from t_akcje ta
-    left outer join t_grupy_akcji_2 gr2
-    on gr2.id_grupy_akcji_2=ta.id_grupy_akcji_2
-    left outer join t_grupy_akcji_3 gr3
-    on gr3.id_grupy_akcji_3=ta.id_grupy_akcji_3
-left outer join fsaps_campaign_campaign fcc
-on fcc.action_group_one_id=ta.id_grupy_akcji_1 and fcc.action_group_two_id = ta.id_grupy_akcji_2 and
-   fcc.action_group_three_id = ta.id_grupy_akcji_3
-left outer join (select * from fsaps_campaign_main_action where newly_acquired=False) fcma on fcc.id = fcma.campaign_id and
-                                                   ta.kod_akcji like '%'||fcma.prefix||'%'
-left outer join fsaps_campaign_action fca on fcma.id = fca.action_main_id and 
-                                                   ta.kod_akcji like '%'||fca.prefix||'%'
-where id_grupy_akcji_1=23 and  ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100)
 
-'''
-        tmp = pd.read_sql_query(sql, con)
+        #dodaje krotki nazwy
+        sql_file_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__),
+                         f'../.././sql_queries/2_ma_detail/short_names.sql'))
+        with open(sql_file_path, 'r') as sql_file:
+            zapytanie = sql_file.read()
+        tmp = pd.read_sql_query(zapytanie, con)
         data = pd.merge(data, tmp, how='left', left_on=['kod_akcji_wysylki', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'],
                         right_on=['kod_akcji', 'grupa_akcji_2', 'grupa_akcji_3'])
 
