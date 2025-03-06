@@ -241,7 +241,6 @@ and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp(_con, refresh_data, _engine):
     if refresh_data == 'True':
-        #todo sql do przerobki
         sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_1 as grupa_akcji_1_wysylki, 
         grupa_akcji_2 as grupa_akcji_2_wysylki, 
         grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad,
