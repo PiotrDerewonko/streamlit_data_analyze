@@ -52,9 +52,11 @@ class DownloadDataMain:
         """Metoda na podstawie nazwy tabeli wstawia dane do bazy danych lub zapisuje do pliku csv."""
         if self.table_name.endswith(".csv"):
             main_df.to_csv(self.table_name, index=False)
+            print(f'zapisano dane do pliku {self.table_name}')
         else:
             main_df.to_sql(self.table_name, self.engine, if_exists='replace', schema='raporty', index=False)
-        print(f'dodano do bazy danych dane do tabeli {self.table_name}')
+            print(f'dodano do bazy danych dane do tabeli {self.table_name}')
+
 
     def download_data(self) -> pd.DataFrame:
         """Metoda do pobierania danych i zwrócenia data frame. W zależności od przekazanego parametru table_name
