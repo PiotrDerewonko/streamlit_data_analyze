@@ -210,7 +210,6 @@ order by łączna_ilość_zamowień desc)a'''
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp_pay(_con, refresh_data, _engine):
     if refresh_data == 'True':
-        #todo sql do przerobki
         sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
          grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty, 
          row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by
@@ -277,7 +276,6 @@ and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.i
 @st.cache_data(ttl=3600)
 def data_pay_all(_con, refresh_data):
     if refresh_data == 'True':
-
         sql_file_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__),
                          '../.././sql_queries/2_ma_detail/paymant_from_mailing.sql'))
