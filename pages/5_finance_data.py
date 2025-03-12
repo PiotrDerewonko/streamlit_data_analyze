@@ -13,7 +13,6 @@ refresh_data = 'False'
 from datetime import datetime as date
 
 with st.container():
-    #todo sql do przerobki
     sql = '''select suma_wplat, rok, case when miesiac<10 then '0'||(miesiac)::text else miesiac::text end as miesiac, typ from (
 select sum(kwota) as suma_wplat, date_part('year', data_wplywu_srodkow) as rok,
  date_part('month', data_wplywu_srodkow) as miesiac,
