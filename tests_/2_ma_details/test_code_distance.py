@@ -8,6 +8,8 @@ from pages.ma_details_files.download_data.data_about_pay_in_campaign import gene
     download_data_about_pay_in_campaign
 from pages.ma_details_files.download_data.data_about_people_in_campaign import generate_data_about_people_in_campaign, \
     download_data_about_people_in_campaign
+from pages.ma_details_files.download_data.data_about_cost_in_campaign import generate_data_about_cost_in_campaign, \
+    download_data_about_cost_in_campaign
 
 # Znajdź katalog główny projektu
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -28,9 +30,18 @@ def test_code_data_about_people_in_campaign():
     if len(data_ma_detail) == 0:
         assert False, 'zwrócony plik jest Dataframe, ale jest pusty'
 
+
 def test_code_data_about_pay_in_campaign():
     generate_data_about_pay_in_campaign(con, engine, True)
     data_ma_detail = download_data_about_pay_in_campaign(con, engine, True)
+    if not isinstance(data_ma_detail, pd.DataFrame):
+        assert False, 'zwrócone dane nie są typu DataFrame'
+    if len(data_ma_detail) == 0:
+        assert False, 'zwrócony plik jest Dataframe, ale jest pusty'
+
+def test_code_data_about_cost_in_campaign():
+    generate_data_about_cost_in_campaign(con, engine, True)
+    data_ma_detail = download_data_about_cost_in_campaign(con, engine, True)
     if not isinstance(data_ma_detail, pd.DataFrame):
         assert False, 'zwrócone dane nie są typu DataFrame'
     if len(data_ma_detail) == 0:
