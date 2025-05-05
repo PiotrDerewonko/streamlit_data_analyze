@@ -7,6 +7,10 @@ from pages.main_diractor.dowload_data_main_ma import generate_data_main_ma
 from pages.main_diractor.download_data_incerease import generate_data_main_increase
 from pages.ma_details_files.download_data.data_about_pay_in_days import generate_data_about_sum_and_count_in_days, \
     generate_data_about_cost_and_circulation_in_days
+from pages.ma_details_files.download_data.data_about_cost_in_campaign import generate_data_about_cost_in_campaign
+from pages.ma_details_files.download_data.data_about_pay_in_campaign import generate_data_about_pay_in_campaign
+from pages.ma_details_files.download_data.data_about_people_in_campaign import generate_data_about_people_in_campaign
+from pages.ma_details_files.download_data.data_about_structure_of_pays import generate_data_about_structure_of_pays
 
 sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
@@ -22,7 +26,10 @@ generate_data_main_increase(con, engine)
 # Dane do zakładki 2_ma_detail
 generate_data_about_sum_and_count_in_days(con, engine)
 generate_data_about_cost_and_circulation_in_days(con, engine)
-
+generate_data_about_cost_in_campaign(con, engine)
+generate_data_about_pay_in_campaign(con, engine)
+generate_data_about_people_in_campaign(con, engine)
+generate_data_about_structure_of_pays(con, engine)
 
 # Dane do zakłdki 3_ custorm report
 generate_data_distance_first_nad_second_pay(con, engine)
