@@ -26,16 +26,16 @@ refresh_data = 'True'
 mail, con, engine = deaful_set(sorce_main)
 print('rozpoczynam przeładowanie danych')
 
-download_dash_address_data(con, refresh_data, engine, 'address')
-download_dash_address_data(con, refresh_data, engine, 'non address')
-down_data_cost_and_circulation(con, refresh_data, engine)
-down_data_sum_and_count(con, refresh_data, engine)
-download_increase_data(con, refresh_data, engine)
+download_dash_address_data(con, refresh_data, engine, 'address') # zrobione
+download_dash_address_data(con, refresh_data, engine, 'non address') # zrobione
+down_data_cost_and_circulation(con, refresh_data, engine) # zrobione
+down_data_sum_and_count(con, refresh_data, engine) # zrobione
+download_increase_data(con, refresh_data, engine) # zrobione
 distance_between_first_and_second_pay(con, engine, refresh_data)
-download_data_about_people_camp(con, refresh_data, engine)
+download_data_about_people_camp(con, refresh_data, engine) # zrobione
 download_data_about_people(con, refresh_data, 0, [])
-download_data_about_people_camp_pay(con, refresh_data, engine)
-data_pay_all(con, refresh_data)
+download_data_about_people_camp_pay(con, refresh_data, engine) #zrobione
+data_pay_all(con, refresh_data) # do dokonczenia
 check_max_day(refresh_data)
 add_prefix(con, refresh_data, engine)
 promise_gift()

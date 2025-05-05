@@ -1,7 +1,7 @@
 select correspondent_id         as id_korespondenta,
        fcs.name                 as kod_akcji,
        fdago.text               as grupa_akcji_1_wysylki,
-       fdagt.text                  asgrupa_akcji_2_wysylki,
+       fdagt.text               as grupa_akcji_2_wysylki,
        fdagt2.text              as grupa_akcji_3_wysylki,
        cost.koszt,
        1                        as naklad,

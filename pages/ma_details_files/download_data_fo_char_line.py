@@ -18,7 +18,7 @@ def download_data(con, text) -> pd.DataFrame:
     with open(sql_file_path, 'r') as sql_file:
         zapytanie = sql_file.read()
 
-    # zmienna pomocnicza konieczna do okreslenia roku poprzedniego, poniewaz w bazie danych jest jedna wartosc
+    # zmienna pomocnicza konieczna do określenia roku poprzedniego, ponieważ w bazie danych jest jedna wartość
     # nie liczbowa
     tmp = 0
     for j in list_of_years:

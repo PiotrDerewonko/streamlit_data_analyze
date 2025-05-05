@@ -7,7 +7,7 @@ EXCLUDE_LIMIT_FILES = {"find_last_mailing.sql"}
 
 TEST_CASES = [
     ("age.sql", {"#A#": '2025'}),
-    ("cost_and_cirtulation_for_char_days.sql", {"#A#": '9', "#B#": '18', "#C#": '17'}),
+    ("cost_and_circulation_for_char_days.sql", {"#A#": '9', "#B#": '18', "#C#": '17'}),
     ("count_and_sum_amount_char_for_days.sql", {"#A#": '9', "#B#": '18', "#C#": '17'}),
     ("find_last_mailing.sql", {}),
     ("is_vip_for_year.sql", {"#A#": '2025', "#B#": '2024'}),
@@ -16,5 +16,6 @@ TEST_CASES = [
     ("people_camp_data.sql", {}),
     ("short_names.sql", {}),
     ("payment_from_mailingv2.sql", {}),
-    ("big_cost.sql", {})]
+    ("big_cost.sql", {}),
+    ("people_camp_data.sql", {})]
 test_sql_queries = run_sql_test(SQL_DIR, TEST_CASES, EXCLUDE_LIMIT_FILES)
