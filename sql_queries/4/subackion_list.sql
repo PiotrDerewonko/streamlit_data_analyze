@@ -1,4 +1,5 @@
 select fcs.name                                                          as kod_akcji,
+       fcs.id                                                            as id_akcji,
        split_part(fcs.name, '_', 3)                                      as miesiac,
        fdago.text                                                        as grupa_akcji_1,
        case when fdagt.text is null then fdagt3.text else fdagt.text end as grupa_akcji_2,

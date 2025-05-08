@@ -41,3 +41,4 @@ from (select fdagt3.text                 as grupa_akcji_3,
       where fcc.action_group_one_id = 22
         and fcc.action_group_three_id >= 8
       group by grupa_akcji_3, grupa_akcji_2, kod_akcji, num_tygodnia, rok) foo
+order by kod_akcji

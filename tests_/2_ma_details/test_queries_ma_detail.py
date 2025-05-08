@@ -17,5 +17,6 @@ TEST_CASES = [
     ("short_names.sql", {}),
     ("payment_from_mailingv2.sql", {}),
     ("big_cost.sql", {}),
-    ("people_camp_data.sql", {})]
+    ("people_camp_data.sql", {}),
+    ("card_for_mailings.sql", {})]
 test_sql_queries = run_sql_test(SQL_DIR, TEST_CASES, EXCLUDE_LIMIT_FILES)

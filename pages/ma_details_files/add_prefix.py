@@ -8,7 +8,8 @@ from functions_pandas.short_mailings_names import change_name_shot_to_long
 
 def add_prefix(con, refresh_data, engine):
     if refresh_data=='True':
-        data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+        path_to_file = os.path.abspath(os.path.join(os.path.dirname(__file__), './tmp_file/people_camp.csv'))
+        data = pd.read_csv(path_to_file)
         data = change_name_shot_to_long(data)
 
         #dodaje krotki nazwy
@@ -92,89 +93,19 @@ def add_prefix(con, refresh_data, engine):
             for i in value:
                 data['WPŁATA'].loc[(data['kod_akcji_wysylki'].str.contains(i))] = key
 
-        sql = '''select id_korespondenta, grupa_akcji_2 AS grupa_akcji_2_wysylki, grupa_akcji_3::int AS grupa_akcji_3_wysylki
-        , case when
-jaka_karta_wtedy = 0  then 'NIEBIESKA'
-when jaka_karta_wtedy = 1 then 'SREBRNA'
-when jaka_karta_wtedy = 2 then 'ZŁOTA'
-else 'BRAK DANYCH'
-end as KARTA_NA_MAILING
-from
-                                                           (
-                                                               select distinct ak.id_korespondenta,
-                                                                               t.grupa_akcji_2,
-                                                                               tga3.grupa_akcji_3,
 
-                                                                               case
-                                                                                   when ak.data >=
-                                                                                        wydanie_niebieskiej and
-                                                                                        (ak.data < wydanie_srebrnej or wydanie_srebrnej is null)
-                                                                                        and (ak.data < wydanie_zlotej or wydanie_zlotej is null)
-                                                                                       then karta.niebieska
-                                                                                   when ak.data >= wydanie_srebrnej and
-                                                                                        (ak.data < wydanie_zlotej or wydanie_zlotej is null)
-                                                                                       then karta.srebrna
-                                                                                   when ak.data >= wydanie_zlotej
-                                                                                       then karta.zlota
-                                                                                   else null end as jaka_karta_wtedy
+        #dodaje kolumnę która określa jaki kolor karty miał darczyńca na dany mailing
+        sql_color_cards_localization = os.path.abspath(
+            os.path.join(os.path.dirname(__file__),
+                         f'../.././sql_queries/2_ma_detail/card_for_mailings.sql'))
+        with open(sql_color_cards_localization, 'r') as sql_file:
+            sql_color_cards = sql_file.read()
 
-                                                               from t_akcje_korespondenci ak
-
-                                                                        left join
-                                                                    (
-                                                                        select k.id_korespondenta,
-                                                                               case
-                                                                                   when (niebieska.wydanie_niebieskiej >= srebrna.wydanie_srebrnej) or
-                                                                                        (niebieska.wydanie_niebieskiej >= zlota.wydanie_zlotej)
-                                                                                       then null
-                                                                                   else niebieska.wydanie_niebieskiej end as wydanie_niebieskiej,
-                                                                               niebieska.niebieska,
-                                                                               case
-                                                                                   when srebrna.wydanie_srebrnej >= zlota.wydanie_zlotej
-                                                                                       then null
-                                                                                   else srebrna.wydanie_srebrnej end      as wydanie_srebrnej,
-                                                                               srebrna.srebrna,
-
-                                                                               zlota.wydanie_zlotej,
-                                                                               zlota.zlota
-
-                                                                        from (select distinct id_korespondenta from t_karty_darczyncow) k
-                                                                                 left join
-                                                                             (select id_korespondenta,
-                                                                                     id_rodzaju_karty        as niebieska,
-                                                                                     min(data_wydania_karty) as wydanie_niebieskiej
-                                                                              from t_karty_darczyncow
-                                                                              where id_rodzaju_karty = 0
-                                                                              group by id_korespondenta, id_rodzaju_karty) niebieska
-                                                                             on niebieska.id_korespondenta = k.id_korespondenta
-                                                                                 left join
-                                                                             (select id_korespondenta,
-                                                                                     id_rodzaju_karty        as srebrna,
-                                                                                     min(data_wydania_karty) as wydanie_srebrnej
-                                                                              from t_karty_darczyncow
-                                                                              where id_rodzaju_karty = 1
-                                                                              group by id_korespondenta, id_rodzaju_karty) srebrna
-                                                                             on srebrna.id_korespondenta = k.id_korespondenta
-                                                                                 left join
-                                                                             (select id_korespondenta,
-                                                                                     id_rodzaju_karty        as zlota,
-                                                                                     min(data_wydania_karty) as wydanie_zlotej
-                                                                              from t_karty_darczyncow
-                                                                              where id_rodzaju_karty = 2
-                                                                              group by id_korespondenta, id_rodzaju_karty) zlota
-                                                                             on zlota.id_korespondenta = k.id_korespondenta
-                                                                    ) karta
-                                                                    on karta.id_korespondenta = ak.id_korespondenta
-
-                                                                        left join t_akcje a on a.id_akcji = ak.id_akcji
-                                                                        left join t_grupy_akcji_2 t on a.id_grupy_akcji_2 = t.id_grupy_akcji_2
-                                                                        left join t_grupy_akcji_3 tga3 on a.id_grupy_akcji_3 = tga3.id_grupy_akcji_3
-                                                           ) foo
-'''
-        data_sql = pd.read_sql_query(sql, con)
+        data_sql = pd.read_sql_query(sql_color_cards, con)
         data = pd.merge(data, data_sql, how='left',
                         on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'])
 
+        # zapisuje do pliku
         data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
 
 

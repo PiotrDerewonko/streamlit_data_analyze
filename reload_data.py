@@ -35,13 +35,13 @@ distance_between_first_and_second_pay(con, engine, refresh_data) # zrobione
 download_data_about_people_camp(con, refresh_data, engine) # zrobione
 download_data_about_people(con, refresh_data, 0, [])
 download_data_about_people_camp_pay(con, refresh_data, engine) #zrobione
-data_pay_all(con, refresh_data) # do dokonczenia
-check_max_day(refresh_data)
-add_prefix(con, refresh_data, engine)
-promise_gift()
-distinct_options(refresh_data)
-live_people_from_db(con, refresh_data)
-weeks_of_db(con, refresh_data, engine)
+data_pay_all(con, refresh_data) # zrobione
+check_max_day(refresh_data) # nie trzeba przerabiać
+add_prefix(con, refresh_data, engine) #chyba zrobione
+promise_gift()# nie trzeba przerabiać
+distinct_options(refresh_data)# nie trzeba przerabiać
+live_people_from_db(con, refresh_data) # zrobione
+weeks_of_db(con, refresh_data, engine) # zrobione
 get_costs(con, refresh_data, engine)
 download_data(con, refresh_data)
 download_data_cycle_of_life(con, refresh_data)

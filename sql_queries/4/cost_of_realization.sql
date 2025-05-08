@@ -5,7 +5,8 @@ select * from (select fdagt3.text                    as grupa_akcji_3,
            else fdagt.text
            end                        as grupa_akcji_2,
        fcs.name                       as kod_akcji,
-       sum(cost_of_realization.koszt) as koszt_wysylki_giftu
+       sum(cost_of_realization.koszt) as koszt_wysylki_giftu,
+       1 as numer_tygodnia
 from fsaps_order_order_answer fooa
          left outer join fsaps_payment_payment fpp
                          on fooa.payment_id = fpp.id
@@ -37,3 +38,4 @@ where fcc.action_group_one_id = 22
   and fcc.action_group_three_id >= 8
 group by grupa_akcji_3, grupa_akcji_2, kod_akcji) foo
 where koszt_wysylki_giftu is not null
+order by kod_akcji

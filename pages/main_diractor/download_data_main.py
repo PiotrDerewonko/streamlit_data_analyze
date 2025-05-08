@@ -10,7 +10,7 @@ class DownloadDataMain:
         self.table_name = table_name
         self.test_mode = test_mode
 
-    def get_data_from_sql(self, file_name) -> pd.DataFrame:
+    def get_data_from_sql(self, file_name:str) -> pd.DataFrame:
         """Metoda pobiera dane dotyczące wpływów z mailingów."""
         sql = read_file_sql(file_name)
         if self.test_mode:
