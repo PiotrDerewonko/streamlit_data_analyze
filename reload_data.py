@@ -42,12 +42,12 @@ promise_gift()# nie trzeba przerabiać
 distinct_options(refresh_data)# nie trzeba przerabiać
 live_people_from_db(con, refresh_data) # zrobione
 weeks_of_db(con, refresh_data, engine) # zrobione
-get_costs(con, refresh_data, engine)
+get_costs(con, refresh_data, engine) # zrobione
 download_data(con, refresh_data)
 download_data_cycle_of_life(con, refresh_data)
 download_data_about_age(con, refresh_data, engine)
-download_data_intention_money(con, refresh_data)
-download_data_intention_count(con, refresh_data)
+download_data_intention_money(con, refresh_data) # zrobione
+download_data_intention_count(con, refresh_data)# zrobione
 download_data_for_days_charts(con, engine, refresh_data, 'dash_char_ma_data_by_id',
                               '10_chart_in_days/count_and_sum_amount_for_char_days')
 download_data_for_days_charts(con, engine, refresh_data,
