@@ -1,22 +1,40 @@
 import pandas as pd
+from sqlalchemy.exc import SQLAlchemyError
 
+from logger import get_logger
 from database.read_file_sql import read_file_sql
+
+logger = get_logger()
 
 
 class DownloadDataMain:
-    def __init__(self, con, engine, table_name, test_mode=False) -> None:
+    def __init__(self, con, engine, table_name, test_mode=False, logger=None) -> None:
         self.con = con
         self.engine = engine
         self.table_name = table_name
         self.test_mode = test_mode
+        self.logger = logger
 
-    def get_data_from_sql(self, file_name:str) -> pd.DataFrame:
+    def get_data_from_sql(self, file_name: str) -> pd.DataFrame:
         """Metoda pobiera dane dotyczące wpływów z mailingów."""
-        sql = read_file_sql(file_name)
+        if self.logger:
+            self.logger.info(f'rozpoczynam pobierania danych z pliku {file_name}')
+        try:
+            sql = read_file_sql(file_name)
+        except FileNotFoundError:
+            if self.logger:
+                self.logger.info(f'File {file_name} not found')
+            raise
         if self.test_mode:
             sql += ' limit 50'
-        data = pd.read_sql(sql, con=self.con)
-        print(f'pobrano dane z {file_name}')
+        try:
+            data = pd.read_sql(sql, con=self.con)
+        except pd.errors.DatabaseError as e:
+            if self.logger:
+                self.logger.exception(f'Blad rzy pliku sql: {file_name} treść błędu {e}')
+            raise
+        if self.logger:
+            self.logger.info(f'pobrano dane z {file_name}')
         return data
 
     def get_data_from_sql_with_out_limit(self, file_name) -> pd.DataFrame:
@@ -51,12 +69,19 @@ class DownloadDataMain:
     def insert_data(self, main_df):
         """Metoda na podstawie nazwy tabeli wstawia dane do bazy danych lub zapisuje do pliku csv."""
         if self.table_name.endswith(".csv"):
-            main_df.to_csv(self.table_name, index=False)
-            print(f'zapisano dane do pliku {self.table_name}')
+            try:
+                main_df.to_csv(self.table_name, index=False)
+            except OSError as e:
+                if self.logger:
+                    self.logger.exception(f'Bad file {e}')
         else:
-            main_df.to_sql(self.table_name, self.engine, if_exists='replace', schema='raporty', index=False)
-            print(f'dodano do bazy danych dane do tabeli {self.table_name}')
-
+            try:
+                main_df.to_sql(self.table_name, self.engine, if_exists='replace', schema='raporty', index=False)
+            except SQLAlchemyError as e:
+                if self.logger:
+                    self.logger.exception(f'Błąd zapisu danych do tabeli {self.table_name}, błąd: {e}')
+                raise
+        self.logger.info(f'zapisano dane do pliku/tabeli {self.table_name}')
 
     def download_data(self) -> pd.DataFrame:
         """Metoda do pobierania danych i zwrócenia data frame. W zależności od przekazanego parametru table_name

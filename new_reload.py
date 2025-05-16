@@ -11,6 +11,7 @@ from pages.ma_details_files.download_data.data_about_cost_in_campaign import gen
 from pages.ma_details_files.download_data.data_about_pay_in_campaign import generate_data_about_pay_in_campaign
 from pages.ma_details_files.download_data.data_about_people_in_campaign import generate_data_about_people_in_campaign
 from pages.ma_details_files.download_data.data_about_structure_of_pays import generate_data_about_structure_of_pays
+from pages.flow.download_data import *
 
 sorce_main = dotenv_values('.env')
 sorce_main = list(sorce_main.values())[0]
@@ -33,3 +34,7 @@ generate_data_about_structure_of_pays(con, engine)
 
 # Dane do zakłdki 3_ custorm report
 generate_data_distance_first_nad_second_pay(con, engine)
+
+
+# Dane do zakładki 11 flow
+generate_data_wrong_address(con, engine, True)

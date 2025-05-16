@@ -49,10 +49,10 @@ download_data_about_age(con, refresh_data, engine)
 download_data_intention_money(con, refresh_data) # zrobione
 download_data_intention_count(con, refresh_data)# zrobione
 download_data_for_days_charts(con, engine, refresh_data, 'dash_char_ma_data_by_id',
-                              '10_chart_in_days/count_and_sum_amount_for_char_days')
+                              '10_chart_in_days/count_and_sum_amount_for_char_days') # zrobione
 download_data_for_days_charts(con, engine, refresh_data,
                               'dash_char_ma_data_cost_cir_by_id',
-                              '10_chart_in_days/cost_and_cirtulation_for_char_days')
+                              '10_chart_in_days/cost_and_cirtulation_for_char_days')# zrobione
 wrong_address(refresh_data, con)
 download_data_about_flow(refresh_data)
 
