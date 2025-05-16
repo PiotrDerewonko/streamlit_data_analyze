@@ -1,10 +1,9 @@
-import pandas as pd
-
-from pages.db_analyze.download_data import *
 import os
-from dotenv import dotenv_values
-from database.source_db import deaful_set
 
+from dotenv import dotenv_values
+
+from database.source_db import deaful_set
+from pages.intentions.download_data import *
 
 # Znajdź katalog główny projektu
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -17,14 +16,14 @@ refresh_data = True
 mail, con, engine = deaful_set(sorce_main)
 
 
-def test_generate_data_live_people():
-    generate_data_for_live_people(con, engine, True)
-    data = download_data_for_live_people(con, engine, True)
+def test_generate_intention_money():
+    generate_data_for_intention_report_money(con, engine, True)
+    data = download_data_for_intention_report_money(con, engine, True)
     assert isinstance(data, pd.DataFrame), 'Zwrócony plik nie jest data frame'
     assert len(data) > 0, 'Zwrocony plik jest pusty'
 
-def test_generate_data_weeks_in_db():
-    generate_data_for_db_weeks(con, engine, True)
-    data = download_data_for_db_weeks(con, engine, True)
+def test_generate_intention_count():
+    generate_data_for_intention_report_count(con, engine, True)
+    data = download_data_for_intention_report_count(con, engine, True)
     assert isinstance(data, pd.DataFrame), 'Zwrócony plik nie jest data frame'
     assert len(data) > 0, 'Zwrocony plik jest pusty'

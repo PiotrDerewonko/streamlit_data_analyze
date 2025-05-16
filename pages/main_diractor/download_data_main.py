@@ -1,8 +1,8 @@
 import pandas as pd
 from sqlalchemy.exc import SQLAlchemyError
 
-from logger import get_logger
 from database.read_file_sql import read_file_sql
+from logger import get_logger
 
 logger = get_logger()
 
@@ -81,7 +81,8 @@ class DownloadDataMain:
                 if self.logger:
                     self.logger.exception(f'Błąd zapisu danych do tabeli {self.table_name}, błąd: {e}')
                 raise
-        self.logger.info(f'zapisano dane do pliku/tabeli {self.table_name}')
+        if self.logger:
+            self.logger.info(f'zapisano dane do pliku/tabeli {self.table_name}')
 
     def download_data(self) -> pd.DataFrame:
         """Metoda do pobierania danych i zwrócenia data frame. W zależności od przekazanego parametru table_name
