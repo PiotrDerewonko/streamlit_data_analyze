@@ -1,8 +1,10 @@
 import logging
 import os
+
 from dotenv import load_dotenv
 
-def get_logger(name='app'):
+
+def get_logger(name='app', filename=None):
     load_dotenv()
     level = os.getenv('LOG_LEVEL', 'logging.INFO')
     filemode = os.getenv('LOG_FILEMODE', 'a')
@@ -18,7 +20,11 @@ def get_logger(name='app'):
     os.makedirs(log_dir, exist_ok=True)
 
     # Ścieżka do pliku logu
-    log_path = os.path.abspath(os.path.join(log_dir, f'{name}.log'))
+    if filename:
+        final_filename = filename
+    else:
+        final_filename = name
+    log_path = os.path.abspath(os.path.join(log_dir, f'{final_filename}.log'))
 
     # Tworzymy FileHandler
     file_handler = logging.FileHandler(log_path, mode=filemode)

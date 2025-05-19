@@ -9,7 +9,8 @@ from pages.main_diractor.download_data_main import DownloadDataMain
 
 class DataAboutPeopleInCampaign(DownloadDataMain):
     """Klasa tworzy dane dotyczących korespondentów biorących udział w mailingach adresowych. Dane tu uzyskane
-    są podstawą do wygenerowania raportu o efektywności mailingów adresowych w sekcji ma_details."""
+    są podstawą do wygenerowania raportu o efektywności mailingów adresowych w sekcji ma_details. Część danych tu
+    zawartych odnosi się do momentu otrzymania mailingu (np. typ darczyńcy na dany rok kalendarzowy)"""
 
     def prepare_data(self, data) -> pd.DataFrame:
         """Metoda wypełnia brakujące komórki, skraca nazwy mailingów oraz dodaje dane o wieku."""

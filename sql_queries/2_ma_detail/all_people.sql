@@ -1,0 +1,1 @@
+select id as id_korespondenta from fsaps_correspondent_correspondent
