@@ -1,5 +1,6 @@
 import datetime
 import os
+from typing import NamedTuple, Optional, Any
 
 import pandas as pd
 
@@ -9,19 +10,32 @@ from pages.main_diractor.download_data_main import DownloadDataMain
 logger = get_logger('people')
 
 
+class SqlQuerySpec(NamedTuple):
+    query: str
+    column_name: Optional[str] = None
+    fillna_value: Optional[Any] = None
+
+
 class DataAboutPeopleDownloader(DownloadDataMain):
     """Klasa generuje dane na temat korespondentów, niezależnie od tego, w jakich kampaniach brali udział."""
 
     def add_many_sql(self, data) -> pd.DataFrame:
         """Metoda dodaje do przekazanych danych, wyniki z zapytań sql"""
-        sql_list = [['sql_queries/2_ma_detail/people_source.sql', None, None],
-                    ['sql_queries/2_ma_detail/origin_material.sql', None, None]]
+        sql_list = [SqlQuerySpec('sql_queries/2_ma_detail/people_source.sql', None, None),
+                    SqlQuerySpec('sql_queries/2_ma_detail/origin_material.sql', None, None),
+                    SqlQuerySpec('sql_queries/2_ma_detail/is_in_rosary.sql', 'modlitwa_rozancowa',
+                                 'nie jest \nw modlitwie różańcowej'),
+                    SqlQuerySpec('sql_queries/2_ma_detail/chosen_city.sql', 'typ_miejscowosci', 'pozostałe'),
+                    SqlQuerySpec('sql_queries/2_ma_detail/postal_districts.sql', 'okreg_pocztowy', 'brak'),
+                    SqlQuerySpec('sql_queries/2_ma_detail/how_many_rosary_have.sql', 'ilosc_dziesiatek', 'nie ma \nżadnej dziesiątki'),
+                    ]
         logger.info('Rozpoczynam dodawanie wielu kwerend do korespondentów')
-        for i in sql_list:
-            data_tmp = self.get_data_from_sql(str(i[0]))
-            data = pd.merge(data, data_tmp, how='left', on='id_korespondenta')
-            if i[1] is not None:
-                data[f'{i[1]}'] = data[f'{i[1]}'].fillna(i[2])
+        for spec in sql_list:
+            data_tmp = self.get_data_from_sql(spec.query)
+            if data_tmp is not None:
+                data = pd.merge(data, data_tmp, how='left', on='id_korespondenta')
+                if spec.column_name is not None:
+                    data[f'{spec.column_name}'] = data[f'{spec.column_name}'].fillna(spec.fillna_value)
         data['rodzaj_materialu_pozyskania'].loc[~(data['grupa_akcji_1_dodania'] == 'DRUKI BEZADRESOWE')] = 'brak'
         data['material_pozyskania'].loc[~(data['grupa_akcji_1_dodania'] == 'DRUKI BEZADRESOWE')] = 'brak'
         logger.info('Zakończono dodawanie wielu kwerend do korespondentów')
@@ -70,5 +84,20 @@ def generate_data_about_people(con, engine, test_mode=False) -> None:
         all_people_with_materials = people_generator.add_data_about_materials(
             all_people_with_extra_sql_and_count_in_years)
         people_generator.insert_data(all_people_with_materials)
+    except Exception as e:
+        logger.error(f'Nie oczekiwany błąd: {e}')
+
+def download_data_about_people(con, engine, test_mode=False) -> pd.DataFrame:
+    """Metoda tworzy obiekt klasy, który pobiera dane na temat korespondentów. Dane wykorzystywane są w raporcie
+    z mailingów adresowych."""
+    try:
+        logger.info('Zaczynam pobieranie danych na temat ludzi')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        csv_path = os.path.join(csv_path, 'tmp_file/data_about_people.csv')
+        people_downloader = DataAboutPeopleDownloader(con, engine, table_name=csv_path, test_mode=test_mode,
+                                                     logger=logger)
+        data_to_return = people_downloader.download_data()
+        return data_to_return
+
     except Exception as e:
         logger.error(f'Nie oczekiwany błąd: {e}')

@@ -18,5 +18,16 @@ TEST_CASES = [
     ("payment_from_mailingv2.sql", {}),
     ("big_cost.sql", {}),
     ("people_camp_data.sql", {}),
-    ("card_for_mailings.sql", {})]
+    ("card_for_mailings.sql", {}),
+    ("all_people.sql", {}),
+    ("chosen_city.sql", {}),
+    ("count_of_pays_in_year.sql", {"#A#": '2024'}),
+    ("how_many_rosary_have.sql", {}),
+    ("is_correspondent_has_product.sql", {"#A#": str('MAGAZYN_DZIEKUJE_Q2_2017 po koszcie 0.263')}),
+    ("card_for_mailings.sql", {}),
+    ("is_in_rosary.sql", {}),
+    ("list_of_products.sql", {}),
+    ("people_source.sql", {}),
+    ("postal_districts.sql", {}),
+]
 test_sql_queries = run_sql_test(SQL_DIR, TEST_CASES, EXCLUDE_LIMIT_FILES)

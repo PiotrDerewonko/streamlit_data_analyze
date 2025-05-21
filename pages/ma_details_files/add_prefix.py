@@ -106,6 +106,7 @@ def add_prefix(con, refresh_data, engine):
                         on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'])
 
         # zapisuje do pliku
-        data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+        data.to_csv(csv_path)
 
 
