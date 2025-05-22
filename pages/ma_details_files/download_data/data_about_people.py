@@ -74,7 +74,7 @@ def generate_data_about_people(con, engine, test_mode=False) -> None:
     try:
         logger.info('Zaczynam generowanie danych na temat ludzi')
         csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        csv_path = os.path.join(csv_path, 'tmp_file/data_about_people.csv')
+        csv_path = os.path.join(csv_path, 'tmp_file/people.csv')
         people_generator = DataAboutPeopleDownloader(con, engine, table_name=csv_path, test_mode=test_mode,
                                                      logger=logger)
         all_people = people_generator.get_data_from_sql('sql_queries/2_ma_detail/all_people.sql')
@@ -93,7 +93,7 @@ def download_data_about_people(con, engine, test_mode=False) -> pd.DataFrame:
     try:
         logger.info('Zaczynam pobieranie danych na temat ludzi')
         csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        csv_path = os.path.join(csv_path, 'tmp_file/data_about_people.csv')
+        csv_path = os.path.join(csv_path, 'tmp_file/people.csv')
         people_downloader = DataAboutPeopleDownloader(con, engine, table_name=csv_path, test_mode=test_mode,
                                                      logger=logger)
         data_to_return = people_downloader.download_data()

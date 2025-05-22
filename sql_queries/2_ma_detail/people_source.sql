@@ -6,3 +6,4 @@ select correspondent_id                   as id_korespondenta,
        date_part('year', data_pozyskania) as rok_dodania,
        data_pozyskania                    as data_dodania
 from fsaps_v_zrodlo_pozyskania_darczyncy
+order by id_korespondenta

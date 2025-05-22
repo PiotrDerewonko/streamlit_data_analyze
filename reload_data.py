@@ -33,7 +33,7 @@ down_data_sum_and_count(con, refresh_data, engine) # zrobione
 download_increase_data(con, refresh_data, engine) # zrobione
 distance_between_first_and_second_pay(con, engine, refresh_data) # zrobione
 download_data_about_people_camp(con, refresh_data, engine) # zrobione
-download_data_about_people(con, refresh_data, 0, [])
+download_data_about_people(con, refresh_data, 0, []) # zrobione
 download_data_about_people_camp_pay(con, refresh_data, engine) #zrobione
 data_pay_all(con, refresh_data) # zrobione
 check_max_day(refresh_data) # nie trzeba przerabiać
@@ -54,7 +54,6 @@ download_data_for_days_charts(con, engine, refresh_data,
                               'dash_char_ma_data_cost_cir_by_id',
                               '10_chart_in_days/cost_and_cirtulation_for_char_days')# zrobione
 wrong_address(refresh_data, con) # zrobione
-download_data_about_flow(refresh_data)
-
+download_data_about_flow(refresh_data) # zrobione
 
 print('zakończono przeładowanie danych')

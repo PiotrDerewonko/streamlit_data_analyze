@@ -1,10 +1,10 @@
-import pandas as pd
-
-from pages.flow.download_data import *
 import os
-from dotenv import dotenv_values
-from database.source_db import deaful_set
 
+from dotenv import dotenv_values
+
+from database.source_db import deaful_set
+from pages.flow.download_data import *
+from pages.flow.download_data_about_flow import *
 
 # Znajdź katalog główny projektu
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -22,3 +22,8 @@ def test_generate_wrong_address():
     assert isinstance(data, pd.DataFrame), 'Zwrócony plik nie jest data frame'
     assert len(data) > 0, 'Zwrocony plik jest pusty'
 
+def test_generate_data_to_flow():
+    generate_data_about_flow(con, engine, True)
+    data = download_data_about_flow(con, engine, True)
+    assert isinstance(data, pd.DataFrame), 'Zwrócony plik nie jest data frame'
+    assert len(data) > 0, 'Zwrocony plik jest pusty'

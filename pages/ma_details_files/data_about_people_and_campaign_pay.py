@@ -11,7 +11,6 @@ from pages.ma_details_files.data_about_peopla_year_and_vip import add_age_and_vi
 @st.cache_data(ttl=7200)
 def download_data_about_people(_con, refresh_data, limit, filtr_column):
     if refresh_data == 'True':
-        #todo sql do przerobki
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
         list_of_sql = [['''select id_korespondenta, 'jest w \nmodlitwie różańcowej' as modlitwa_rozancowa from 
         t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', '''nie jest \nw modlitwie różańcowej'''],
