@@ -1,6 +1,9 @@
 import pandas as pd
 import streamlit as st
 
+from database.change_types_of_columns import change_types_of_columns
+
+
 @st.cache_resource(ttl=7200)
 def down_data_about_cor(_con, _engine, refresh):
     if refresh == 'True':
@@ -46,6 +49,7 @@ left outer join (select tytul , case when id_plci=1 then 'mężczyźni'
 '''
         data = pd.read_sql_query(sql, _con)
         data['last_mailing'].fillna(False, inplace=True)
+        data = change_types_of_columns(data)
         data.to_sql('cr_distance_corr', _engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_corr')
     data = pd.read_sql_query('''select * from raporty.cr_distance_corr''', _con)
@@ -62,6 +66,7 @@ def down_data_about_pay(_con, _engine, refresh):
         , data_wplywu_srodkow from t_transakcje)a
         )foo where numer <=2 '''
         data = pd.read_sql_query(sql, _con)
+        data = change_types_of_columns(data)
         data.to_sql('cr_distance_pay', _engine, if_exists='replace', schema='raporty', index=False)
         print('dodano cr_distance_pay')
     data = pd.read_sql_query('''select * from raporty.cr_distance_pay''', _con)

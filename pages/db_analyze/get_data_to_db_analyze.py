@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 from dateutil.relativedelta import relativedelta
 
+from database.change_types_of_columns import change_types_of_columns
+
 
 @st.cache_data(ttl=7200)
 def live_people_from_db(_con, refresh_data):
@@ -176,6 +178,7 @@ group by grupa_akcji_3, grupa_akcji_2, kod_akcji
             group by grupa_akcji_3, grupa_akcji_2, ta.kod_akcji'''
         data_part_3 = pd.read_sql_query(sql_3, _con)
         final_data = pd.concat([data_part_1, data_part_2, data_part_3])
+        final_data = change_types_of_columns(final_data)
         final_data.to_sql('weeks_of_db', _engine, if_exists='replace', schema='raporty', index=False)
     to_return = pd.read_sql_query(f'''select * from raporty.weeks_of_db''', _con)
     return to_return

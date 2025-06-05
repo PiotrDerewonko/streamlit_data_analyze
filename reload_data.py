@@ -1,3 +1,5 @@
+import os
+
 from dotenv import dotenv_values
 
 from database.dowload_data import download_dash_address_data, download_increase_data
@@ -20,7 +22,8 @@ from pages.ma_details_files.data_about_people_and_campaign_pay import download_d
 from pages.ma_details_files.download_data_fo_char_line import down_data_sum_and_count, down_data_cost_and_circulation
 from pages.ma_details_files.max_day import check_max_day
 
-sorce_main = dotenv_values('.env')
+env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '.env'))
+sorce_main = dotenv_values(env_path)
 sorce_main = list(sorce_main.values())[0]
 refresh_data = 'True'
 mail, con, engine = deaful_set(sorce_main)

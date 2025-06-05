@@ -1,5 +1,7 @@
 import pandas as pd
 
+from database.change_types_of_columns import change_types_of_columns
+
 
 def download_dash_address_data(con, refresh, engine, type):
     if type == 'address':
@@ -47,6 +49,7 @@ def download_dash_address_data(con, refresh, engine, type):
 
         if type == 'address':
             to_insert['pozyskano'] = 0
+            to_insert = change_types_of_columns(to_insert)
             to_insert.to_sql('dash_ma_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard adresowy')
 
@@ -121,6 +124,7 @@ where id_korespondenta in (select id_korespondenta
 group by kod_akcji'''
             data = pd.read_sql_query(sql, con)
             to_insert = pd.merge(to_insert, data, how='left', on='kod_akcji')
+            to_insert = change_types_of_columns(to_insert)
             to_insert.to_sql('dash_db_data', engine, if_exists='replace', schema='raporty', index=False)
             print('dodano do bazy danych dane dla dashboard bezadresowy')
     if type == 'address':
@@ -161,6 +165,7 @@ def download_increase_data(con, refresh, engine):
         to_insert = pd.read_sql_query(sql, con)
         to_insert['mailingi'].fillna('nie bierze udziału', inplace=True)
         to_insert['wpłata'].fillna('nie wpłacił', inplace=True)
+        to_insert = change_types_of_columns(to_insert)
         to_insert.to_sql('dash_increase_data', engine, if_exists='replace', schema='raporty', index=False)
         print('dodano do bazy danych dane dla dashboard przyrost')
     to_return = pd.read_sql_query('select * from raporty.dash_increase_data', con)

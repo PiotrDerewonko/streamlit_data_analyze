@@ -3,6 +3,8 @@ import os
 
 import pandas as pd
 
+from database.change_types_of_columns import change_types_of_columns
+
 
 def download_data(con, text) -> pd.DataFrame:
     list_of_id_gr2 = pd.read_sql_query('''select id from fsaps_dictionary_action_group_two 
@@ -40,6 +42,7 @@ def down_data_sum_and_count(con, refresh_data, engine) -> pd.DataFrame:
         data = download_data(con, '2_ma_detail/count_and_sum_amount_char_for_days')
         data['dzien_po_mailingu'].fillna(999, inplace=True)
         data['dzien_po_mailingu'] = data['dzien_po_mailingu'].astype(int)
+        data = change_types_of_columns(data)
         data.to_sql('dash_char_ma_data', engine, if_exists='replace', schema='raporty', index=False)
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data''', con)
     return data
@@ -47,6 +50,7 @@ def down_data_sum_and_count(con, refresh_data, engine) -> pd.DataFrame:
 def down_data_cost_and_circulation(con, refresh_data, engine) -> pd.DataFrame:
     if refresh_data == 'True':
         data = download_data(con, '2_ma_detail/cost_and_cirtulation_for_char_days')
+        data = change_types_of_columns(data)
         data.to_sql('dash_char_ma_data_cost_cir', engine, if_exists='replace', schema='raporty', index=False)
     data = pd.read_sql_query('''select * from raporty.dash_char_ma_data_cost_cir''', con)
     data['koszt'] = data['koszt'].astype(float)

@@ -1,6 +1,9 @@
 import pandas as pd
 import streamlit as st
 
+from database.change_types_of_columns import change_types_of_columns
+
+
 @st.cache_resource(ttl=7200)
 def get_costs(_con, refresh_data, _engine):
     if refresh_data == 'True':
@@ -85,6 +88,7 @@ def get_costs(_con, refresh_data, _engine):
             data_with_info['koszt_wysylki_na_polske_bez_warszawy']
         data_with_info['if_gifts'] = 0
         data_with_info['if_gifts'].loc[data_with_info['koszt_giftow'] > 0] = 1
+        data_with_info = change_types_of_columns(data_with_info)
         data_with_info.to_sql('streamlit_cost_structure', _engine, if_exists='replace', schema='raporty', index=False)
     to_return = pd.read_sql_query(f'''select * from raporty.streamlit_cost_structure''', _con)
     return to_return
