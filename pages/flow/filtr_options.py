@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -30,7 +31,8 @@ class FiltrOptions:
 
     def add_other_options(self):
         """Metoda dodaje dwa dodatkowe filtry, pozwalające filtrować po wszystkich kolumnach w pliku"""
-        df = pd.read_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ma_details_files/tmp_file/column_with_options.csv'))
+        df = pd.read_csv(csv_path)
         filtr_1 = AddFillterByColumns(df, 'filtr_1', 'filtr_1_wartosc', self.options,
                                       'Filtr 1')
         filtr_1.init_session_state()

@@ -2,7 +2,7 @@ import os
 
 from dotenv import dotenv_values
 
-from database.delete_tables import delete_tables
+from database.delete_tables import delete_tables, update_tables
 from database.dowload_data import download_dash_address_data, download_increase_data
 from database.source_db import deaful_set
 from pages.about_db.data import download_data
@@ -29,6 +29,7 @@ sorce_main = list(sorce_main.values())[0]
 refresh_data = 'True'
 mail, con, engine = deaful_set(sorce_main)
 print('rozpoczynam przeładowanie danych')
+
 
 delete_tables(con)
 
@@ -62,5 +63,5 @@ download_data_for_days_charts(con, engine, refresh_data,
 wrong_address(refresh_data, con)
 download_data_about_flow(refresh_data)
 
-
+update_tables(con)
 print('zakończono przeładowanie danych')

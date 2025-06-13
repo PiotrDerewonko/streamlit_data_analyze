@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import streamlit as st
 from dotenv import dotenv_values
@@ -17,7 +19,8 @@ with st.container():
     count_intentions = download_data_intention_count(con, False)
     money_intentions = download_data_intention_money(con, False)
     data_all_intentions = count_intentions
-    data_about_people = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'ma_details_files/tmp_file/people.csv'))
+    data_about_people = pd.read_csv(csv_path, index_col='Unnamed: 0',
                                     low_memory=False)
     data_to_analyze = modificate_data(data_all_intentions, data_about_people)
     options = options_to_choose()

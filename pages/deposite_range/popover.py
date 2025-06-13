@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import pandas as pd
@@ -13,7 +14,8 @@ def add_popover() -> List:
     gr_2_dod = popover.checkbox('Filtruj po grupie akcji 2 dodania', False)
     rok_dod = popover.checkbox('Filtruj po roku dodania', False)
     przedzial_wieku = popover.checkbox('Filtruj po przedziale wiekowym', False)
-    uniq_data = pd.read_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__),'..', 'ma_details_files/tmp_file/column_with_options.csv'))
+    uniq_data = pd.read_csv(csv_path)
 
     if gr_2_wpl:
         with st.container(border=True):

@@ -1,3 +1,4 @@
+import os
 from typing import Dict, Tuple
 
 import pandas as pd
@@ -16,7 +17,8 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
 
     if refresh_data =='True':
         # pobranie orginlanych danych o kampaniach i ich odfiltorowanie
-        data_original_campaing = pd.read_csv('pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0',
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ma_details_files/tmp_file/people_camp.csv'))
+        data_original_campaing = pd.read_csv(csv_path, index_col='Unnamed: 0',
                                              low_memory=False)
         data_original_campaing = data_original_campaing.sort_values(by=['id_korespondenta'])
         data_original_short = data_original_campaing[
@@ -25,7 +27,9 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
         data_original_short = data_original_short
 
         # pobieram orginalne dane na temat ludzi
-        data_original_people = pd.read_csv('pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+        csv_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), '..', 'ma_details_files/tmp_file/people.csv'))
+        data_original_people = pd.read_csv(csv_path, index_col='Unnamed: 0',
                                            low_memory=False)
         data_original_people = data_original_people.sort_values(by=['id_korespondenta'])
         # data_original_people_short = data_original_people.iloc[0:10000]
@@ -42,7 +46,8 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
         # collection.insert_many(data_all.to_dict('records'))
 
         # todo po zainstlwoaniu mongo zmienic na mongo a nic csv
-        data_all.to_csv('./pages/flow/tmp_files/data_all.csv', index=False)
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_files/data_all.csv'))
+        data_all.to_csv(csv_path, index=False)
 
     else:
         # Pobierz wszystkie dokumenty z kolekcji
@@ -50,8 +55,8 @@ def download_data_about_flow(refresh_data) -> pd.DataFrame:
 
         # Zamień wynik na ramkę danych
         # data = pd.DataFrame(documents)
-
-        data = pd.read_csv('./pages/flow/tmp_files/data_all.csv', low_memory=False)
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_files/data_all.csv'))
+        data = pd.read_csv(csv_path, low_memory=False)
         return data
 
 

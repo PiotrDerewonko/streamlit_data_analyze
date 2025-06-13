@@ -17,9 +17,11 @@ def download_data_intention_count(_con, refresh_data) -> pd.DataFrame:
         with open(sql_file_path, 'r') as sql_file:
             zapytanie = sql_file.read()
         data = pd.read_sql_query(zapytanie, _con)
-        data.to_csv('./pages/intentions/tmp_files/count_intentions.csv', index=False)
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_files/count_intentions.csv'))
+        data.to_csv(csv_path, index=False)
     else:
-        data_to_return = pd.read_csv('./pages/intentions/tmp_files/count_intentions.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_files/count_intentions.csv'))
+        data_to_return = pd.read_csv(csv_path)
         return data_to_return
 
 @st.cache_data(ttl=3600)
@@ -34,7 +36,9 @@ def download_data_intention_money(_con, refresh_data) -> pd.DataFrame:
         with open(sql_file_path, 'r') as sql_file:
             zapytanie = sql_file.read()
         data = pd.read_sql_query(zapytanie, _con)
-        data.to_csv('./pages/intentions/tmp_files/money_intentions.csv', index=False)
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_files/money_intentions.csv'))
+        data.to_csv(csv_path, index=False)
     else:
-        data_to_return = pd.read_csv('./pages/intentions/tmp_files/money_intentions.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_files/money_intentions.csv'))
+        data_to_return = pd.read_csv(csv_path)
         return data_to_return

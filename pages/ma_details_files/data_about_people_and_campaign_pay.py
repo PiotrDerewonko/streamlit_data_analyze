@@ -11,7 +11,7 @@ from pages.ma_details_files.data_about_peopla_year_and_vip import add_age_and_vi
 @st.cache_data(ttl=7200)
 def download_data_about_people(_con, refresh_data, limit, filtr_column):
     if refresh_data == 'True':
-        #todo sql do przerobki
+        # todo sql do przerobki
         # tutaj dajemy specjalne warunki np ile ma dziesiatek rozanca, czy jest w modliwtie itp
         list_of_sql = [['''select id_korespondenta, 'jest w \nmodlitwie różańcowej' as modlitwa_rozancowa from 
         t_tajemnice_rozanca_korespondenci where czy_aktywny=True''', '''nie jest \nw modlitwie różańcowej'''],
@@ -106,7 +106,8 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
                 data_tmp_3 = pd.read_sql_query(sql, _con)
                 data_tmp_1 = data_tmp_1.merge(data_tmp_3, on='id_korespondenta', how='left')
                 data_tmp_1[f'liczba_wplat_{i}'].fillna(0, inplace=True)
-            people_camp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+            csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+            people_camp = pd.read_csv(csv_path, index_col='Unnamed: 0')
             people_camp['TYP DARCZYŃCY'] = 'pozostali'
             # dane do określenia typu darczyncy na dany rok
             for year in range(2011, rok + 1):
@@ -146,7 +147,8 @@ select id_korespondenta , substring( kod_pocztowy, 1, 1)::int as okreg_pocztowy 
             people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == 2009)] = '<3 lata w bazie'
             people_camp['TYP DARCZYŃCY'].loc[(people_camp['grupa_akcji_3_wysylki'] == 2010)] = '<3 lata w bazie'
 
-            people_camp.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+            csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+            people_camp.to_csv(csv_path)
         except:
             a = ""
 
@@ -195,13 +197,15 @@ order by łączna_ilość_zamowień desc)a'''
         data_tmp_1['material_pozyskania'].loc[~(data_tmp_1['grupa_akcji_1_dodania'] == 'DRUKI BEZADRESOWE')] = 'brak'
 
         # zapis wyniku
-        data_tmp_1.to_csv('./pages/ma_details_files/tmp_file/people.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people.csv'))
+        data_tmp_1.to_csv(csv_path)
 
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people.csv'))
     if limit == 0:
-        data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+        data_to_return = pd.read_csv(csv_path, index_col='Unnamed: 0',
                                      low_memory=False)
     else:
-        data_to_return = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+        data_to_return = pd.read_csv(csv_path, index_col='Unnamed: 0',
                                      low_memory=False, nrows=limit)
 
     return data_to_return
@@ -210,7 +214,7 @@ order by łączna_ilość_zamowień desc)a'''
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp_pay(_con, refresh_data, _engine):
     if refresh_data == 'True':
-        #todo sql do przerobki
+        # todo sql do przerobki
         sql = f'''select tak.id_korespondenta, sum(kwota) as suma_wplat, count(kwota) as liczba_wplat,
          grupa_akcji_2 as grupa_akcji_2_wplaty, grupa_akcji_3 as grupa_akcji_3_wplaty, kod_akcji as kod_akcji_wplaty, 
          row_number() over (partition by tak.id_korespondenta, grupa_akcji_2, grupa_akcji_3 order by
@@ -232,16 +236,17 @@ and dni.data_wplywu_srodkow = tr.data_wplywu_srodkow
         where ta.id_grupy_akcji_2 in (9,10,11,12,24,67,100) and tak.id_transakcji is not null
         group by tak.id_korespondenta, grupa_akcji_2_wplaty, grupa_akcji_3_wplaty, kod_akcji_wplaty, dzien_po_mailingu'''
         data = pd.read_sql_query(sql, _con)
-
-        data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv')
-    data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp_pay.csv'))
+        data.to_csv(csv_path)
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp_pay.csv'))
+    data = pd.read_csv(csv_path, index_col='Unnamed: 0')
     return data
 
 
 @st.cache_data(ttl=7200)
 def download_data_about_people_camp(_con, refresh_data, _engine):
     if refresh_data == 'True':
-        #todo sql do przerobki
+        # todo sql do przerobki
         sql = f'''select tak.id_korespondenta, kod_akcji as kod_akcji_wysylki, grupa_akcji_1 as grupa_akcji_1_wysylki, 
         grupa_akcji_2 as grupa_akcji_2_wysylki, 
         grupa_akcji_3 as grupa_akcji_3_wysylki, koszt.koszt , 1 as naklad,
@@ -269,9 +274,11 @@ and takpog.id_grupy_akcji_2=ta.id_grupy_akcji_2 and takpog.id_grupy_akcji_3=ta.i
 
         # dodaje informacje na temat wieku
         data = add_age_and_vip(data, _con)
-        data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
-
-    data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+        # data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+        data.to_csv(csv_path)
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+    data = pd.read_csv(csv_path, index_col='Unnamed: 0')
     return data
 
 
@@ -290,16 +297,19 @@ def data_pay_all(_con, refresh_data):
                   '[080-090)',
                   '[090-100)', '[100-110)', '[110-120)', '[120-200)', '[200-maks)']
         data['przedzialy'] = pd.cut(data['suma_wplat'], bins, right=False, labels=labels)
-        data.to_csv('./pages/ma_details_files/tmp_file/people_camp_pay_individual.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp_pay_individual.csv'))
+        data.to_csv(csv_path)
     else:
-        data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay_individual.csv', index_col='Unnamed: 0')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp_pay_individual.csv'))
+        data = pd.read_csv(csv_path, index_col='Unnamed: 0')
     return data
 
 
 def distinct_options(refresh_data):
     if refresh_data == 'True':
         # plik z danymi ludzi
-        tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0',
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people.csv'))
+        tmp = pd.read_csv(csv_path, index_col='Unnamed: 0',
                           low_memory=False)
         data_about_people = tmp.drop(['id_korespondenta'], axis=1)
         list = data_about_people.columns
@@ -312,7 +322,8 @@ def distinct_options(refresh_data):
             data_to_save = pd.concat([data_to_save, tmp_2])
 
         # plik z wplatami ludzi
-        tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp_pay.csv', index_col='Unnamed: 0')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp_pay.csv'))
+        tmp = pd.read_csv(csv_path, index_col='Unnamed: 0')
         data_about_people = tmp.drop(['id_korespondenta', 'suma_wplat', 'liczba_wplat'], axis=1)
         list = data_about_people.columns
         for i in list:
@@ -323,7 +334,8 @@ def distinct_options(refresh_data):
             data_to_save = pd.concat([data_to_save, tmp_2])
 
         # plik z danymi ludzmi z kmapanii
-        tmp = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+        tmp = pd.read_csv(csv_path, index_col='Unnamed: 0')
         data_about_people = tmp.drop(['id_korespondenta', 'koszt', 'naklad'], axis=1)
         list = data_about_people.columns
         for i in list:
@@ -332,9 +344,10 @@ def distinct_options(refresh_data):
             tmp_2 = tmp_2.rename({"0": f"{i}"}, axis=1)
             tmp_2.drop_duplicates(inplace=True)
             data_to_save = pd.concat([data_to_save, tmp_2])
-
-        data_to_save.to_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/column_with_options.csv'))
+        data_to_save.to_csv(csv_path)
     else:
-        data_to_save = pd.read_csv('./pages/ma_details_files/tmp_file/column_with_options.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/column_with_options.csv'))
+        data_to_save = pd.read_csv(csv_path)
         data_to_save[' '] = ' '
     return data_to_save

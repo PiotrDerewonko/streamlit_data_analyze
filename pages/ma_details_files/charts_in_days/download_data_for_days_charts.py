@@ -5,14 +5,14 @@ import pandas as pd
 
 
 def download_data_for_days_charts(con, engine, refresh_data, table_name, file_name):
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__),'../..' ,f'chart_in_days/tmp_file/{table_name}.csv'))
     if refresh_data == 'True':
         data = download_data(con, file_name)
         data['dzien_po_mailingu'].fillna(999, inplace=True)
         data['dzien_po_mailingu'] = data['dzien_po_mailingu'].astype(int)
-        data.to_csv(f'./pages/chart_in_days/tmp_file/{table_name}.csv')
+        data.to_csv(csv_path)
     else:
-        data = pd.read_csv(f'./pages/chart_in_days/tmp_file/{table_name}.csv', index_col='Unnamed: 0',
-                                     low_memory=False)
+        data = pd.read_csv(csv_path, index_col='Unnamed: 0', low_memory=False)
     return data
 
 

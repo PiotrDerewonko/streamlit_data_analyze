@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -7,7 +8,8 @@ from functions_pandas.short_mailings_names import change_name_shot_to_long
 
 def add_prefix(con, refresh_data, engine):
     if refresh_data=='True':
-        data = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+        data = pd.read_csv(csv_path, index_col='Unnamed: 0')
         #tmp = pd.read_excel('./pages/ma_details_files/tmp_file/zastepcze.xlsx', sheet_name='Arkusz1')
         #data = pd.merge(data, tmp, on='kod_akcji_wysylki', how='left')
 
@@ -189,7 +191,7 @@ from
         data_sql = pd.read_sql_query(sql, con)
         data = pd.merge(data, data_sql, how='left',
                         on=['id_korespondenta', 'grupa_akcji_2_wysylki', 'grupa_akcji_3_wysylki'])
-
-        data.to_csv('./pages/ma_details_files/tmp_file/people_camp.csv')
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+        data.to_csv(csv_path)
 
 

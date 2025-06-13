@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import streamlit as st
 from dateutil.relativedelta import relativedelta
@@ -8,6 +10,7 @@ from database.change_types_of_columns import change_types_of_columns
 @st.cache_data(ttl=7200)
 def live_people_from_db(_con, refresh_data):
     #todo sql do poprawki
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/db.csv'))
     if refresh_data == 'True':
         id_group_two = '''(1, 2, 4,  5, 91, 93, 95, 96, 101, 102, 103, 104, 105, 82, 117, 118, 119,86, 120, 121, 122, 
         123, 124, 125, 126, 127, 128)'''
@@ -121,9 +124,9 @@ def live_people_from_db(_con, refresh_data):
 
 
         #zapis do csv
-        final_df.to_csv('./pages/db_analyze/tmp_file/db.csv')
+        final_df.to_csv(csv_path)
 
-    data = pd.read_csv('./pages/db_analyze/tmp_file/db.csv')
+    data = pd.read_csv(csv_path)
 
     return data
 

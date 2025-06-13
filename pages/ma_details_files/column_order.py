@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import pandas as pd
@@ -37,8 +38,10 @@ def column_options(con):
 def distinct_columns() -> List:
     """Funkcja zwraca liste nazwy kolumn plikow people i people_camp. Lista ta jest wykorzystywana pozniej do
     wybory ktore dane maja byc prezentowane na wykresie/w tabeli"""
-    tmp_peaople = pd.read_csv('./pages/ma_details_files/tmp_file/people.csv', index_col='Unnamed: 0', nrows=1)
-    tmp_campaign = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0', nrows=1)
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people.csv'))
+    tmp_peaople = pd.read_csv(csv_path, index_col='Unnamed: 0', nrows=1)
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/people_camp.csv'))
+    tmp_campaign = pd.read_csv(csv_path, index_col='Unnamed: 0', nrows=1)
     tmp_all = pd.concat([tmp_peaople, tmp_campaign])
     tmp_all = tmp_all.drop(columns=['id_korespondenta'])
     list_options = tmp_all.columns.to_list()

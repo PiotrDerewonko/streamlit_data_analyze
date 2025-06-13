@@ -15,3 +15,23 @@ def delete_tables(conn):
 
     # Zamknięcie połączenia
     cur.close()
+
+def update_tables(conn):
+
+    # Lista nazw tabel do usunięcia (bez schematu)
+    tables_to_drop = ["""alter table raporty.dash_char_ma_data
+    alter column liczba_wplat type int using liczba_wplat::int""", """alter table raporty.dash_char_ma_data_cost_cir
+    alter column naklad type int using naklad::int;""", """
+alter table raporty.dash_char_ma_data_cost_cir
+    alter column dzien_po_mailingu type int using dzien_po_mailingu::int;"""]
+
+    conn.autocommit = True  # lub użyj commit() na końcu
+    cur = conn.cursor()
+
+    # Usuwanie tabel
+    for table_name in tables_to_drop:
+        print(f"aktualizacja tabeli: {table_name}")
+        cur.execute(f'{table_name} ')
+
+    # Zamknięcie połączenia
+    cur.close()

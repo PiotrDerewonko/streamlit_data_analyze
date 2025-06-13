@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import pandas as pd
 import streamlit as st
@@ -61,12 +62,15 @@ def download_data(_con, refresh_data):
         cur = _con.cursor()
         data = add_data_about_peaopl_in_camp(_con, cur)
         data['wplata'].fillna('brak wplaty', inplace=True)
-        data_type = pd.read_csv('./pages/ma_details_files/tmp_file/people_camp.csv', index_col='Unnamed: 0', low_memory=False)
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__),'..', 'ma_details_files/tmp_file/people_camp.csv'))
+        data_type = pd.read_csv(csv_path, index_col='Unnamed: 0', low_memory=False)
         data_type = data_type[['id_korespondenta', 'grupa_akcji_3_wysylki', 'TYP DARCZYŃCY']]
         data_type.drop_duplicates(inplace=True)
         data_final = pd.merge(data, data_type, how='left', left_on=['id_korespondenta', 'rok'],
                               right_on=['id_korespondenta', 'grupa_akcji_3_wysylki'])
         data_final.drop('grupa_akcji_3_wysylki', inplace=True, axis=1)
-        data.to_csv('./pages/about_db/tmp_file/data_db.csv')
-    data = pd.read_csv('./pages/about_db/tmp_file/data_db.csv', index_col='Unnamed: 0', low_memory=False)
+        csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/data_db.csv'))
+        data.to_csv(csv_path)
+    csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tmp_file/data_db.csv'))
+    data = pd.read_csv(csv_path, index_col='Unnamed: 0', low_memory=False)
     return data
