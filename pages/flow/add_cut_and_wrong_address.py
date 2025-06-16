@@ -46,8 +46,8 @@ def update_new_people(df, year, df_people):
     mają status < 3 lata. Jeśli tak, podmienia im typ w roku wejścia."""
     data_new_cut = df.loc[(df['TYP DARCZYŃCY'] == 'odcięci') & (df['grupa_akcji_3_wysylki'] == year) &
                           (df['rok_dodania'] == year)]
-    data_new_next_year = df_people.loc[
-        (df_people['grupa_akcji_3_wysylki'] == year + 1) & (df['TYP DARCZYŃCY'] == '<3 lata w bazie')]
+    data_new_next_year = df.loc[
+        (df['grupa_akcji_3_wysylki'] == (year + 1)) & (df['TYP DARCZYŃCY'] == '<3 lata w bazie')]
     data_to_update = data_new_cut.loc[data_new_cut.id_korespondenta.isin(data_new_next_year.id_korespondenta)]
     data_to_update = data_to_update.loc[data_to_update['TYP DARCZYŃCY'] == '<3 lata w bazie']
     df.loc[df.id_korespondenta.isin(data_to_update.id_korespondenta)] = '<3 lata w bazie'
